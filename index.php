@@ -2,6 +2,44 @@
 $is_auth = rand(0, 1);
 
 $user_name = 'Александр'; // укажите здесь ваше имя
+
+$posts = [
+        [
+            'headline' => 'Цитата',
+            'type' => 'post-quote',
+            'content' => 'Мы в жизни любим только раз, а после ищем лишь похожих',
+            'username' => 'Лариса',
+            'avatar' => 'userpic-larisa-small.jpg'
+        ],
+        [
+            'headline' => 'Игра престолов',
+            'type' => 'post-text',
+            'content' => 'Не могу дождаться начала финального сезона своего любимого сериала!',
+            'username' => 'Владик',
+            'avatar' => 'userpic.jpg'
+        ],
+        [
+            'headline' => 'Наконец, обработал фотки!',
+            'type' => 'post-photo',
+            'content' => 'rock-medium.jpg',
+            'username' => 'Владик',
+            'avatar' => 'userpic.jpg'
+        ],
+        [
+            'headline' => 'Моя мечта',
+            'type' => 'post-photo',
+            'content' => 'coast-medium.jpg',
+            'username' => 'Лариса',
+            'avatar' => 'userpic-larisa-small.jpg'
+        ],
+        [
+            'headline' => 'Лучшие курсы',
+            'type' => 'post-link',
+            'content' => 'www.htmlacademy.ru',
+            'username' => 'Владик',
+            'avatar' => 'userpic.jpg'
+        ],
+];
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -242,23 +280,50 @@ $user_name = 'Александр'; // укажите здесь ваше имя
                 <!--содержимое для поста-текста-->
                 <p><!--здесь текст--></p>
             </div>
-
-            <article class="popular__post post">
+            <?php foreach ($posts as $key => $val): ?>
+            <article class="popular__post post <?=$val['type'];?>">
                 <header class="post__header">
-                    <h2><!--здесь заголовок--></h2>
+                    <h2><?=$val['headline'];?></h2>
                 </header>
                 <div class="post__main">
-                    <!--здесь содержимое карточки-->
+                    <?php if ($val['type'] == 'post-quote'): ?>
+                    <blockquote>
+                        <p>
+                        <?=$val['content'];?>
+                        </p>
+                        <cite>Неизвестный Автор</cite>
+                    </blockquote>
+                    <?php elseif ($val['type'] == 'post-text'): ?>
+                        <p><?=$val['content'];?></p>
+                    <?php elseif ($val['type'] == 'post-photo'): ?>
+                        <div class="post-photo__image-wrapper">
+                            <img src="img/<?=$val['content'];?>" alt="Фото от пользователя" width="360" height="240">
+                        </div>
+                    <?php elseif ($val['type'] == 'post-link'): ?>
+                        <div class="post-link__wrapper">
+                            <a class="post-link__external" href="http://" title="Перейти по ссылке">
+                                <div class="post-link__info-wrapper">
+                                    <div class="post-link__icon-wrapper">
+                                        <img src="img/logo-vita.jpg" alt="Иконка">
+                                    </div>
+                                    <div class="post-link__info">
+                                        <h3><?=$val['headline'];?></h3>
+                                    </div>
+                                </div>
+                                <span><?=$val['content'];?></span>
+                            </a>
+                        </div>
+                    <?php endif; ?>
                 </div>
                 <footer class="post__footer">
                     <div class="post__author">
                         <a class="post__author-link" href="#" title="Автор">
                             <div class="post__avatar-wrapper">
                                 <!--укажите путь к файлу аватара-->
-                                <img class="post__author-avatar" src="img/" alt="Аватар пользователя">
+                                <img class="post__author-avatar" src="img/<?=$val['avatar'];?>" alt="Аватар пользователя">
                             </div>
                             <div class="post__info">
-                                <b class="post__author-name"><!--здесь имя пользоателя--></b>
+                                <b class="post__author-name"><?=$val['username'];?></b>
                                 <time class="post__time" datetime="">дата</time>
                             </div>
                         </a>
@@ -286,6 +351,7 @@ $user_name = 'Александр'; // укажите здесь ваше имя
                     </div>
                 </footer>
             </article>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
