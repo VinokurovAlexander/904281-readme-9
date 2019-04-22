@@ -40,6 +40,32 @@ $posts = [
             'avatar' => 'userpic.jpg'
         ],
 ];
+
+$num_letters = 30;
+function cut_text ($text, $num_letters) {
+    $explode_text = explode(" ",$text);
+    $i = 0;
+    $sum = 0;
+    $new_text = [];
+    foreach ($explode_text as $v) {
+        if ($sum < $num_letters) {
+            $len = mb_strlen($explode_text[$i]);
+            $sum = $sum + $len;
+            array_push($new_text,$explode_text[$i] );
+            $i++;
+        }
+
+    }
+    if ($sum > $num_letters) {
+        array_pop($new_text);
+        $final_text = implode(" ",$new_text) .'...' . "<br>" . "<a class=\"post-text__more-link\" href=\"#\">Читать далее</a>";
+    }
+    else {
+        $final_text = implode(" ",$new_text);
+    }
+    return $final_text;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -278,7 +304,10 @@ $posts = [
                 </div>
 
                 <!--содержимое для поста-текста-->
-                <p><!--здесь текст--></p>
+                <p>
+                    <!--здесь текст-->
+
+                </p>
             </div>
             <?php foreach ($posts as $key => $val): ?>
             <article class="popular__post post <?=$val['type'];?>">
@@ -294,7 +323,9 @@ $posts = [
                         <cite>Неизвестный Автор</cite>
                     </blockquote>
                     <?php elseif ($val['type'] == 'post-text'): ?>
-                        <p><?=$val['content'];?></p>
+                        <p>
+                            <?= cut_text($val['content'],$num_letters);?>
+                        </p>
                     <?php elseif ($val['type'] == 'post-photo'): ?>
                         <div class="post-photo__image-wrapper">
                             <img src="img/<?=$val['content'];?>" alt="Фото от пользователя" width="360" height="240">
