@@ -164,7 +164,9 @@
                             </div>
                             <div class="post__info">
                                 <b class="post__author-name"><?=$val['username'];?></b>
-                                <time class="post__time" datetime="">дата</time>
+                                <time class="post__time" datetime="<?= generate_random_date($key)?>" title="<?=post_time_title($key)?>" >
+                                    <?= rel_post_time($key)?>
+                                </time>
                             </div>
                         </a>
                     </div>
