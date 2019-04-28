@@ -59,14 +59,18 @@ CREATE TABLE comments (
 
 CREATE TABLE likes (
     like_id INT AUTO_INCREMENT PRIMARY KEY,
-    FOREIGN KEY (like_id) REFERENCES users(user_id),
-    FOREIGN KEY (like_id) REFERENCES posts(post_id)
+    who_like_id INT,
+    post_id INT,
+    FOREIGN KEY (who_like_id) REFERENCES users(user_id),
+    FOREIGN KEY (post_id) REFERENCES posts(post_id)
 );
 
 CREATE TABLE follow (
     who_sub_id INT,
     to_sub_id INT,
-    CONSTRAINT follow_users PRIMARY KEY (who_sub_id,to_sub_id)
+    CONSTRAINT follow_users PRIMARY KEY (who_sub_id,to_sub_id),
+    FOREIGN KEY (who_sub_id) REFERENCES users(user_id),
+    FOREIGN KEY (to_sub_id) REFERENCES users(user_id)
 );
 
 CREATE TABLE messages (
@@ -74,7 +78,9 @@ CREATE TABLE messages (
     content TEXT,
     mes_sender_id INT,
     mes_res_id INT,
-    CONSTRAINT messages_users PRIMARY KEY (mes_sender_id,mes_res_id)
+    CONSTRAINT messages_users PRIMARY KEY (mes_sender_id,mes_res_id),
+    FOREIGN KEY (mes_sender_id) REFERENCES users(user_id),
+    FOREIGN KEY (mes_res_id) REFERENCES users(user_id)
 );
 
 CREATE UNIQUE INDEX email ON users(email);
