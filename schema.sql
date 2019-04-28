@@ -30,13 +30,15 @@ CREATE TABLE posts (
     pub_date DATETIME,
     title CHAR(64),
     text TEXT,
-    author CHAR(128),
+    user_id INT,
     img CHAR(128),
     video CHAR(128),
     link CHAR(128),
     view_count INT,
-    FOREIGN KEY (post_id) REFERENCES users(user_id),
-    FOREIGN KEY (post_id) REFERENCES content_type(content_type_id)
+    content_type_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (content_type_id) REFERENCES content_type(content_type_id)
+
 );
 
 CREATE TABLE posts_hashtags (
@@ -49,8 +51,10 @@ CREATE TABLE comments (
     comment_id INT AUTO_INCREMENT PRIMARY KEY,
     pub_date DATETIME,
     content TEXT,
-    FOREIGN KEY (comment_id) REFERENCES users(user_id),
-    FOREIGN KEY (comment_id) REFERENCES posts(post_id)
+    user_id INT,
+    post_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (post_id) REFERENCES posts(post_id)
 );
 
 CREATE TABLE likes (
@@ -73,14 +77,7 @@ CREATE TABLE messages (
     CONSTRAINT messages_users PRIMARY KEY (mes_sender_id,mes_res_id)
 );
 
-CREATE TABLE users_roles(
-    roles_id INT AUTO_INCREMENT PRIMARY KEY,
-    roles_name char(64)
-);
-
 CREATE UNIQUE INDEX email ON users(email);
 CREATE UNIQUE INDEX user_name ON users(name);
-CREATE UNIQUE INDEX roles ON users_roles(roles_name);
 CREATE UNIQUE INDEX content_type ON content_type(name);
-CREATE UNIQUE INDEX icon_class ON content_type(icon_class);
 CREATE UNIQUE INDEX hashtag ON hashtags(name);
