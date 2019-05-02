@@ -6,7 +6,7 @@ USE readme_db;
 
 CREATE TABLE content_type (
     content_type_id INT AUTO_INCREMENT PRIMARY KEY,
-    name CHAR(128),
+    content_type CHAR(128),
     icon_class CHAR(128)
 );
 
@@ -19,7 +19,7 @@ CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     reg_date DATETIME,
     email CHAR(128),
-    name CHAR(64),
+    user_name CHAR(64),
     password CHAR(64),
     avatar_path CHAR(128),
     contacts CHAR(128)
@@ -84,6 +84,6 @@ CREATE TABLE messages (
 );
 
 CREATE UNIQUE INDEX email ON users(email);
-CREATE UNIQUE INDEX user_name ON users(name);
-CREATE UNIQUE INDEX content_type ON content_type(name);
+CREATE UNIQUE INDEX user_name ON users(user_name);
+CREATE UNIQUE INDEX content_type ON content_type(content_type);
 CREATE UNIQUE INDEX hashtag ON hashtags(name);
