@@ -73,10 +73,10 @@ function cut_text ($text) {
 date_default_timezone_set("Europe/Moscow");
 
 // Функция, отображающая ОТНОСИТЕЛЬНОЕ время публикации поста
-function rel_post_time ($k) {
+function rel_post_time ($pub_date) {
     $cur_date = time(); // текущее время
-    $gen_date = generate_random_date($k); //время поста
-    $post_date= strtotime($gen_date);  // метка для времени поста
+//    $gen_date = generate_random_date($k); //время поста
+    $post_date= strtotime($pub_date);  // метка для времени поста
     $diff = floor($cur_date - $post_date); //разница между временем поста и текущим временем в секундах
     if ($diff < 3600) {
         $diff = floor($diff / 60);
@@ -103,16 +103,39 @@ function rel_post_time ($k) {
 }
 
 // Время поста в формате дд.мм.гггг чч:мм
-function post_time_title ($k) {
-    $post_date = generate_random_date($k);
+function post_time_title ($post_date) {
+//    $post_date = generate_random_date($k);
     $ts_post_date = strtotime($post_date);
     $post_date_title = date('j-m-Y G:i', $ts_post_date);
     return $post_date_title;
 }
 
+// Работаем с БД
+$con = mysqli_connect("localhost", "root", "", "readme_db");
+mysqli_set_charset($con, "utf8");
+if ($con == false) {
+    print("Ошибка подключение: " . mysqli_connect_error());
+}
+else {
+    print("Соединение установлено");
+}
+// Выгружаем список типов контента
+$con_type = "SELECT content_type,icon_class FROM content_type";
+$con_type_res = mysqli_query($con,$con_type);
+$con_type_rows = mysqli_fetch_all($con_type_res, MYSQLI_ASSOC);
+
+// Выгружаем список постов
+$posts = "SELECT p.*,u.user_name,ct.content_type,ct.icon_class,u.avatar_path FROM posts p
+INNER JOIN users u ON p.user_id  = u.user_id
+INNER JOIN content_type ct ON p.content_type_id = ct.content_type_id
+ORDER BY view_count";
+$posts_res = mysqli_query($con,$posts);
+$posts_rows = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
+
 //Загружаем шаблоны
 $page_content = include_template('index.php', [
-    'posts' => $posts
+    'posts_rows' => $posts_rows,
+    'con_type_rows' => $con_type_rows
 ]);
 
 $layout_content = include_template('layout.php', [
