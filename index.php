@@ -4,44 +4,6 @@ require_once('helpers.php');
 $is_auth = rand(0, 1);
 $user_name = 'Александр'; // укажите здесь ваше имя
 
-$posts = [
-        [
-            'headline' => 'Цитата',
-            'type' => 'post-quote',
-            'content' => 'Мы в жизни любим только раз, а после ищем лишь похожих',
-            'username' => 'Лариса',
-            'avatar' => 'userpic-larisa-small.jpg'
-        ],
-        [
-            'headline' => 'Игра престолов',
-            'type' => 'post-text',
-            'content' => 'Не могу дождаться начала финального сезона своего любимого сериала!',
-            'username' => 'Владик',
-            'avatar' => 'userpic.jpg'
-        ],
-        [
-            'headline' => 'Наконец, обработал фотки!',
-            'type' => 'post-photo',
-            'content' => 'rock-medium.jpg',
-            'username' => 'Владик',
-            'avatar' => 'userpic.jpg'
-        ],
-        [
-            'headline' => 'Моя мечта',
-            'type' => 'post-photo',
-            'content' => 'coast-medium.jpg',
-            'username' => 'Лариса',
-            'avatar' => 'userpic-larisa-small.jpg'
-        ],
-        [
-            'headline' => 'Лучшие курсы',
-            'type' => 'post-link',
-            'content' => 'www.htmlacademy.ru',
-            'username' => 'Владик',
-            'avatar' => 'userpic.jpg'
-        ],
-];
-
 //Функция, обрезающая текст в постах
 function cut_text ($text) {
     $num_letters = 40;
@@ -113,14 +75,15 @@ function post_time_title ($post_date) {
 // Работаем с БД
 $con = mysqli_connect("localhost", "root", "", "readme_db");
 mysqli_set_charset($con, "utf8");
+
 if ($con == false) {
-    print("Ошибка подключение: " . mysqli_connect_error());
+    $error = mysqli_connect_error();
+    $page_content = include_template('error.php', ['error' => $error]);
 }
+
 else {
-    print("Соединение установлено");
-}
 // Выгружаем список типов контента
-$con_type = "SELECT content_type,icon_class FROM content_type";
+$con_type = "SELECT content_type_id,content_type,icon_class FROM content_type";
 $con_type_res = mysqli_query($con,$con_type);
 $con_type_rows = mysqli_fetch_all($con_type_res, MYSQLI_ASSOC);
 
@@ -128,15 +91,38 @@ $con_type_rows = mysqli_fetch_all($con_type_res, MYSQLI_ASSOC);
 $posts = "SELECT p.*,u.user_name,ct.content_type,ct.icon_class,u.avatar_path FROM posts p
 INNER JOIN users u ON p.user_id  = u.user_id
 INNER JOIN content_type ct ON p.content_type_id = ct.content_type_id
-ORDER BY view_count";
+ORDER BY view_count DESC";
+
+
+// Определяем если ли в параметрах запроса id контента
+    $all_content = ""; // класс для оторажения всего контента
+    $get_con_id= "";
+    if (isset($_GET['content_type_id'])) {
+        $get_con_id = $_GET['content_type_id'];
+        $posts = "SELECT p.*,u.user_name,ct.content_type,ct.icon_class,u.avatar_path FROM posts p
+                  INNER JOIN users u ON p.user_id  = u.user_id
+                  INNER JOIN content_type ct ON p.content_type_id = ct.content_type_id
+                  WHERE p.content_type_id = $get_con_id
+                  ORDER BY view_count DESC";
+
+    } else {
+        $all_content = "filters__button--active";
+    };
+
 $posts_res = mysqli_query($con,$posts);
 $posts_rows = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
+
+
 
 //Загружаем шаблоны
 $page_content = include_template('index.php', [
     'posts_rows' => $posts_rows,
-    'con_type_rows' => $con_type_rows
+    'con_type_rows' => $con_type_rows,
+    'get_con_id' => $get_con_id,
+    'all_content' => $all_content
 ]);
+
+}
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content ,
