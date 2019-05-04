@@ -36,50 +36,22 @@
             <b class="popular__filters-caption filters__caption">Тип контента:</b>
             <ul class="popular__filters-list filters__list">
                 <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                    <a class="filters__button filters__button--ellipse filters__button--all filters__button--active" href="#">
+                    <a class="filters__button filters__button--ellipse filters__button--all <?=$all_content; ?>" href="/">
                         <span>Все</span>
                     </a>
                 </li>
+                <?php foreach ($con_type_rows as $ct): ?>
                 <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--photo button" href="#">
-                        <span class="visually-hidden">Фото</span>
+                    <a class="filters__button filters__button--photo button
+                    <?php if (($get_con_id == $ct['content_type_id'])) {echo "filters__button--active";} ?>"
+                       href="/?content_type_id=<?=$ct['content_type_id']; ?>">
+                        <span class="visually-hidden"><?=$ct['content_type']; ?></span>
                         <svg class="filters__icon" width="22" height="18">
-                            <use xlink:href="#icon-filter-photo"></use>
+                            <use xlink:href="#icon-filter-<?=$ct['icon_class']; ?>"></use>
                         </svg>
                     </a>
-                </li>
-                <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--video button" href="#">
-                        <span class="visually-hidden">Видео</span>
-                        <svg class="filters__icon" width="24" height="16">
-                            <use xlink:href="#icon-filter-video"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--text button" href="#">
-                        <span class="visually-hidden">Текст</span>
-                        <svg class="filters__icon" width="20" height="21">
-                            <use xlink:href="#icon-filter-text"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--quote button" href="#">
-                        <span class="visually-hidden">Цитата</span>
-                        <svg class="filters__icon" width="21" height="20">
-                            <use xlink:href="#icon-filter-quote"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--link button" href="#">
-                        <span class="visually-hidden">Ссылка</span>
-                        <svg class="filters__icon" width="21" height="18">
-                            <use xlink:href="#icon-filter-link"></use>
-                        </svg>
-                    </a>
-                </li>
+                 </li>
+                <?php endforeach; ?>
             </ul>
         </div>
     </div>
@@ -118,28 +90,28 @@
                 <!--здесь текст-->
             </p>
         </div>
-        <?php foreach ($posts as $key => $val): ?>
-            <article class="popular__post post <?=$val['type'];?>">
+        <?php foreach ($posts_rows as $key => $val): ?>
+            <article class="popular__post post post-<?=$val['icon_class'];?>">
                 <header class="post__header">
-                    <h2><?=$val['headline'];?></h2>
+                    <h2><a href="post.php/?post_id=<?=$val['post_id'];?>"><?=$val['title'];?></a></h2>
                 </header>
                 <div class="post__main">
-                    <?php if ($val['type'] == 'post-quote'): ?>
+                    <?php if ($val['icon_class'] == 'quote'): ?>
                         <blockquote>
                             <p>
-                                <?=$val['content'];?>
+                                <?=$val['text'];?>
                             </p>
                             <cite>Неизвестный Автор</cite>
                         </blockquote>
-                    <?php elseif ($val['type'] == 'post-text'): ?>
+                    <?php elseif ($val['icon_class'] == 'text'): ?>
                         <p>
-                            <?= cut_text($val['content']) ;?>
+                            <?= cut_text($val['text']) ;?>
                         </p>
-                    <?php elseif ($val['type'] == 'post-photo'): ?>
+                    <?php elseif ($val['icon_class'] == 'photo'): ?>
                         <div class="post-photo__image-wrapper">
-                            <img src="img/<?=$val['content'];?>" alt="Фото от пользователя" width="360" height="240">
+                            <img src="img/<?=$val['img'];?>" alt="Фото от пользователя" width="360" height="240">
                         </div>
-                    <?php elseif ($val['type'] == 'post-link'): ?>
+                    <?php elseif ($val['icon_class'] == 'link'): ?>
                         <div class="post-link__wrapper">
                             <a class="post-link__external" href="http://" title="Перейти по ссылке">
                                 <div class="post-link__info-wrapper">
@@ -147,10 +119,10 @@
                                         <img src="img/logo-vita.jpg" alt="Иконка">
                                     </div>
                                     <div class="post-link__info">
-                                        <h3><?=$val['headline'];?></h3>
+                                        <h3><?=$val['title'];?></h3>
                                     </div>
                                 </div>
-                                <span><?=$val['content'];?></span>
+                                <span><?=$val['link'];?></span>
                             </a>
                         </div>
                     <?php endif; ?>
@@ -160,12 +132,12 @@
                         <a class="post__author-link" href="#" title="Автор">
                             <div class="post__avatar-wrapper">
                                 <!--укажите путь к файлу аватара-->
-                                <img class="post__author-avatar" src="img/<?=$val['avatar'];?>" alt="Аватар пользователя">
+                                <img class="post__author-avatar" src="img/<?=$val['avatar_path'];?>" alt="Аватар пользователя">
                             </div>
                             <div class="post__info">
-                                <b class="post__author-name"><?=$val['username'];?></b>
-                                <time class="post__time" datetime="<?= generate_random_date($key)?>" title="<?=post_time_title($key)?>" >
-                                    <?= rel_post_time($key)?>
+                                <b class="post__author-name"><?=$val['user_name'];?></b>
+                                <time class="post__time" datetime="<?= $val['pub_date']?>" title="<?=post_time_title($val['pub_date'])?>" >
+                                    <?= rel_post_time($val['pub_date'])?>
                                 </time>
                             </div>
                         </a>
