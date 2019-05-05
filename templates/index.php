@@ -93,7 +93,11 @@
         <?php foreach ($posts_rows as $key => $val): ?>
             <article class="popular__post post post-<?=$val['icon_class'];?>">
                 <header class="post__header">
-                    <h2><a href="post.php/?post_id=<?=$val['post_id'];?>"><?=$val['title'];?></a></h2>
+                    <h2>
+                        <a href="post.php/?post_id=<?=$val['post_id'];?>">
+                            <?=$val['title'];?>
+                        </a>
+                    </h2>
                 </header>
                 <div class="post__main">
                     <?php if ($val['icon_class'] == 'quote'): ?>
