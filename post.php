@@ -12,7 +12,7 @@ if ($con == false) {
 
 if (isset($_GET['post_id'])) {
     //Получаем контент поста из запроса GET
-    $get_post_id = $_GET['post_id'];
+    $get_post_id = intval($_GET['post_id']);
     $post = "SELECT p.*,ct.content_type,u.user_name,u.avatar_path FROM posts p 
     JOIN content_type ct ON  p.content_type_id = ct.content_type_id
     JOIN users u ON p.user_id = u.user_id
