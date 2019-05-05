@@ -2611,11 +2611,20 @@ img {
 }
 
 .post-link__external span {
+    position: absolute;
+    left: 146px;
+    top: 45px;
+    padding-left: 23px;
     font-size: 16px;
     font-weight: 700;
     color: #3e5dde;
+    background-image: url(../img/link.svg);
+    background-size: 16px 14px;
+    background-repeat: no-repeat;
+    background-position: left center;
     -webkit-transition: opacity .3s;
     transition: opacity .3s
+
 }
 
 .post-link__icon-wrapper {
