@@ -25,18 +25,35 @@ else {
 
 
 //    Отображаем необходимый шаблон для добавления поста в зависимости от ct
-    if ($ct_rows[0]['content_type'] == 'Текст') {
+
+    if ($get_ct_id == '1') {
         $post_add = include_template('add_post_text_temp.php',[]);
+    }
+
+    elseif ($get_ct_id == '2') {
+        $post_add = include_template('add_post_quote_temp.php',[]);
+    }
+
+    elseif ($get_ct_id == '3') {
+        $post_add = include_template('add_post_photo_temp.php',[]);
+    }
+
+    elseif ($get_ct_id == '4') {
+        $post_add = include_template('add_post_video_temp.php',[]);
+    }
+
+    elseif ($get_ct_id == '5') {
+        $post_add = include_template('add_post_link_temp.php',[]);
     }
 
     $page_content = include_template('add_post_temp.php',[
         'ct_all_rows' => $ct_all_rows,
         'get_ct_id' => $get_ct_id,
         'post_add' => $post_add
-
     ]);
 
-    print($page_content);
-
 }
+
+print($page_content);
+
 
