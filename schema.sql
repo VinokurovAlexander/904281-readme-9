@@ -83,6 +83,8 @@ CREATE TABLE messages (
     FOREIGN KEY (mes_res_id) REFERENCES users(user_id)
 );
 
+
+
 CREATE UNIQUE INDEX email ON users(email);
 CREATE UNIQUE INDEX user_name ON users(user_name);
 CREATE UNIQUE INDEX content_type ON content_type(content_type);
