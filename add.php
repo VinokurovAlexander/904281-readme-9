@@ -23,27 +23,22 @@ else {
     $ct_result = mysqli_query($con, $ct_sql);
     $ct_rows = mysqli_fetch_all($ct_result, MYSQLI_ASSOC);
 
-
     //Проверка заполнения полей
     $errors = [];
-    $required_fields_all = [
-        1 => ['text-heading','post-text'],
-        2 => ['quote-heading','quote-text'],
-        3 => ['photo-heading','photo-link'],
-        4 => ['video-heading','video-link'],
-        5 => ['link-heading', 'post-link']
-    ];
+
+    //Получаем обязательные поля для формы
+    $required_fields_sql = "SELECT field_name FROM required_fields rf WHERE content_type_id = $get_ct_id";
+    $required_fields_result = mysqli_query($con, $required_fields_sql);
+    $required_fields = mysqli_fetch_all($required_fields_result, MYSQLI_ASSOC);
+
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-        $required_fields = $required_fields_all[$get_ct_id];
-
-        foreach ($required_fields as $field) {
+        foreach ($required_fields as $field => $value) {
+            $field_name = $value['field_name'];
             if (empty($_POST[$field])) {
-                $errors[$field] = 'Поле не заполнено';
+                $errors[$field_name] = 'Поле не заполнено';
             }
         }
     }
-
 
     // Подключаем шаблоны
     $post_add = include_template('add_form_temp.php', [
@@ -54,13 +49,12 @@ else {
     $page_content = include_template('add_post_temp.php',[
         'ct_all_rows' => $ct_all_rows,
         'get_ct_id' => $get_ct_id,
-        'post_add' => $post_add,
+        'post_add' => $post_add
     ]);
 
 }
 
 print($page_content);
-
 
 // Вывод результатов
 print("Полученные данные: ");
