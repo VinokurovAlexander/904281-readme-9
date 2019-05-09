@@ -67,5 +67,17 @@ VALUES (1,1);
 INSERT INTO follow (who_sub_id, to_sub_id)
 VALUES (1,2);
 
+-- Добавляем обязательные поля на русском
+
+INSERT INTO rf_rus (field_name_rus) VALUES ('Заголовок'),('Текст поста'),('Текст цитаты'), ('Автор'),
+                                           ('Ссылка из интернета'), ('Ссылка youtube'), ('Ссылка');
+
+-- ДОбавляем обязательные поля для форм публикации поста
+
+INSERT INTO required_fields (field_name, content_type_id,fd_rus_id )
+VALUES ('text-heading', '1','1'), ('post-text','1','2'), ('quote-heading','2','1'), ('quote-text','2','3'), ('quote-author','2','4'),
+       ('photo-heading','3','1'),( 'photo-link','3','5'),('video-heading','4','1'),( 'video-link','4','6'),('link-heading','5','1'),
+       ('post-link','5','7');
+
 
 

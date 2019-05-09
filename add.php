@@ -27,7 +27,9 @@ else {
     $errors = [];
 
     //Получаем обязательные поля для формы
-    $required_fields_sql = "SELECT field_name FROM required_fields rf WHERE content_type_id = $get_ct_id";
+    $required_fields_sql = "SELECT rf.field_name,rf_rus.field_name_rus FROM required_fields rf 
+    JOIN rf_rus ON rf.fd_rus_id = rf_rus.rf_rus_id
+    WHERE content_type_id = $get_ct_id";
     $required_fields_result = mysqli_query($con, $required_fields_sql);
     $required_fields = mysqli_fetch_all($required_fields_result, MYSQLI_ASSOC);
 
@@ -35,7 +37,7 @@ else {
         foreach ($required_fields as $field => $value) {
             $field_name = $value['field_name'];
             if (empty($_POST[$field])) {
-                $errors[$field_name] = 'Поле не заполнено';
+                $errors[$field_name] = 'Заполните это поле';
             }
         }
     }
@@ -57,17 +59,29 @@ else {
 print($page_content);
 
 // Вывод результатов
+print("<pre>");
+
 print("Полученные данные: ");
 print_r($_POST);
 print("<br>");
+
 print("Полученные файлы: ");
 print_r($_FILES);
 print("<br>");
+
 print("Результаты проверки заполнения данных: ");
 print_r($errors);
 print("<br>");
+
 print("Итоговый массив с данными");
 print_r($ct_rows);
+print("<br>");
+
+print("Обязательные поля: ");
+print_r($required_fields);
+print("<br>");
+
+print("</pre>");
 
 
 

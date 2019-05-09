@@ -83,11 +83,19 @@ CREATE TABLE messages (
     FOREIGN KEY (mes_res_id) REFERENCES users(user_id)
 );
 
+CREATE TABLE rf_rus (
+    rf_rus_id INT AUTO_INCREMENT PRIMARY KEY,
+    field_name_rus CHAR(64)
+);
+
+
 CREATE TABLE required_fields (
     rf_id INT AUTO_INCREMENT PRIMARY KEY,
     field_name CHAR(64),
     content_type_id INT,
-    FOREIGN KEY (content_type_id) REFERENCES content_type(content_type_id)
+    fd_rus_id INT,
+    FOREIGN KEY (content_type_id) REFERENCES content_type(content_type_id),
+    FOREIGN KEY (fd_rus_id) REFERENCES rf_rus(rf_rus_id)
 );
 
 CREATE UNIQUE INDEX email ON users(email);
