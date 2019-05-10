@@ -1,7 +1,13 @@
 <?php
 
+print("<pre>");
+
 print("Переданный массив с ошибками: ");
 print_r($errors);
+print('<br>');
+
+print("</pre>");
+
 
 ?>
 
@@ -51,8 +57,8 @@ print_r($errors);
             <div class="form__invalid-block">
                 <b class="form__invalid-slogan">Пожалуйста, исправьте следующие ошибки:</b>
                 <ul class="form__invalid-list">
-                    <?php foreach ($errors as $err) : ?>
-                        <li class="form__invalid-item"><?=$err;?></li>
+                    <?php foreach ($errors as $k => $v) : ?>
+                        <li class="form__invalid-item"><?=$v['field_name_rus']. '.' . ' ' . $v['error_text'] ;?></li>
                     <?php endforeach; ?>
                 </ul>
             </div>
@@ -97,7 +103,7 @@ print_r($errors);
                 </div>
                 <div class="adding-post__textarea-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="quote-author">Автор <span class="form__input-required">*</span></label>
-                    <div class="form__input-section">
+                    <div class="form__input-section <? if($errors['quote-author']) {echo "form__input-section--error";} ?>">
                         <input class="adding-post__input form__input" id="quote-author" type="text" name="quote-author">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
@@ -121,8 +127,9 @@ print_r($errors);
             <div class="form__invalid-block">
                 <b class="form__invalid-slogan">Пожалуйста, исправьте следующие ошибки:</b>
                 <ul class="form__invalid-list">
-                    <li class="form__invalid-item">Заголовок. Это поле должно быть заполнено.</li>
-                    <li class="form__invalid-item">Цитата. Она не должна превышать 70 знаков.</li>
+                    <?php foreach ($errors as $k => $v) : ?>
+                        <li class="form__invalid-item"><?=$v['field_name_rus']. '.' . ' ' . $v['error_text'] ;?></li>
+                    <?php endforeach; ?>
                 </ul>
             </div>
         </div>
@@ -177,7 +184,9 @@ print_r($errors);
             <div class="form__invalid-block">
                 <b class="form__invalid-slogan">Пожалуйста, исправьте следующие ошибки:</b>
                 <ul class="form__invalid-list">
-                    <li class="form__invalid-item">Заголовок. Это поле должно быть заполнено.</li>
+                    <?php foreach ($errors as $k => $v) : ?>
+                        <li class="form__invalid-item"><?=$v['field_name_rus']. '.' . ' ' . $v['error_text'] ;?></li>
+                    <?php endforeach; ?>
                 </ul>
             </div>
         </div>
