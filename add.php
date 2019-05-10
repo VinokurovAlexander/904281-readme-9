@@ -55,10 +55,19 @@ else {
 //
 //            print("</pre>");
 
+            print("<pre>");
+
+            print('$_POST ');
+            print_r($_POST);
+            print("<br>");
+
+            print("</pre>");
+
             if (empty($_POST[$field])) {
                 $errors[$field_name] = [
                 'field_name_rus' => $field_name_rus,
-                'error_text' => 'Заполните это поле'
+                'error_title' => 'Заполните это поле',
+                'error_desc' => 'Данное поле должно быть обязательно заполнено'
             ];
             }
 

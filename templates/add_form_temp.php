@@ -25,8 +25,8 @@ print("</pre>");
                         <input class="adding-post__input form__input" id="text-heading" type="text" name="text-heading" placeholder="Введите заголовок">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок</h3>
-                            <p class="form__error-desc"><?=$errors['text-heading'];?></p>
+                            <h3 class="form__error-title"><?=$errors['text-heading']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['text-heading']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -36,8 +36,8 @@ print("</pre>");
                         <textarea class="adding-post__textarea form__textarea form__input" id="post-text" placeholder="Введите текст публикации" name="post-text"></textarea>
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['post-text']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['post-text']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@ print("</pre>");
                 <b class="form__invalid-slogan">Пожалуйста, исправьте следующие ошибки:</b>
                 <ul class="form__invalid-list">
                     <?php foreach ($errors as $k => $v) : ?>
-                        <li class="form__invalid-item"><?=$v['field_name_rus']. '.' . ' ' . $v['error_text'] ;?></li>
+                        <li class="form__invalid-item"><?=$v['field_name_rus']. '.' . ' ' . $v['error_title'] ;?></li>
                     <?php endforeach; ?>
                 </ul>
             </div>
@@ -85,8 +85,8 @@ print("</pre>");
                         <input class="adding-post__input form__input" id="quote-heading" type="text" name="quote-heading" placeholder="Введите заголовок">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['quote-heading']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['quote-heading']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -96,8 +96,8 @@ print("</pre>");
                         <textarea class="adding-post__textarea adding-post__textarea--quote form__textarea form__input" id="cite-text" name="quote-text" placeholder="Текст цитаты"></textarea>
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['quote-text']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['quote-text']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -107,8 +107,8 @@ print("</pre>");
                         <input class="adding-post__input form__input" id="quote-author" type="text" name="quote-author">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['quote-author']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['quote-author']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -124,14 +124,16 @@ print("</pre>");
                     </div>
                 </div>
             </div>
+            <?php if (count($errors)) : ?>
             <div class="form__invalid-block">
                 <b class="form__invalid-slogan">Пожалуйста, исправьте следующие ошибки:</b>
                 <ul class="form__invalid-list">
                     <?php foreach ($errors as $k => $v) : ?>
-                        <li class="form__invalid-item"><?=$v['field_name_rus']. '.' . ' ' . $v['error_text'] ;?></li>
+                        <li class="form__invalid-item"><?=$v['field_name_rus']. '.' . ' ' . $v['error_title'] ;?></li>
                     <?php endforeach; ?>
                 </ul>
             </div>
+            <?php endif; ?>
         </div>
         <div class="adding-post__buttons">
             <button class="adding-post__submit button button--main" type="submit">Опубликовать</button>
@@ -153,8 +155,8 @@ print("</pre>");
                         <input class="adding-post__input form__input" id="photo-heading" type="text" name="photo-heading" placeholder="Введите заголовок">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['photo-heading']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['photo-heading']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -164,8 +166,8 @@ print("</pre>");
                         <input class="adding-post__input form__input" id="photo-url" type="text" name="photo-link" placeholder="Введите ссылку">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['photo-link']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['photo-link']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -181,14 +183,16 @@ print("</pre>");
                     </div>
                 </div>
             </div>
+            <?php if (count($errors)) : ?>
             <div class="form__invalid-block">
                 <b class="form__invalid-slogan">Пожалуйста, исправьте следующие ошибки:</b>
                 <ul class="form__invalid-list">
                     <?php foreach ($errors as $k => $v) : ?>
-                        <li class="form__invalid-item"><?=$v['field_name_rus']. '.' . ' ' . $v['error_text'] ;?></li>
+                        <li class="form__invalid-item"><?=$v['field_name_rus']. '.' . ' ' . $v['error_title'] ;?></li>
                     <?php endforeach; ?>
                 </ul>
             </div>
+            <?php endif; ?>
         </div>
         <div class="adding-post__input-file-container form__input-container form__input-container--file">
             <div class="adding-post__input-file-wrapper form__input-file-wrapper">
@@ -229,8 +233,8 @@ print("</pre>");
                         <input class="adding-post__input form__input" id="video-heading" type="text" name="video-heading" placeholder="Введите заголовок">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['video-heading']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['video-heading']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -240,8 +244,8 @@ print("</pre>");
                         <input class="adding-post__input form__input" id="video-url" type="text" name="video-link" placeholder="Введите ссылку">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['video-link']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['video-link']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -257,12 +261,16 @@ print("</pre>");
                     </div>
                 </div>
             </div>
+            <?php if (count($errors)) : ?>
             <div class="form__invalid-block">
                 <b class="form__invalid-slogan">Пожалуйста, исправьте следующие ошибки:</b>
                 <ul class="form__invalid-list">
-                    <li class="form__invalid-item">Заголовок. Это поле должно быть заполнено.</li>
+                    <?php foreach ($errors as $k => $v) : ?>
+                        <li class="form__invalid-item"><?=$v['field_name_rus']. '.' . ' ' . $v['error_title'] ;?></li>
+                    <?php endforeach; ?>
                 </ul>
             </div>
+            <?php endif; ?>
         </div>
 
         <div class="adding-post__buttons">
@@ -285,8 +293,8 @@ print("</pre>");
                         <input class="adding-post__input form__input" id="link-heading" type="text" name="link-heading" placeholder="Введите заголовок">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['link-heading']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['link-heading']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -296,8 +304,8 @@ print("</pre>");
                         <input class="adding-post__input form__input" id="post-link" type="text" name="post-link" placeholder="Введите ссылку">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['post-link']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['post-link']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -313,13 +321,16 @@ print("</pre>");
                     </div>
                 </div>
             </div>
+            <?php if (count($errors)) : ?>
             <div class="form__invalid-block">
                 <b class="form__invalid-slogan">Пожалуйста, исправьте следующие ошибки:</b>
                 <ul class="form__invalid-list">
-                    <li class="form__invalid-item">Заголовок. Это поле должно быть заполнено.</li>
-                    <li class="form__invalid-item">Цитата. Она не должна превышать 70 знаков.</li>
+                    <?php foreach ($errors as $k => $v) : ?>
+                        <li class="form__invalid-item"><?=$v['field_name_rus']. '.' . ' ' . $v['error_title'] ;?></li>
+                    <?php endforeach; ?>
                 </ul>
             </div>
+            <?php endif; ?>
         </div>
         <div class="adding-post__buttons">
             <button class="adding-post__submit button button--main" type="submit">Опубликовать</button>
