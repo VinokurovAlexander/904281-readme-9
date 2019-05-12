@@ -23,67 +23,68 @@ else {
     $ct_result = mysqli_query($con, $ct_sql);
     $ct_rows = mysqli_fetch_all($ct_result, MYSQLI_ASSOC);
 
-    //Проверка заполнения полей
+    //Валидация формы
     $errors = [];
+    $fv = []; // fv = field_values Массив для сохранения данных из полей
 
     //Получаем обязательные поля для формы
-    $required_fields_sql = "SELECT rf.field_name,rf_rus.field_name_rus FROM required_fields rf 
+    // rf = required fields
+    $rf_sql = "SELECT rf.field_name,rf_rus.field_name_rus FROM required_fields rf 
     JOIN rf_rus ON rf.fd_rus_id = rf_rus.rf_rus_id
     WHERE content_type_id = $get_ct_id";
-    $required_fields_result = mysqli_query($con, $required_fields_sql);
-    $required_fields = mysqli_fetch_all($required_fields_result, MYSQLI_ASSOC);
+    $rf_result = mysqli_query($con, $rf_sql);
+    $rf = mysqli_fetch_all($rf_result, MYSQLI_ASSOC);
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        foreach ($required_fields as $field => $value) {
-            $field_name = $value['field_name'];
-            $field_name_rus = $value['field_name_rus'];
 
-//            print("<pre>");
-//            print("Прохождение по массиву: ");
-//            print_r($required_fields);
+        foreach ($rf as $field) {
+            $r_fn = $field['field_name']; // r_fn = required field name
+            $r_fn_rus = $field['field_name_rus'];
+
+
+//            $field_values = $_POST[$field_name] ?? '';
+
+//            print('$_POST[$field_name]: ');
+//            print($_POST[$field_name]);
 //            print("<br>");
 //
-//            print('$field: ' . $field);
+//            print("<pre style = font-size:18px;font-weight:bold;>");
+////
+//            print('Переданные данные $_POST ');
+//            print_r($_POST);
+//            print("<br>");
+////
+////
+//            print('$field_name: ');
+//            print_r($field_name);
 //            print("<br>");
 //
-//            print('$value: ');
-//            print_r($value);
+//            print('$_POST[$field_name]: ');
+//            print($_POST[$field_name]);
 //            print("<br>");
 //
-//            print('$field_name: ' . $field_name . '<br>');
-//            print('$field_name_rus: ' . $field_name_rus . '<br>');
+//            print('-------------------------------');
+//            print('<br>');
 //
-//            print("</pre>");
-
-            print("<pre>");
-
-            print('$_POST ');
-            print_r($_POST);
-            print("<br>");
-
             print("</pre>");
 
-            if (empty($_POST[$field])) {
-                $errors[$field_name] = [
-                'field_name_rus' => $field_name_rus,
+            //Проверяем заполнены ли поля
+            if (empty($_POST[$r_fn])) {
+                $errors[$r_fn] = [
+                'field_name_rus' => $r_fn_rus,
                 'error_title' => 'Заполните это поле',
                 'error_desc' => 'Данное поле должно быть обязательно заполнено'
             ];
             }
-
-//            print("<pre>");
-//
-//            print('Массив с ошибками: ');
-//            print_r($errors);
-//
-//            print("</pre>");
         }
+
     }
 
     // Подключаем шаблоны
     $post_add = include_template('add_form_temp.php', [
         'get_ct_id' => $get_ct_id,
-        'errors' => $errors
+        'errors' => $errors,
+        'fv' => $fv
     ]);
 
     $page_content = include_template('add_post_temp.php',[
@@ -92,20 +93,22 @@ else {
         'post_add' => $post_add
     ]);
 
+
+
 }
 
 print($page_content);
 
 // Вывод результатов
-//print("<pre>");
+print("<pre>");
 //
 //print("Полученные данные: ");
 //print_r($_POST);
 //print("<br>");
 //
-//print("Полученные файлы: ");
-//print_r($_FILES);
-//print("<br>");
+print("Полученные файлы: ");
+print_r($_FILES);
+print("<br>");
 //
 //print("Результаты проверки заполнения данных: ");
 //print_r($errors);
@@ -119,7 +122,7 @@ print($page_content);
 //print_r($required_fields);
 //print("<br>");
 //
-//print("</pre>");
+print("</pre>");
 
 
 

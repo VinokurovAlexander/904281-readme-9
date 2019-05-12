@@ -2,11 +2,24 @@
 
 print("<pre>");
 
-print("Переданный массив с ошибками: ");
-print_r($errors);
+//print("Переданный массив с ошибками: ");
+//print_r($errors);
+//print('<br>');
+//
+print('Переданные данные $_POST ');
+print_r($_POST);
 print('<br>');
+//
+//print('$_POST[\'text-heading\']: ');
+//print($_POST['text-heading']);
+//print('<br>');
+//
 
 print("</pre>");
+
+
+
+
 
 
 ?>
@@ -22,7 +35,7 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="text-heading">Заголовок <span class="form__input-required">*</span></label>
                     <div class="form__input-section <? if($errors['text-heading']) {echo "form__input-section--error";} ?>">
-                        <input class="adding-post__input form__input" id="text-heading" type="text" name="text-heading" placeholder="Введите заголовок">
+                        <input class="adding-post__input form__input" id="text-heading" type="text" name="text-heading" placeholder="Введите заголовок" value="<? if(isset($_POST['text-heading'])) {print($_POST['text-heading']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                             <h3 class="form__error-title"><?=$errors['text-heading']['error_title'];?></h3>
@@ -33,7 +46,7 @@ print("</pre>");
                 <div class="adding-post__textarea-wrapper form__textarea-wrapper ">
                     <label class="adding-post__label form__label" for="post-text">Текст поста <span class="form__input-required">*</span></label>
                     <div class="form__input-section <? if($errors['post-text']) {echo "form__input-section--error";} ?>">
-                        <textarea class="adding-post__textarea form__textarea form__input" id="post-text" placeholder="Введите текст публикации" name="post-text"></textarea>
+                        <textarea class="adding-post__textarea form__textarea form__input" id="post-text" placeholder="Введите текст публикации" name="post-text"><? if(isset($_POST['post-text'])) {print($_POST['post-text']);} ?></textarea>
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                             <h3 class="form__error-title"><?=$errors['post-text']['error_title'];?></h3>
@@ -44,11 +57,11 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="post-tags">Теги</label>
                     <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="post-tags" type="text" name="post-tags" placeholder="Введите теги">
+                        <input class="adding-post__input form__input" id="post-tags" type="text" name="post-tags" placeholder="Введите теги" value="<? if(isset($_POST['post-tags'])) {print($_POST['post-tags']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['post-tags']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['post-tags']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -82,7 +95,7 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="quote-heading">Заголовок <span class="form__input-required">*</span></label>
                     <div class="form__input-section <? if($errors['quote-heading']) {echo "form__input-section--error";} ?>">
-                        <input class="adding-post__input form__input" id="quote-heading" type="text" name="quote-heading" placeholder="Введите заголовок">
+                        <input class="adding-post__input form__input" id="quote-heading" type="text" name="quote-heading" placeholder="Введите заголовок" value="<? if(isset($_POST['quote-heading'])) {print($_POST['quote-heading']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                             <h3 class="form__error-title"><?=$errors['quote-heading']['error_title'];?></h3>
@@ -93,7 +106,7 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__textarea-wrapper">
                     <label class="adding-post__label form__label" for="cite-text">Текст цитаты <span class="form__input-required">*</span></label>
                     <div class="form__input-section <? if($errors['quote-text']) {echo "form__input-section--error";} ?>">
-                        <textarea class="adding-post__textarea adding-post__textarea--quote form__textarea form__input" id="cite-text" name="quote-text" placeholder="Текст цитаты"></textarea>
+                        <textarea class="adding-post__textarea adding-post__textarea--quote form__textarea form__input" id="cite-text" name="quote-text" placeholder="Текст цитаты"><? if(isset($_POST['quote-text'])) {print($_POST['quote-text']);} ?></textarea>
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                             <h3 class="form__error-title"><?=$errors['quote-text']['error_title'];?></h3>
@@ -104,7 +117,7 @@ print("</pre>");
                 <div class="adding-post__textarea-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="quote-author">Автор <span class="form__input-required">*</span></label>
                     <div class="form__input-section <? if($errors['quote-author']) {echo "form__input-section--error";} ?>">
-                        <input class="adding-post__input form__input" id="quote-author" type="text" name="quote-author">
+                        <input class="adding-post__input form__input" id="quote-author" type="text" name="quote-author" value="<? if(isset($_POST['quote-author'])) {print($_POST['quote-author']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                             <h3 class="form__error-title"><?=$errors['quote-author']['error_title'];?></h3>
@@ -115,11 +128,11 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="cite-tags">Теги</label>
                     <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="cite-tags" type="text" name="quote-tags" placeholder="Введите теги">
+                        <input class="adding-post__input form__input" id="cite-tags" type="text" name="quote-tags" placeholder="Введите теги" value="<? if(isset($_POST['quote-tags'])) {print($_POST['quote-tags']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['quote-tags']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['quote-tags']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -142,7 +155,7 @@ print("</pre>");
     </form>
 </section>
 
-<?php elseif ($get_ct_id == '3') : ?>    <!-- ct = 'Фото'  -->
+<?php elseif ($get_ct_id == '3') : ?>    <!-- ct = 'Картинка'  -->
 
 <section class="adding-post__photo tabs__content tabs__content--active tabs__content--active">
     <h2 class="visually-hidden">Форма добавления фото</h2>
@@ -152,7 +165,7 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="photo-heading">Заголовок <span class="form__input-required">*</span></label>
                     <div class="form__input-section <? if($errors['photo-heading']) {echo "form__input-section--error";} ?>">
-                        <input class="adding-post__input form__input" id="photo-heading" type="text" name="photo-heading" placeholder="Введите заголовок">
+                        <input class="adding-post__input form__input" id="photo-heading" type="text" name="photo-heading" placeholder="Введите заголовок" value="<? if(isset($_POST['photo-heading'])) {print($_POST['photo-heading']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                             <h3 class="form__error-title"><?=$errors['photo-heading']['error_title'];?></h3>
@@ -163,7 +176,7 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="photo-url">Ссылка из интернета<span class="form__input-required">*</span></label>
                     <div class="form__input-section <? if($errors['photo-link']) {echo "form__input-section--error";} ?>">
-                        <input class="adding-post__input form__input" id="photo-url" type="text" name="photo-link" placeholder="Введите ссылку">
+                        <input class="adding-post__input form__input" id="photo-url" type="text" name="photo-link" placeholder="Введите ссылку" value="<? if(isset($_POST['photo-link'])) {print($_POST['photo-link']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                             <h3 class="form__error-title"><?=$errors['photo-link']['error_title'];?></h3>
@@ -174,11 +187,11 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="photo-tags">Теги</label>
                     <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="photo-tags" type="text" name="photo-tags" placeholder="Введите теги">
+                        <input class="adding-post__input form__input" id="photo-tags" type="text" name="photo-tags" placeholder="Введите теги" value="<? if(isset($_POST['photo-tags'])) {print($_POST['photo-tags']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['photo-tags']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['photo-tags']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
@@ -230,7 +243,7 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="video-heading">Заголовок <span class="form__input-required">*</span></label>
                     <div class="form__input-section <? if($errors['video-heading']) {echo "form__input-section--error";} ?>">
-                        <input class="adding-post__input form__input" id="video-heading" type="text" name="video-heading" placeholder="Введите заголовок">
+                        <input class="adding-post__input form__input" id="video-heading" type="text" name="video-heading" placeholder="Введите заголовок" value="<? if(isset($_POST['video-heading'])) {print($_POST['video-heading']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                             <h3 class="form__error-title"><?=$errors['video-heading']['error_title'];?></h3>
@@ -241,7 +254,7 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="video-url">Ссылка youtube <span class="form__input-required">*</span></label>
                     <div class="form__input-section <? if($errors['video-link']) {echo "form__input-section--error";} ?>">
-                        <input class="adding-post__input form__input" id="video-url" type="text" name="video-link" placeholder="Введите ссылку">
+                        <input class="adding-post__input form__input" id="video-url" type="text" name="video-link" placeholder="Введите ссылку" value="<? if(isset($_POST['video-link'])) {print($_POST['video-link']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                             <h3 class="form__error-title"><?=$errors['video-link']['error_title'];?></h3>
@@ -252,11 +265,11 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="video-tags">Теги</label>
                     <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="video-tags" type="text" name="video-tags" placeholder="Введите теги">
+                        <input class="adding-post__input form__input" id="video-tags" type="text" name="video-tags" placeholder="Введите теги" value="<? if(isset($_POST['video-tags'])) {print($_POST['video-tags']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['video-tags']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['video-tags']['error_title'];?></p>
                         </div>
                     </div>
                 </div>
@@ -290,7 +303,7 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="link-heading">Заголовок <span class="form__input-required">*</span></label>
                     <div class="form__input-section <? if($errors['link-heading']) {echo "form__input-section--error";} ?>">
-                        <input class="adding-post__input form__input" id="link-heading" type="text" name="link-heading" placeholder="Введите заголовок">
+                        <input class="adding-post__input form__input" id="link-heading" type="text" name="link-heading" placeholder="Введите заголовок" value="<? if(isset($_POST['link-heading'])) {print($_POST['link-heading']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                             <h3 class="form__error-title"><?=$errors['link-heading']['error_title'];?></h3>
@@ -301,7 +314,7 @@ print("</pre>");
                 <div class="adding-post__textarea-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="post-link">Ссылка <span class="form__input-required">*</span></label>
                     <div class="form__input-section <? if($errors['post-link']) {echo "form__input-section--error";} ?>">
-                        <input class="adding-post__input form__input" id="post-link" type="text" name="post-link" placeholder="Введите ссылку">
+                        <input class="adding-post__input form__input" id="post-link" type="text" name="post-link" placeholder="Введите ссылку" value="<? if(isset($_POST['post-link'])) {print($_POST['post-link']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
                             <h3 class="form__error-title"><?=$errors['post-link']['error_title'];?></h3>
@@ -312,11 +325,11 @@ print("</pre>");
                 <div class="adding-post__input-wrapper form__input-wrapper">
                     <label class="adding-post__label form__label" for="link-tags">Теги</label>
                     <div class="form__input-section">
-                        <input class="adding-post__input form__input" id="link-tags" type="text" name="link-tags" placeholder="Введите теги">
+                        <input class="adding-post__input form__input" id="link-tags" type="text" name="link-tags" placeholder="Введите теги" value="<? if(isset($_POST['link-tags'])) {print($_POST['link-tags']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об ошибке, подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?=$errors['link-tags']['error_title'];?></h3>
+                            <p class="form__error-desc"><?=$errors['link-tags']['error_desc'];?></p>
                         </div>
                     </div>
                 </div>
