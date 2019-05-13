@@ -2,10 +2,10 @@
 
 print("<pre>");
 
-//print("Переданный массив с ошибками: ");
-//print_r($errors);
-//print('<br>');
-//
+print("Переданный массив с ошибками: ");
+print_r($errors);
+print('<br>');
+
 print('Переданные данные $_POST ');
 print_r($_POST);
 print('<br>');
@@ -15,10 +15,11 @@ print('<br>');
 //print('<br>');
 //
 
+print("Полученные файлы: ");
+print_r($_FILES);
+print("<br>");
+
 print("</pre>");
-
-
-
 
 
 
@@ -55,8 +56,8 @@ print("</pre>");
                     </div>
                 </div>
                 <div class="adding-post__input-wrapper form__input-wrapper">
-                    <label class="adding-post__label form__label" for="post-tags">Теги</label>
-                    <div class="form__input-section">
+                    <label class="adding-post__label form__label" for="post-tags">Теги<span class="form__input-required">*</span></label>
+                    <div class="form__input-section <? if($errors['post-tags']) {echo "form__input-section--error";} ?>">
                         <input class="adding-post__input form__input" id="post-tags" type="text" name="post-tags" placeholder="Введите теги" value="<? if(isset($_POST['post-tags'])) {print($_POST['post-tags']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
@@ -126,8 +127,8 @@ print("</pre>");
                     </div>
                 </div>
                 <div class="adding-post__input-wrapper form__input-wrapper">
-                    <label class="adding-post__label form__label" for="cite-tags">Теги</label>
-                    <div class="form__input-section">
+                    <label class="adding-post__label form__label" for="cite-tags">Теги<span class="form__input-required">*</span></label>
+                    <div class="form__input-section <? if($errors['quote-tags']) {echo "form__input-section--error";} ?>">
                         <input class="adding-post__input form__input" id="cite-tags" type="text" name="quote-tags" placeholder="Введите теги" value="<? if(isset($_POST['quote-tags'])) {print($_POST['quote-tags']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
@@ -185,8 +186,8 @@ print("</pre>");
                     </div>
                 </div>
                 <div class="adding-post__input-wrapper form__input-wrapper">
-                    <label class="adding-post__label form__label" for="photo-tags">Теги</label>
-                    <div class="form__input-section">
+                    <label class="adding-post__label form__label" for="photo-tags">Теги<span class="form__input-required">*</span></label>
+                    <div class="form__input-section <? if($errors['photo-tags']) {echo "form__input-section--error";} ?>">
                         <input class="adding-post__input form__input" id="photo-tags" type="text" name="photo-tags" placeholder="Введите теги" value="<? if(isset($_POST['photo-tags'])) {print($_POST['photo-tags']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
@@ -263,8 +264,8 @@ print("</pre>");
                     </div>
                 </div>
                 <div class="adding-post__input-wrapper form__input-wrapper">
-                    <label class="adding-post__label form__label" for="video-tags">Теги</label>
-                    <div class="form__input-section">
+                    <label class="adding-post__label form__label" for="video-tags">Теги<span class="form__input-required">*</span></label>
+                    <div class="form__input-section <? if($errors['video-tags']) {echo "form__input-section--error";} ?>">
                         <input class="adding-post__input form__input" id="video-tags" type="text" name="video-tags" placeholder="Введите теги" value="<? if(isset($_POST['video-tags'])) {print($_POST['video-tags']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
@@ -323,8 +324,8 @@ print("</pre>");
                     </div>
                 </div>
                 <div class="adding-post__input-wrapper form__input-wrapper">
-                    <label class="adding-post__label form__label" for="link-tags">Теги</label>
-                    <div class="form__input-section">
+                    <label class="adding-post__label form__label" for="link-tags">Теги<span class="form__input-required">*</span></label>
+                    <div class="form__input-section <? if($errors['link-tags']) {echo "form__input-section--error";} ?>">
                         <input class="adding-post__input form__input" id="link-tags" type="text" name="link-tags" placeholder="Введите теги" value="<? if(isset($_POST['link-tags'])) {print($_POST['link-tags']);} ?>">
                         <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                         <div class="form__error-text">
