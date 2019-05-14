@@ -3,6 +3,8 @@ require_once ('helpers.php');
 require_once ('sql_connect.php');
 
 
+
+
 if ($con == false) {
     $error = mysqli_connect_error();
     $page_content = include_template('error.php', ['error' => $error]);
@@ -55,53 +57,173 @@ else {
         //Проверяем корректное заполнение полей
 
         //Проверяем поля для добавления картинок
-        if ($_POST['photo-link'] or $_FILES['userpic-file-photo']['name']) {
-            unset($errors['photo-link']);
-            unset($errors['userpic-file-photo']);
+        if ($get_ct_id == 3) {
+            if ($_POST['photo-link'] or $_FILES['userpic-file-photo']['name']) {
+                unset($errors['photo-link']);
+                unset($errors['userpic-file-photo']);
+            }
+
+            elseif ($_POST['photo-link'] and $_FILES['userpic-file-photo']['name']) {
+                // Условие для игнорирования поля 'photo-link'
+            }
+
+            if (!empty($_FILES['userpic-file-photo']['name'])) {
+                $tmp_name = $_FILES['userpic-file-photo']['tmp_name'];
+                $path = $_FILES['userpic-file-photo']['name'];
+
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $file_type = finfo_file($finfo, $tmp_name);
+
+                if ($file_type !== 'image/gif' and $file_type !== 'image/jpeg' and $file_type !== 'image/png') {
+                    $errors['userpic-file-photo'] = [
+                        'field_name_rus' => 'Выбрать фото',
+                        'error_title' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
+                    ];
+                }
+                else {
+                        move_uploaded_file($tmp_name, 'uploads/' . $path);
+
+                        $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id)
+                        VALUES (NOW(),?,1,?,?)';
+                        $stmt = db_get_prepare_stmt($con,$post_add_sql,[$post['photo-heading'], $path, $get_ct_id]);
+                        $res = mysqli_stmt_execute($stmt);
+
+                        if ($res) {
+                            $post_id = mysqli_insert_id($con);
+                            header("Location: /post.php/?post_id=" . $post_id);
+                            exit;
+                        }
+
+                        else {
+                                $post_add_sql_error = include_template('error.php',[
+                                    'error' => mysqli_error($con)
+                                ]);
+                        }
+                }
+
+            }
+
+            if (!empty($_POST['photo-link'])) {
+                    // Получаем ссылку на изображение из метода POST
+                    $photo_link = $_POST['photo-link'];
+
+                    //Проверяем корректно ли указана ссылка на изображение
+                    if (!filter_var($photo_link, FILTER_VALIDATE_URL)) {
+                            $errors['photo-link'] = [
+                            'field_name_rus' => 'Ссылка из интернета',
+                            'error_title' => 'Неверно указана ссылка на изображение',
+                            'error_desc' => 'Просьба указать ссылку на изображение в виде: "https://site.com"'
+                        ];
+
+                    }
+                    else {
+                        //Загружаем изображение в переменную
+                        $get_image = file_get_contents($photo_link);
+
+                        if ($get_image !== FALSE) {
+                            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                            $file_type = finfo_buffer($finfo, $get_image);
+
+                            // Получаем расширение загружаемого изображения для формирования пути файла
+                            $file_type_explode = explode('/', $file_type);
+                            $file_extension = end($file_type_explode);
+
+                            //Проверяем тип загружаемого файла
+                            if ($file_type !== 'image/gif' and $file_type !== 'image/jpeg' and $file_type !== 'image/png') {
+                                $errors['photo-link'] = [
+                                    'field_name_rus' => 'Ссылка из интернета',
+                                    'error_title' => 'Недопустимый формат изображения',
+                                    'error_desc' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
+                                ];
+                            }
+
+                            else {
+                                   //Загружаем данные в БД и показываем пост с картинкой
+                                $uniqid = uniqid();
+                                $path = 'uploads/' . $uniqid . '.' . $file_extension;
+
+
+                                if (file_put_contents($path,$get_image )) {
+                                    $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id)
+                        VALUES (NOW(),?,1,?,?)';
+                                    $stmt = db_get_prepare_stmt($con,$post_add_sql,[$post['photo-heading'], $path, $get_ct_id]);
+                                    $res = mysqli_stmt_execute($stmt);
+
+                                    if ($res) {
+                                        $post_id = mysqli_insert_id($con);
+                                        header("Location: /post.php/?post_id=" . $post_id);
+                                        exit;
+                                    }
+
+                                    else {
+                                        $post_add_sql_error = include_template('error.php',[
+                                            'error' => mysqli_error($con)
+                                        ]);
+                                    }
+                                }
+                                else {
+                                    $errors['photo-link'] = [
+                                        'field_name_rus' => 'Ссылка из интернета',
+                                        'error_title' => 'Изображение не загружено',
+                                        'error_desc' => 'Возникла ошибка во время загрузки изображения'
+                                    ];
+                                }
+
+                            }
+                        }
+
+                        else {
+                            $errors['photo-link'] = [
+                                'field_name_rus' => 'Ссылка из интернета',
+                                'error_title' => 'Не удалось загрузить изображение',
+                                'error_desc' => 'При загрузке изображения возникла ошибка'
+                            ];
+                        }
+                    }
+            }
         }
 
-        elseif ($_POST['photo-link'] and $_FILES['userpic-file-photo']['name']) {
-            // Условие для игнорирования поля 'photo-link'
-        }
+        if ($get_ct_id == 4) {
+            //Получаем ссылку на видео из метода POST
+            $video_link = $_POST['video-link'];
 
-        if (!empty($_FILES['userpic-file-photo']['name'])) {
-            $tmp_name = $_FILES['userpic-file-photo']['tmp_name'];
-            $path = $_FILES['userpic-file-photo']['name'];
-
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $file_type = finfo_file($finfo, $tmp_name);
-
-            if ($file_type !== 'image/gif' and $file_type !== 'image/jpeg' and $file_type !== 'image/png') {
-                $errors['userpic-file-photo'] = [
-                    'field_name_rus' => 'Выбрать фото',
-                    'error_title' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
+            //Проверяем кооректно ли задан URL
+            if (!filter_var($video_link, FILTER_VALIDATE_URL)) {
+                $errors['video-link'] = [
+                    'field_name_rus' => 'Ссылка youtube',
+                    'error_title' => 'Неверно указана ссылка на видео',
+                    'error_desc' => 'Просьба указать ссылку на видео в виде: "https://www.youtube.com/"'
                 ];
             }
             else {
-                    move_uploaded_file($tmp_name, 'uploads/' . $path);
-
-                    $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id)
-                    VALUES (NOW(),?,1,?,3)';
-                    $stmt = db_get_prepare_stmt($con,$post_add_sql,[$post['photo-heading'], $path]);
+                if (check_youtube_url($video_link)) {
+                    $post_video_add_sql = 'INSERT INTO posts (pub_date, title, user_id, video, content_type_id)
+                            VALUES (NOW(),?,1,?,?)';
+                    $stmt = db_get_prepare_stmt($con,$post_video_add_sql,[$post['video-heading'],$post['video'],$get_ct_id]);
                     $res = mysqli_stmt_execute($stmt);
 
                     if ($res) {
                         $post_id = mysqli_insert_id($con);
-
                         header("Location: /post.php/?post_id=" . $post_id);
                         exit;
-
                     }
 
                     else {
-                            $post_add_sql_error = include_template('error.php',[
-                                'error' => mysqli_error($con)
-                            ]);
+                        $post_add_sql_error = include_template('error.php',[
+                            'error' => mysqli_error($con)
+                        ]);
                     }
+                    }
+                else {
+                    $errors['video-link'] = [
+                        'field_name_rus' => 'Ссылка youtube',
+                        'error_title' => 'Неверно указана ссылка на видео',
+                        'error_desc' => 'Просьба указать ссылку на существующее видео на youtube'
+                    ];
+                }
+                }
+
             }
-
-        }
-
     } // Заканчивается if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
     if (!empty($post_add_sql_error)) {
@@ -135,11 +257,11 @@ print("<pre>");
 //print("Полученные данные: ");
 //print_r($_POST);
 //print("<br>");
-//
-//print("Полученные файлы: ");
-//print_r($_FILES);
-//print("<br>");
-//
+
+print("Полученные файлы: ");
+print_r($_FILES);
+print("<br>");
+
 //print("Результаты проверки заполнения данных: ");
 //print_r($errors);
 //print("<br>");
@@ -153,6 +275,8 @@ print("<pre>");
 //print("<br>");
 //
 print("</pre>");
+
+
 
 
 

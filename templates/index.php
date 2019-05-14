@@ -114,7 +114,7 @@
                             </p>
                         <?php elseif ($val['icon_class'] == 'photo'): ?>
                             <div class="post-photo__image-wrapper">
-                                <img src="img/<?=$val['img'];?>" alt="Фото от пользователя" width="360" height="240">
+                                <img src="/<?=$val['img'];?>" alt="Фото от пользователя" width="360" height="240">
                             </div>
                         <?php elseif ($val['icon_class'] == 'link'): ?>
                             <div class="post-link__wrapper">

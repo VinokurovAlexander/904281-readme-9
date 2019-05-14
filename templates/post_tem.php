@@ -114,6 +114,18 @@
 <main class="page__main page__main--publication">
     <div class="container">
         <?php foreach ($posts_rows as $k => $v): ?>
+
+
+            <?php
+            print('<pre>');
+
+            print('$v: ');
+            print_r($v);
+
+            print('</pre>');
+
+            ?>
+
         <h1 class="page__title page__title--publication"><?=$v['title'];?></h1>
         <section class="post-details">
             <h2 class="visually-hidden">Публикация</h2>
@@ -121,7 +133,7 @@
                 <div class="post-details__main-block post post--details">
                     <?php if ($v['content_type'] == 'Картинка' ) :?>
                     <div class="post-details__image-wrapper post-photo__image-wrapper">
-                        <img src="../img/<?=$v['img']?>" alt="Фото от пользователя" width="760" height="507">
+                        <img src="/<?=$v['img']?>" alt="Фото от пользователя" width="760" height="507">
                     </div>
                     <?php elseif ($v['content_type'] == 'Цитата' ) :?>
                     <div class="post-details__image-wrapper post-quote">
