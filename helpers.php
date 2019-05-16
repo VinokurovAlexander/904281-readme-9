@@ -13,7 +13,7 @@ ini_set('display_errors', 1);
  * is_date_valid('10.10.2010'); // false
  * is_date_valid('10/10/2010'); // false
  *
- * @param string $date Дата в виде строки
+ * @param string $date Тип файла в виде строки,
  *
  * @return bool true при совпадении с форматом 'ГГГГ-ММ-ДД', иначе false
  */
