@@ -5,17 +5,16 @@ print("<pre>");
 print("Переданный массив с ошибками: ");
 print_r($errors);
 print('<br>');
-
+//
 print('Переданные данные $_POST ');
 print_r($_POST);
 print('<br>');
 //
-//print('$_POST[\'text-heading\']: ');
-//print($_POST['text-heading']);
-//print('<br>');
-//
 
-print("Полученные файлы: ");
+
+
+
+print('Полученные файлы $_FILES: ');
 print_r($_FILES);
 print("<br>");
 

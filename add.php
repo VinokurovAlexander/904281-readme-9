@@ -45,6 +45,19 @@ else {
             $r_fn = $field['field_name']; // r_fn = required field name
             $r_fn_rus = $field['field_name_rus'];
 
+            print('<pre>');
+            print('Обязательные поля $field: ');
+            print_r($field);
+
+            print('$r_fn: ');
+            print($r_fn);
+            print('<br>');
+
+            print('$_POST[$r_fn]: ');
+            print($_POST[$r_fn]);
+
+            print('</pre>');
+
             //Проверяем заполнены ли обязательные поля
             if (empty($_POST[$r_fn])) {
                 $errors[$r_fn] = [
@@ -69,19 +82,9 @@ else {
                     unset($errors['photo-link']);
                     $tmp_name = $_FILES['userpic-file-photo']['tmp_name'];
 
-                    //Проверяем тип переданного изображения
-                    if (checking_image_type($tmp_name)) {
+                  //Валидация полей и публикация поста
+                    add_post_img($con,$tmp_name,$post['photo-heading'],$errors);
 
-                    //Загружаем данные в БД и публикуем пост
-                    add_img_post($con,$tmp_name,$post['photo-heading']);
-                }
-
-                else {
-                    $errors['userpic-file-photo'] = [
-                        'field_name_rus' => 'Выбрать фото',
-                        'error_title' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
-                    ];
-                }
             }
 
             //Изображение загружено через поле "Ссылка из интернета" ----------------------------------------------------
@@ -106,20 +109,8 @@ else {
 
                     if ($get_image !== FALSE) {
 
-                        //Проверяем тип переданного изображения
-                        if (checking_image_type($get_image, false)) {
+                        add_post_img($con,$get_image,$post['photo-heading'],$errors,false);
 
-                            //Загружаем данные в БД и публикуем пост
-                            add_img_post($con,$get_image,$post['photo-heading'],false);
-                        }
-
-                        else {
-                            $errors['photo-link'] = [
-                                'field_name_rus' => 'Ссылка из интернета',
-                                'error_title' => 'Недопустимый формат изображения',
-                                'error_desc' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
-                            ];
-                        }
                     }
                     else {
                         $errors['photo-link'] = [
@@ -217,11 +208,11 @@ print("<pre>");
 //print("Итоговый массив с данными");
 //print_r($ct_rows);
 //print("<br>");
-//
+
 //print("Обязательные поля: ");
-//print_r($required_fields);
+//print_r($rf);
 //print("<br>");
-//
+
 print("</pre>");
 
 
