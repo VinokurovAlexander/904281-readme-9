@@ -31,6 +31,7 @@ CREATE TABLE posts (
     title CHAR(64),
     text TEXT,
     user_id INT,
+    quote_author CHAR(64),
     img CHAR(128),
     video CHAR(128),
     link CHAR(128),

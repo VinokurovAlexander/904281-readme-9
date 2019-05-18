@@ -53,31 +53,66 @@ else {
             }
         }
 
-        //Получаем список хэштегов для поста
-        $hashtags_sql = "SELECT field_name FROM required_fields
-WHERE content_type_id = $get_ct_id AND fd_rus_id = 9";
-        $hashtags_result = mysqli_query($con, $hashtags_sql);
-        $hashtags_fieldname_array = mysqli_fetch_all($hashtags_result, MYSQLI_ASSOC);
-        $hashtags_fieldname = $hashtags_fieldname_array[0]['field_name'];
-
-        $hashtags = explode(' ',$post[$hashtags_fieldname]);
 
         //Проверяем Форму заполнения поста "Текст"------------------------------------------------------------------------------------
         if ($get_ct_id == 1) {
             if(empty($errors)) {
-                $post_text_add_sql = 'INSERT into posts(pub_date, title, text, user_id, content_type_id) VALUES (NOW(),?,?,2,1)';
-                $stmt = db_get_prepare_stmt($con,$post_text_add_sql,[$post['text-heading'],$post['post-text']]);
+
+                //Добавляем данные поста в БД
+                $post_text_add_sql = 'INSERT INTO posts(pub_date, title, text, user_id, content_type_id) VALUES (NOW(),?,?,2,1)';
+                $stmt = db_get_prepare_stmt($con, $post_text_add_sql, [$post['text-heading'], $post['post-text']]);
                 $res = mysqli_stmt_execute($stmt);
 
-                $add_hastags_sql = 'INSERT'
-
-                if($res) {
+                if ($res) {
+                    //Публикация поста
                     $post_id = mysqli_insert_id($con);
-                    header("Location: /post.php/?post_id=" . $post_id);
-                    exit;
+                    $hashtags = get_hashtags($con, $get_ct_id, $post);
+
+//                    Рабочий код на добавление хэштегов
+//                    foreach ($hashtags as $hashtag) {
+//                        //Добавляем данные в таблицу hashtags
+//                        $hashtag_add_sql = "INSERT INTO hashtags(name) VALUES (?)";
+//                        $stmt = db_get_prepare_stmt($con,$hashtag_add_sql,[$hashtag]);
+//                        $res = mysqli_stmt_execute($stmt);
+//
+//                        if ($res) {
+//                            //Получем id хэштегов
+//                            $hashtag_id_sql = "SELECT hashtag_id FROM hashtags h WHERE h.name = '$hashtag'";
+//                            $hashtag_id_result = mysqli_query($con,$hashtag_id_sql);
+//                            $hashtag_id_array = mysqli_fetch_all($hashtag_id_result, MYSQLI_ASSOC);
+//                            $hashtag_id = $hashtag_id_array[0]['hashtag_id'];
+//
+//                            //Добавляем данные в таблицу posts-hashtags
+//                            $hashtags_post_add_sql = 'INSERT INTO posts_hashtags(post_id,hashtag_id) VALUES (?,?)';
+//                            $stmt = db_get_prepare_stmt($con,$hashtags_post_add_sql,[$post_id,$hashtag_id]);
+//                            $res = mysqli_stmt_execute($stmt);
+//
+//                            if($res) {
+//                                print('данные добавлены в таблицу posts-hashtags' . '<br>');
+//                            }
+//                            else {
+//                                $error = mysqli_error($con);
+//                                print("Ошибка MySQL: " . $error);
+//                            }
+//                        }
+//                        else {
+//                            $error = mysqli_error($con);
+//                            print("Ошибка MySQL: " . $error);
+//
+//                        }
+//                    }
+
+                    if (add_hashtags($con,$hashtags,$post_id)) {
+                        header("Location: /post.php/?post_id=" . $post_id);
+                        exit;
+                    }
+                    else {
+                        $error = mysqli_error($con);
+                        print("Ошибка MySQL: " . $error);
+                    }
                 }
                 else {
-                    $post_add_sql_error = include_template('error.php',[
+                    $post_add_sql_error = include_template('error.php', [
                         'error' => mysqli_error($con)
                     ]);
                 }
@@ -87,12 +122,16 @@ WHERE content_type_id = $get_ct_id AND fd_rus_id = 9";
         //Проверяем Форму заполнения поста "Цитата"------------------------------------------------------------------------------------
         if ($get_ct_id == 2) {
             if(empty($errors)) {
-                $post_quote_add_sql = 'INSERT into posts(pub_date,title,text,quote_author,user_id,content_type_id) VALUES (NOW(),?,?,?,1,2)';
+                //Добавляем данные поста в БД
+                $post_quote_add_sql = 'INSERT INTO posts(pub_date,title,text,quote_author,user_id,content_type_id) VALUES (NOW(),?,?,?,1,2)';
                 $stmt = db_get_prepare_stmt($con,$post_quote_add_sql,[$post['quote-heading'],$post['quote-text'],$post['quote-author']]);
                 $res = mysqli_stmt_execute($stmt);
 
                 if($res) {
+                    //Публикация поста
                     $post_id = mysqli_insert_id($con);
+                    $hashtags = get_hashtags($con,$get_ct_id,$post);
+                    add_hashtags($con,$hashtags,$post_id);
                     header("Location: /post.php/?post_id=" . $post_id);
                     exit;
                 }
@@ -212,14 +251,17 @@ WHERE content_type_id = $get_ct_id AND fd_rus_id = 9";
                     }
 
                         if (empty($errors)) {
-
+                            //Добавляем данные поста в БД
                             $post_video_add_sql = 'INSERT INTO posts (pub_date, title, user_id, video, content_type_id)
                                     VALUES (NOW(),?,2,?,4)';
                             $stmt = db_get_prepare_stmt($con,$post_video_add_sql,[$post['video-heading'],$video_link]);
                             $res = mysqli_stmt_execute($stmt);
 
                             if ($res) {
+                                //Публикация поста
                                 $post_id = mysqli_insert_id($con);
+                                $hashtags = get_hashtags($con,$get_ct_id,$post);
+                                add_hashtags($con,$hashtags,$post_id);
                                 header("Location: /post.php/?post_id=" . $post_id);
                                 exit;
                             }
@@ -255,12 +297,16 @@ WHERE content_type_id = $get_ct_id AND fd_rus_id = 9";
                     ];
                 } else {
                     if (empty($errors)) {
-                        $post_link_add_sql = 'INSERT into posts(pub_date,title,link,user_id,content_type_id) VALUES (NOW(),?,?,2,5)';
+                        //Добавляем данные поста в БД
+                        $post_link_add_sql = 'INSERT INTO posts(pub_date,title,link,user_id,content_type_id) VALUES (NOW(),?,?,2,5)';
                         $stmt = db_get_prepare_stmt($con, $post_link_add_sql, [$post['link-heading'], $post['post-link']]);
                         $res = mysqli_stmt_execute($stmt);
 
                         if ($res) {
+                            //Публикация поста
                             $post_id = mysqli_insert_id($con);
+                            $hashtags = get_hashtags($con,$get_ct_id,$post);
+                            add_hashtags($con,$hashtags,$post_id);
                             header("Location: /post.php/?post_id=" . $post_id);
                             exit;
                         } else {
