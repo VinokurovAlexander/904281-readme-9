@@ -114,18 +114,6 @@
 <main class="page__main page__main--publication">
     <div class="container">
         <?php foreach ($posts_rows as $k => $v): ?>
-
-
-            <?php
-            print('<pre>');
-
-            print('$v: ');
-            print_r($v);
-
-            print('</pre>');
-
-            ?>
-
         <h1 class="page__title page__title--publication"><?=$v['title'];?></h1>
         <section class="post-details">
             <h2 class="visually-hidden">Публикация</h2>
@@ -171,6 +159,8 @@
                                 </p>
                             </div>
                         </div>
+                    <?php elseif ($v['content_type'] == 'Видео' ) :?>
+                        <iframe width="760" height="400" src="<?= $v['video'] ?>" frameborder="0"></iframe>
                     <?php endif; ?>
                     <div class="post__indicators">
                         <div class="post__buttons">

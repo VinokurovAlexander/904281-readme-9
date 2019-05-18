@@ -155,22 +155,33 @@ else {
             }
             else {
                 if (check_youtube_url($video_link)) {
-                    $post_video_add_sql = 'INSERT INTO posts (pub_date, title, user_id, video, content_type_id)
-                            VALUES (NOW(),?,1,?,?)';
-                    $stmt = db_get_prepare_stmt($con,$post_video_add_sql,[$post['video-heading'],$post['video'],$get_ct_id]);
-                    $res = mysqli_stmt_execute($stmt);
 
-                    if ($res) {
-                        $post_id = mysqli_insert_id($con);
-                        header("Location: /post.php/?post_id=" . $post_id);
-                        exit;
+                    //Формируем итоговый URL для видео
+                    $youtube_video_id = extract_youtube_id($video_link);
+
+                    if ($youtube_video_id) {
+                        $video_link = "https://www.youtube.com/embed/" . $youtube_video_id;
                     }
 
-                    else {
-                        $post_add_sql_error = include_template('error.php',[
-                            'error' => mysqli_error($con)
-                        ]);
-                    }
+                        if (empty($errors)) {
+
+                            $post_video_add_sql = 'INSERT INTO posts (pub_date, title, user_id, video, content_type_id)
+                                    VALUES (NOW(),?,2,?,4)';
+                            $stmt = db_get_prepare_stmt($con,$post_video_add_sql,[$post['video-heading'],$video_link]);
+                            $res = mysqli_stmt_execute($stmt);
+
+                            if ($res) {
+                                $post_id = mysqli_insert_id($con);
+                                header("Location: /post.php/?post_id=" . $post_id);
+                                exit;
+                            }
+
+                            else {
+                                $post_add_sql_error = include_template('error.php',[
+                                    'error' => mysqli_error($con)
+                                ]);
+                            }
+                        }
                     }
                 else {
                     $errors['video-link'] = [

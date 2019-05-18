@@ -130,6 +130,8 @@
                                     <span><?=$val['link'];?></span>
                                 </a>
                             </div>
+                        <?php elseif ($val['icon_class'] == 'video'): ?>
+                            <iframe width="360" height="240" src="<?= $val['video'] ?>" frameborder="0"></iframe>
                         <?php endif; ?>
                     </div>
                     <footer class="post__footer">
