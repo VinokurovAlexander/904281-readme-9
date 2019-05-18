@@ -4,8 +4,6 @@ require_once ('sql_connect.php');
 require_once ('my_functions.php');
 
 
-
-
 if ($con == false) {
     $error = mysqli_connect_error();
     $page_content = include_template('error.php', ['error' => $error]);
@@ -55,7 +53,57 @@ else {
             }
         }
 
-        //Проверяем корректное заполнение полей
+        //Получаем список хэштегов для поста
+        $hashtags_sql = "SELECT field_name FROM required_fields
+WHERE content_type_id = $get_ct_id AND fd_rus_id = 9";
+        $hashtags_result = mysqli_query($con, $hashtags_sql);
+        $hashtags_fieldname_array = mysqli_fetch_all($hashtags_result, MYSQLI_ASSOC);
+        $hashtags_fieldname = $hashtags_fieldname_array[0]['field_name'];
+
+        $hashtags = explode(' ',$post[$hashtags_fieldname]);
+
+        //Проверяем Форму заполнения поста "Текст"------------------------------------------------------------------------------------
+        if ($get_ct_id == 1) {
+            if(empty($errors)) {
+                $post_text_add_sql = 'INSERT into posts(pub_date, title, text, user_id, content_type_id) VALUES (NOW(),?,?,2,1)';
+                $stmt = db_get_prepare_stmt($con,$post_text_add_sql,[$post['text-heading'],$post['post-text']]);
+                $res = mysqli_stmt_execute($stmt);
+
+                $add_hastags_sql = 'INSERT'
+
+                if($res) {
+                    $post_id = mysqli_insert_id($con);
+                    header("Location: /post.php/?post_id=" . $post_id);
+                    exit;
+                }
+                else {
+                    $post_add_sql_error = include_template('error.php',[
+                        'error' => mysqli_error($con)
+                    ]);
+                }
+            }
+        }
+
+        //Проверяем Форму заполнения поста "Цитата"------------------------------------------------------------------------------------
+        if ($get_ct_id == 2) {
+            if(empty($errors)) {
+                $post_quote_add_sql = 'INSERT into posts(pub_date,title,text,quote_author,user_id,content_type_id) VALUES (NOW(),?,?,?,1,2)';
+                $stmt = db_get_prepare_stmt($con,$post_quote_add_sql,[$post['quote-heading'],$post['quote-text'],$post['quote-author']]);
+                $res = mysqli_stmt_execute($stmt);
+
+                if($res) {
+                    $post_id = mysqli_insert_id($con);
+                    header("Location: /post.php/?post_id=" . $post_id);
+                    exit;
+                }
+                else {
+                    $post_add_sql_error = include_template('error.php',[
+                        'error' => mysqli_error($con)
+                    ]);
+                }
+            }
+        }
+
 
         //Проверяем Форму заполнения поста "Картинка"------------------------------------------------------------------------------------
         if ($get_ct_id == 3) {
@@ -140,7 +188,7 @@ else {
                 }
             }
         }
-
+        //Проверяем Форму заполнения поста "Видео"------------------------------------------------------------------------------------
         if ($get_ct_id == 4) {
             //Получаем ссылку на видео из метода POST
             $video_link = $_POST['video-link'];
@@ -193,6 +241,37 @@ else {
                 }
 
             }
+
+        //Проверяем Форму заполнения поста "Ссылка"------------------------------------------------------------------------------------
+        if ($get_ct_id == 5) {
+            $link = $post['post-link'];
+
+            if($link) {
+                if (!filter_var($link, FILTER_VALIDATE_URL)) {
+                    $errors['post-link'] = [
+                        'field_name_rus' => 'Ссылка',
+                        'error_title' => 'Неверно указана ссылка',
+                        'error_desc' => 'Просьба указать ссылку в виде: "https://site.com"'
+                    ];
+                } else {
+                    if (empty($errors)) {
+                        $post_link_add_sql = 'INSERT into posts(pub_date,title,link,user_id,content_type_id) VALUES (NOW(),?,?,2,5)';
+                        $stmt = db_get_prepare_stmt($con, $post_link_add_sql, [$post['link-heading'], $post['post-link']]);
+                        $res = mysqli_stmt_execute($stmt);
+
+                        if ($res) {
+                            $post_id = mysqli_insert_id($con);
+                            header("Location: /post.php/?post_id=" . $post_id);
+                            exit;
+                        } else {
+                            $post_add_sql_error = include_template('error.php', [
+                                'error' => mysqli_error($con)
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
     } // Заканчивается if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
     if (!empty($post_add_sql_error)) {

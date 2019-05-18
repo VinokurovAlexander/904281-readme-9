@@ -106,7 +106,7 @@
                                 <p>
                                     <?=$val['text'];?>
                                 </p>
-                                <cite>Неизвестный Автор</cite>
+                                <cite><?=$val['quote_author']?></cite>
                             </blockquote>
                         <?php elseif ($val['icon_class'] == 'text'): ?>
                             <p>

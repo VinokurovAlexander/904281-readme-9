@@ -130,14 +130,14 @@
                                 <p>
                                     <?=$v['text']?>
                                 </p>
-                                <cite>Xью Оден</cite>
+                                <cite><?=$v['quote_author']?></cite>
                             </blockquote>
                         </div>
                     </div>
                     <?php elseif ($v['content_type'] == 'Ссылка' ) :?>
                     <div class="post__main">
                         <div class="post-link__wrapper">
-                            <a class="post-link__external" href="http://<?= $v['link'] ?>" title="Перейти по ссылке">
+                            <a class="post-link__external" href="<?= $v['link'] ?>" title="Перейти по ссылке">
                                 <div class="post-link__info-wrapper">
                                     <div class="post-link__icon-wrapper">
                                         <img src="../img/logo-vita.jpg" alt="Иконка">
