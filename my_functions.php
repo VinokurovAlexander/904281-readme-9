@@ -33,48 +33,6 @@ function checking_image_type(string $file_name, bool $isFromClient = true) : boo
 }
 
 /**
- * Добавляет пост с типом "Картинка"
- **
- * @param $con соединение с БД
- * @param string $file_name Имя файла, полученное через $_FILES['tmp_name'] или file_get_contents.
- * @param string $photo_heading Заголовок поста
- * @param bool $isFromClient Определяет откуда было получено изображение. Если true из $_FILES['tmp_name'], fales - file_get_contents.
- *
- * @return string Перенаправляет на страницу с постом, иначе показывает ошибку связанную с загрузкой данных в БД
- */
-
-function add_img_post ($con, string $file_name,string $photo_heading,int $post_id,bool $isFromClient = true ) :string  {
-    $path = 'uploads/' . uniqid();
-
-    if ($isFromClient) {
-        move_uploaded_file($file_name, $path);
-    }
-
-    else {
-        file_put_contents($path,$file_name);
-    }
-
-    $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id)
-                        VALUES (NOW(),?,1,?,3)';
-    $stmt = db_get_prepare_stmt($con,$post_add_sql,[$photo_heading, $path]);
-    $res = mysqli_stmt_execute($stmt);
-
-    if ($res) {
-//        $post_id = mysqli_insert_id($con);
-        header("Location: /post.php/?post_id=" . $post_id);
-    }
-
-    else {
-        $post_add_sql_error = include_template('error.php',[
-            'error' => mysqli_error($con)
-        ]);
-
-        $result = $post_add_sql_error;
-        return $result;
-    }
-}
-
-/**
  * Получает массив с хэштегами для поста
  **
  * @param $con соединение с БД
@@ -148,3 +106,55 @@ function add_hashtags($con,string $hashtag, int $post_id) {
     }
 
 }
+
+/**
+ * Добавляет данные, переданные через форму в БД
+ **
+ * @param $con соединение с БД
+ * @param int $content_type_id Тип публикуемого поста
+ *@param array $post Данные, передаваемые через форму
+ *
+ * @return true - если данные добавлены, в ином случае false
+ */
+
+function add_data_to_database ($con, int $content_type_id, array $post) {
+    if ($content_type_id == 1) {
+        $post_text_add_sql = 'INSERT INTO posts(pub_date, title, text, user_id, content_type_id) VALUES (NOW(),?,?,2,1)';
+        $stmt = db_get_prepare_stmt($con, $post_text_add_sql, [$post['text-heading'], $post['post-text']]);
+    }
+
+    elseif ($content_type_id == 2) {
+        $post_quote_add_sql = 'INSERT INTO posts(pub_date,title,text,quote_author,user_id,content_type_id) VALUES (NOW(),?,?,?,1,2)';
+        $stmt = db_get_prepare_stmt($con,$post_quote_add_sql,[$post['quote-heading'],$post['quote-text'],$post['quote-author']]);
+    }
+
+    elseif ($content_type_id == 3) {
+        $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id) VALUES (NOW(),?,1,?,3)';
+        $stmt = db_get_prepare_stmt($con,$post_add_sql,[$post['photo-heading'], $post['img_path']]);
+
+    }
+
+    elseif ($content_type_id == 4) {
+        $post_video_add_sql = 'INSERT INTO posts (pub_date, title, user_id, video, content_type_id)
+                                    VALUES (NOW(),?,2,?,4)';
+        $stmt = db_get_prepare_stmt($con,$post_video_add_sql,[$post['video-heading'],$post['video-link']]);
+    }
+
+    elseif ($content_type_id == 5) {
+        $post_link_add_sql = 'INSERT INTO posts(pub_date,title,link,user_id,content_type_id) VALUES (NOW(),?,?,2,5)';
+        $stmt = db_get_prepare_stmt($con, $post_link_add_sql, [$post['link-heading'], $post['post-link']]);
+    }
+
+    $res = mysqli_stmt_execute($stmt);
+
+    if ($res) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+
+
+

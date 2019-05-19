@@ -59,11 +59,7 @@ else {
             if(empty($errors)) {
 
                 //Добавляем данные поста в БД
-                $post_text_add_sql = 'INSERT INTO posts(pub_date, title, text, user_id, content_type_id) VALUES (NOW(),?,?,2,1)';
-                $stmt = db_get_prepare_stmt($con, $post_text_add_sql, [$post['text-heading'], $post['post-text']]);
-                $res = mysqli_stmt_execute($stmt);
-
-                if ($res) {
+                if (add_data_to_database($con,$get_ct_id,$post)) {
                     //Публикация поста
                     $post_id = mysqli_insert_id($con);
                     $hashtags = get_hashtags($con, $get_ct_id, $post);
@@ -90,12 +86,9 @@ else {
 //------Проверяем Форму заполнения поста "Цитата"------------------------------------------------------------------------------------
         if ($get_ct_id == 2) {
             if(empty($errors)) {
-                //Добавляем данные поста в БД
-                $post_quote_add_sql = 'INSERT INTO posts(pub_date,title,text,quote_author,user_id,content_type_id) VALUES (NOW(),?,?,?,1,2)';
-                $stmt = db_get_prepare_stmt($con,$post_quote_add_sql,[$post['quote-heading'],$post['quote-text'],$post['quote-author']]);
-                $res = mysqli_stmt_execute($stmt);
 
-                if($res) {
+                //Добавляем данные поста в БД
+                if(add_data_to_database($con,$get_ct_id,$post)) {
                     //Публикация поста
                     $post_id = mysqli_insert_id($con);
                     $hashtags = get_hashtags($con,$get_ct_id,$post);
@@ -133,7 +126,7 @@ else {
 
             $photo_link_from_internet = $_POST['photo-link'];
             $photo_from_user = $_FILES['userpic-file-photo']['name'];
-            $path = 'uploads/' . uniqid();
+            $post['img_path'] = 'uploads/' . uniqid();
 
 //----------Изображение загружено через поле "Выбор файла"  или оба поля "Выбор файла" и "Ссылка из интернета"-------
             if ($photo_from_user or ($photo_link_from_internet and $photo_from_user)) {
@@ -145,14 +138,8 @@ else {
                     if (empty($errors)) {
 
                         //Добавляем пост
-                        move_uploaded_file($tmp_name, $path);
-
-                        $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id)
-                        VALUES (NOW(),?,1,?,3)';
-                        $stmt = db_get_prepare_stmt($con,$post_add_sql,[$post['photo-heading'], $path]);
-                        $res = mysqli_stmt_execute($stmt);
-
-                        if ($res) {
+                        if (add_data_to_database($con,$get_ct_id,$post)) {
+                            move_uploaded_file($tmp_name, $post['img_path']);
                             $post_id = mysqli_insert_id($con);
 
                             //Добавляем хэштеги
@@ -207,14 +194,8 @@ else {
                             if (empty($errors)) {
 
                                 //Публикуем пост
-                                file_put_contents($path,$get_image);
-
-                                $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id)
-                        VALUES (NOW(),?,1,?,3)';
-                                $stmt = db_get_prepare_stmt($con,$post_add_sql,[$post['photo-heading'], $path]);
-                                $res = mysqli_stmt_execute($stmt);
-
-                                if ($res) {
+                                if (add_data_to_database($con,$get_ct_id,$post)) {
+                                    file_put_contents($post['img_path'],$get_image);
                                     $post_id = mysqli_insert_id($con);
 
                                     //Добавляем хэштеги
@@ -273,19 +254,10 @@ else {
 
                     //Формируем итоговый URL для видео
                     $youtube_video_id = extract_youtube_id($video_link);
-
-                    if ($youtube_video_id) {
-                        $video_link = "https://www.youtube.com/embed/" . $youtube_video_id;
-                    }
+                    $post['video-link'] = "https://www.youtube.com/embed/" . $youtube_video_id;
 
                         if (empty($errors)) {
-                            //Добавляем данные поста в БД
-                            $post_video_add_sql = 'INSERT INTO posts (pub_date, title, user_id, video, content_type_id)
-                                    VALUES (NOW(),?,2,?,4)';
-                            $stmt = db_get_prepare_stmt($con,$post_video_add_sql,[$post['video-heading'],$video_link]);
-                            $res = mysqli_stmt_execute($stmt);
-
-                            if ($res) {
+                            if (add_data_to_database($con,$get_ct_id,$post)) {
                                 //Публикация поста
                                 $post_id = mysqli_insert_id($con);
                                 $hashtags = get_hashtags($con,$get_ct_id,$post);
@@ -333,11 +305,8 @@ else {
                 } else {
                     if (empty($errors)) {
                         //Добавляем данные поста в БД
-                        $post_link_add_sql = 'INSERT INTO posts(pub_date,title,link,user_id,content_type_id) VALUES (NOW(),?,?,2,5)';
-                        $stmt = db_get_prepare_stmt($con, $post_link_add_sql, [$post['link-heading'], $post['post-link']]);
-                        $res = mysqli_stmt_execute($stmt);
-
-                        if ($res) {
+                        
+                        if (add_data_to_database($con,$get_ct_id,$post)) {
                             //Публикация поста
                             $post_id = mysqli_insert_id($con);
                             $hashtags = get_hashtags($con,$get_ct_id,$post);
@@ -352,7 +321,6 @@ else {
                                     print("Ошибка MySQL: " . $error . '<br>');
                                 }
                             }
-
                         } else {
                             $post_add_sql_error = include_template('error.php', [
                                 'error' => mysqli_error($con)
