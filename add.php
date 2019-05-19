@@ -3,6 +3,9 @@ require_once ('helpers.php');
 require_once ('sql_connect.php');
 require_once ('my_functions.php');
 
+$sql_error = include_template('error.php', [
+    'error' => mysqli_error($con)
+]);
 
 if ($con == false) {
     $error = mysqli_connect_error();
@@ -36,14 +39,13 @@ else {
     $rf = mysqli_fetch_all($rf_result, MYSQLI_ASSOC);
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
         $post = $_POST;
 
+        //Проверяем заполнены ли обязательные поля
         foreach ($rf as $field) {
             $r_fn = $field['field_name']; // r_fn = required field name
             $r_fn_rus = $field['field_name_rus'];
 
-            //Проверяем заполнены ли обязательные поля
             if (empty($_POST[$r_fn])) {
                 $errors[$r_fn] = [
                     'field_name_rus' => $r_fn_rus,
@@ -53,125 +55,46 @@ else {
             }
         }
 
-
-//------Проверяем Форму заполнения поста "Текст"------------------------------------------------------------------------------------
-        if ($get_ct_id == 1) {
-            if(empty($errors)) {
-
-                //Добавляем данные поста в БД
-                if (add_data_to_database($con,$get_ct_id,$post)) {
-                    //Публикация поста
-                    $post_id = mysqli_insert_id($con);
-                    $hashtags = get_hashtags($con, $get_ct_id, $post);
-
-                    foreach ($hashtags as $hashtag) {
-                        //Добавление хэштегов
-                        if (add_hashtags($con,$hashtag,$post_id)) {
-                            header("Location: /post.php/?post_id=" . $post_id);
-                        }
-                        else {
-                            $error = mysqli_error($con);
-                            print("Ошибка MySQL: " . $error . '<br>');
-                        }
-                    }
-                }
-                else {
-                    $post_add_sql_error = include_template('error.php', [
-                        'error' => mysqli_error($con)
-                    ]);
-                }
-            }
-        }
-
-//------Проверяем Форму заполнения поста "Цитата"------------------------------------------------------------------------------------
-        if ($get_ct_id == 2) {
-            if(empty($errors)) {
-
-                //Добавляем данные поста в БД
-                if(add_data_to_database($con,$get_ct_id,$post)) {
-                    //Публикация поста
-                    $post_id = mysqli_insert_id($con);
-                    $hashtags = get_hashtags($con,$get_ct_id,$post);
-
-                    foreach ($hashtags as $hashtag) {
-                        //Добавление хэштегов
-                        if (add_hashtags($con,$hashtag,$post_id)) {
-                            header("Location: /post.php/?post_id=" . $post_id);
-                        }
-                        else {
-                            $error = mysqli_error($con);
-                            print("Ошибка MySQL: " . $error . '<br>');
-                        }
-                    }
-                }
-                else {
-                    $post_add_sql_error = include_template('error.php',[
-                        'error' => mysqli_error($con)
-                    ]);
-                }
-            }
-        }
-
-
-//------Проверяем Форму заполнения поста "Картинка"------------------------------------------------------------------------------------
+        //Проверяем корректность заполнения полей
         if ($get_ct_id == 3) {
 
+            //Проверяем добавлена ли картинка через поле 'Выбрать фото'
             if (empty($_FILES['userpic-file-photo']['name'])) {
+
                 $errors['userpic-file-photo'] = [
                     'field_name_rus' => 'Выбрать фото',
                     'error_title' => 'Заполните это поле',
                     'error_desc' => 'Данное поле должно быть обязательно заполнено'
                 ];
+
             }
 
             $photo_link_from_internet = $_POST['photo-link'];
             $photo_from_user = $_FILES['userpic-file-photo']['name'];
             $post['img_path'] = 'uploads/' . uniqid();
 
-//----------Изображение загружено через поле "Выбор файла"  или оба поля "Выбор файла" и "Ссылка из интернета"-------
+            //Изображение загружено через поле "Выбор файла" или через оба поля "Выбор файла" и "Ссылка из интернета"
             if ($photo_from_user or ($photo_link_from_internet and $photo_from_user)) {
                 unset($errors['photo-link']);
                 $tmp_name = $_FILES['userpic-file-photo']['tmp_name'];
 
                 //Проверка типа загружаемой картинки
                 if (checking_image_type($tmp_name)) {
-                    if (empty($errors)) {
 
-                        //Добавляем пост
-                        if (add_data_to_database($con,$get_ct_id,$post)) {
-                            move_uploaded_file($tmp_name, $post['img_path']);
-                            $post_id = mysqli_insert_id($con);
+                    //Загружаем картинку в публичную директорию
+                    move_uploaded_file($tmp_name, $post['img_path']);
 
-                            //Добавляем хэштеги
-                            $hashtags = get_hashtags($con,$get_ct_id,$post);
+                } else {
 
-                            foreach ($hashtags as $hashtag) {
-                                if (add_hashtags($con,$hashtag,$post_id)) {
-                                    header("Location: /post.php/?post_id=" . $post_id);
-                                }
-                                else {
-                                    $error = mysqli_error($con);
-                                    print("Ошибка MySQL: " . $error . '<br>');
-                                }
-                            }
-                        }
-                        else {
-                            $post_add_sql_error = include_template('error.php', [
-                                'error' => mysqli_error($con)
-                            ]);
-                        }
-                    }
-                }
-                else {
                     $errors['userpic-file-photo'] = [
                         'field_name_rus' => 'Выбрать фото',
                         'error_title' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
                     ];
+
                 }
             }
-
-//----------Изображение загружено через поле "Ссылка из интернета" ----------------------------------------------------
-            if ($photo_link_from_internet) {
+            //Изображение загружено только через поле "Ссылка из интернета"
+            elseif ($photo_link_from_internet) {
                 unset($errors['userpic-file-photo']);
 
                 //Проверяем корректно ли указана ссылка на изображение
@@ -181,42 +104,12 @@ else {
                         'error_title' => 'Неверно указана ссылка на изображение',
                         'error_desc' => 'Просьба указать ссылку на изображение в виде: "https://site.com"'
                     ];
-
-                }
-                else {
+                } else {
                     //Загружаем изображение в переменную
                     $get_image = file_get_contents($photo_link_from_internet);
-
-                    if ($get_image !== FALSE) {
-
-                        //Проверка типа загружаемой картинки
+                    if ($get_image) {
                         if (checking_image_type($get_image,false)) {
-                            if (empty($errors)) {
-
-                                //Публикуем пост
-                                if (add_data_to_database($con,$get_ct_id,$post)) {
-                                    file_put_contents($post['img_path'],$get_image);
-                                    $post_id = mysqli_insert_id($con);
-
-                                    //Добавляем хэштеги
-                                    $hashtags = get_hashtags($con,$get_ct_id,$post);
-
-                                    foreach ($hashtags as $hashtag) {
-                                        if (add_hashtags($con,$hashtag,$post_id)) {
-                                        header("Location: /post.php/?post_id=" . $post_id);
-                                        }
-                                        else {
-                                            $error = mysqli_error($con);
-                                            print("Ошибка MySQL: " . $error . '<br>');
-                                        }
-                                    }
-                                }
-                                else {
-                                    $post_add_sql_error = include_template('error.php', [
-                                        'error' => mysqli_error($con)
-                                    ]);
-                                }
-                            }
+                            file_put_contents($post['img_path'],$get_image);
                         }
                         else {
                             $errors['photo-link'] = [
@@ -225,8 +118,7 @@ else {
                                 'error_desc' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
                             ];
                         }
-                    }
-                    else {
+                    } else {
                         $errors['photo-link'] = [
                             'field_name_rus' => 'Ссылка из интернета',
                             'error_title' => 'Не удалось загрузить изображение',
@@ -236,7 +128,7 @@ else {
                 }
             }
         }
-//------Проверяем Форму заполнения поста "Видео"------------------------------------------------------------------------------------
+
         if ($get_ct_id == 4) {
             //Получаем ссылку на видео из метода POST
             $video_link = $_POST['video-link'];
@@ -250,87 +142,54 @@ else {
                 ];
             }
             else {
+                //Проверяем существует ли такое видео на youtube
                 if (check_youtube_url($video_link)) {
-
                     //Формируем итоговый URL для видео
                     $youtube_video_id = extract_youtube_id($video_link);
                     $post['video-link'] = "https://www.youtube.com/embed/" . $youtube_video_id;
-
-                        if (empty($errors)) {
-                            if (add_data_to_database($con,$get_ct_id,$post)) {
-                                //Публикация поста
-                                $post_id = mysqli_insert_id($con);
-                                $hashtags = get_hashtags($con,$get_ct_id,$post);
-
-                                //Добавление хэштегов
-                                foreach ($hashtags as $hashtag) {
-                                    if (add_hashtags($con,$hashtag,$post_id)) {
-                                        header("Location: /post.php/?post_id=" . $post_id);
-                                    }
-                                    else {
-                                        $error = mysqli_error($con);
-                                        print("Ошибка MySQL: " . $error . '<br>');
-                                    }
-                                }
-                            }
-                            else {
-                                $post_add_sql_error = include_template('error.php',[
-                                    'error' => mysqli_error($con)
-                                ]);
-                            }
-                        }
-                    }
-                else {
+                } else {
                     $errors['video-link'] = [
                         'field_name_rus' => 'Ссылка youtube',
                         'error_title' => 'Неверно указана ссылка на видео',
                         'error_desc' => 'Просьба указать ссылку на существующее видео на youtube'
                     ];
                 }
-                }
-
-            }
-
-//------Проверяем Форму заполнения поста "Ссылка"------------------------------------------------------------------------------------
-        if ($get_ct_id == 5) {
-            $link = $post['post-link'];
-
-            if($link) {
-                if (!filter_var($link, FILTER_VALIDATE_URL)) {
-                    $errors['post-link'] = [
-                        'field_name_rus' => 'Ссылка',
-                        'error_title' => 'Неверно указана ссылка',
-                        'error_desc' => 'Просьба указать ссылку в виде: "https://site.com"'
-                    ];
-                } else {
-                    if (empty($errors)) {
-                        //Добавляем данные поста в БД
-                        
-                        if (add_data_to_database($con,$get_ct_id,$post)) {
-                            //Публикация поста
-                            $post_id = mysqli_insert_id($con);
-                            $hashtags = get_hashtags($con,$get_ct_id,$post);
-
-                            //Добавление хэштегов
-                            foreach ($hashtags as $hashtag) {
-                                if (add_hashtags($con,$hashtag,$post_id)) {
-                                    header("Location: /post.php/?post_id=" . $post_id);
-                                }
-                                else {
-                                    $error = mysqli_error($con);
-                                    print("Ошибка MySQL: " . $error . '<br>');
-                                }
-                            }
-                        } else {
-                            $post_add_sql_error = include_template('error.php', [
-                                'error' => mysqli_error($con)
-                            ]);
-                        }
-                    }
-                }
             }
         }
-    } // Заканчивается if ($_SERVER['REQUEST_METHOD'] == 'POST')
+
+        if ($get_ct_id == 5) {
+            //Проверяем корректно ли указан URL
+            $link = $post['post-link'];
+
+            if (!filter_var($link, FILTER_VALIDATE_URL)) {
+                $errors['post-link'] = [
+                    'field_name_rus' => 'Ссылка',
+                    'error_title' => 'Неверно указана ссылка',
+                    'error_desc' => 'Просьба указать ссылку в виде: "https://site.com"'
+                ];
+            }
+        }
+
+        //Добавляем данные в БД и публикуем пост
+        if(empty($errors)) {
+            if (add_data_to_database($con, $get_ct_id, $post)) {
+                $post_id = mysqli_insert_id($con);
+
+                //Добавление хэштегов
+                $hashtags = get_hashtags($con, $get_ct_id, $post);
+                foreach ($hashtags as $hashtag) {
+
+                    if (add_hashtags($con, $hashtag, $post_id)) {
+                        header("Location: /post.php/?post_id=" . $post_id);
+                    } else {
+                        $post_add_sql_error = $sql_error;
+                    }
+                }
+            } else {
+                $post_add_sql_error = $sql_error;
+            }
+        }
+    }
 
     if (!empty($post_add_sql_error)) {
         $post_add = $post_add_sql_error;
@@ -354,31 +213,5 @@ else {
 
 
 print($page_content);
-
-// Вывод результатов
-
-print("<pre>");
-//
-//print("Полученные данные: ");
-//print_r($_POST);
-//print("<br>");
-
-//print("Полученные файлы: ");
-//print_r($_FILES);
-//print("<br>");
-
-//print("Результаты проверки заполнения данных: ");
-//print_r($errors);
-//print("<br>");
-//
-//print("Итоговый массив с данными");
-//print_r($ct_rows);
-//print("<br>");
-
-//print("Обязательные поля: ");
-//print_r($rf);
-//print("<br>");
-
-print("</pre>");
 
 

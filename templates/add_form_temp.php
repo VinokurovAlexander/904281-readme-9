@@ -1,29 +1,3 @@
-<?php
-
-print("<pre>");
-
-print("Переданный массив с ошибками: ");
-print_r($errors);
-print('<br>');
-//
-print('Переданные данные $_POST ');
-print_r($_POST);
-print('<br>');
-//
-
-
-
-
-print('Полученные файлы $_FILES: ');
-print_r($_FILES);
-print("<br>");
-
-print("</pre>");
-
-
-
-?>
-
 <?php if ($get_ct_id == '1') : ?>    <!-- ct = 'Текст'-->
 
 <section class="adding-post__text tabs__content tabs__content--active">

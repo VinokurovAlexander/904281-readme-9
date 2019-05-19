@@ -64,9 +64,6 @@ function get_hashtags ($con,int $current_ct_id, array $post ) {
  */
 
 function add_hashtags($con,string $hashtag, int $post_id) {
-    //Получаем все необходимые тэги и проверяем их наличие в базе.
-    // Если каких-то нет, то добавляем и получаем их идшники.
-    // Если есть то просто получаем их идшники.
 
     $get_hashtag_id_sql = "SELECT hashtag_id FROM hashtags h WHERE h.name = '$hashtag'";
     $get_hashtag_id_result = mysqli_query($con,$get_hashtag_id_sql);
@@ -154,6 +151,8 @@ function add_data_to_database ($con, int $content_type_id, array $post) {
         return false;
     }
 }
+
+
 
 
 
