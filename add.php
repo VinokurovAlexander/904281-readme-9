@@ -83,11 +83,42 @@ else {
                         if (!empty($get_hashtag_id_array)) {
                             $get_hashtag_id = $get_hashtag_id_array[0]['hashtag_id'];
                             print($hashtag . ' hashtag_id = ' .$get_hashtag_id . '<br>');
-
                         }
                         else {
                             print($hashtag . ' - такого хэштега нет!' . '<br>');
+
+                            //Добавляем данные в таблицу hashtags
+                            $hashtag_add_sql = "INSERT INTO hashtags(name) VALUES (?)";
+                            $stmt = db_get_prepare_stmt($con,$hashtag_add_sql,[$hashtag]);
+                            $res = mysqli_stmt_execute($stmt);
+
+                            if ($res) {
+                                $get_hashtag_id = mysqli_insert_id($con);
+                                print('Новый хэштег с id=' . $get_hashtag_id . ' добавлен' . '<br>');
+                            }
+                            else {
+                                $error = mysqli_error($con);
+                                print('Ошибка MySQL: ' . $error . '<br>');
+                            }
                         }
+
+                        print('В итоге: ' . $get_hashtag_id . '<br>');
+
+                        //Получили id, добавляем в таблицу posts_hashtags
+                        $hashtags_post_add_sql = 'INSERT INTO posts_hashtags(post_id,hashtag_id) VALUES (?,?)';
+                        $stmt = db_get_prepare_stmt($con,$hashtags_post_add_sql,[$post_id,$get_hashtag_id]);
+                        $res = mysqli_stmt_execute($stmt);
+
+                        if ($res) {
+                            print('Данные добавлены в таблицу posts-hashtags' . '<br>');
+                        }
+                        else {
+                            $error = mysqli_error($con);
+                            print("Ошибка MySQL: " . $error);
+                        }
+                        print('<br>');
+
+
 
 
 

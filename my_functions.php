@@ -136,3 +136,7 @@ function add_hashtags_without_foreach ($con,string $hashtag, int $post_id) {
             print("Ошибка MySQL: " . $error);
         }
 }
+
+
+
+
