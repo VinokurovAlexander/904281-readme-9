@@ -43,7 +43,7 @@ function checking_image_type(string $file_name, bool $isFromClient = true) : boo
  * @return string Перенаправляет на страницу с постом, иначе показывает ошибку связанную с загрузкой данных в БД
  */
 
-function add_img_post ($con, string $file_name,string $photo_heading,bool $isFromClient = true ) :string  {
+function add_img_post ($con, string $file_name,string $photo_heading,int $post_id,bool $isFromClient = true ) :string  {
     $path = 'uploads/' . uniqid();
 
     if ($isFromClient) {
@@ -60,9 +60,8 @@ function add_img_post ($con, string $file_name,string $photo_heading,bool $isFro
     $res = mysqli_stmt_execute($stmt);
 
     if ($res) {
-        $post_id = mysqli_insert_id($con);
+//        $post_id = mysqli_insert_id($con);
         header("Location: /post.php/?post_id=" . $post_id);
-        exit;
     }
 
     else {
@@ -97,7 +96,7 @@ function get_hashtags ($con,int $current_ct_id, array $post ) {
 }
 
 /**
- * Добавляет хэштеги в БД
+ * Проверяет и добавляет хэштеги в БД
  **
  * @param $con соединение с БД
  * @param string $hashtag Хэштег, полученный из формы
@@ -106,37 +105,46 @@ function get_hashtags ($con,int $current_ct_id, array $post ) {
  * @return
  */
 
-function add_hashtags_without_foreach ($con,string $hashtag, int $post_id) {
+function add_hashtags($con,string $hashtag, int $post_id) {
+    //Получаем все необходимые тэги и проверяем их наличие в базе.
+    // Если каких-то нет, то добавляем и получаем их идшники.
+    // Если есть то просто получаем их идшники.
+
+    $get_hashtag_id_sql = "SELECT hashtag_id FROM hashtags h WHERE h.name = '$hashtag'";
+    $get_hashtag_id_result = mysqli_query($con,$get_hashtag_id_sql);
+    $get_hashtag_id_array = mysqli_fetch_all($get_hashtag_id_result, MYSQLI_ASSOC);
+
+
+    if (!empty($get_hashtag_id_array)) {
+        $get_hashtag_id = $get_hashtag_id_array[0]['hashtag_id'];
+    }
+    else {
+
         //Добавляем данные в таблицу hashtags
         $hashtag_add_sql = "INSERT INTO hashtags(name) VALUES (?)";
-        $stmt = db_get_prepare_stmt($con, $hashtag_add_sql, [$hashtag]);
+        $stmt = db_get_prepare_stmt($con,$hashtag_add_sql,[$hashtag]);
         $res = mysqli_stmt_execute($stmt);
 
         if ($res) {
-            //Получем id хэштегов
-            $hashtag_id_sql = "SELECT hashtag_id FROM hashtags h WHERE h.name = '$hashtag'";
-            $hashtag_id_result = mysqli_query($con,$hashtag_id_sql);
-            $hashtag_id_array = mysqli_fetch_all($hashtag_id_result, MYSQLI_ASSOC);
-            $hashtag_id = $hashtag_id_array[0]['hashtag_id'];
-
-            //Добавляем данные в таблицу posts-hashtags
-            $hashtags_post_add_sql = 'INSERT INTO posts_hashtags(post_id,hashtag_id) VALUES (?,?)';
-            $stmt = db_get_prepare_stmt($con, $hashtags_post_add_sql, [$post_id, $hashtag_id]);
-            $res = mysqli_stmt_execute($stmt);
-
-            if ($res) {
-                return $result = true;
-            } else {
-                $error = mysqli_error($con);
-                print("Ошибка MySQL: " . $error);
-            }
-
-        } else {
-            $error = mysqli_error($con);
-            print("Ошибка MySQL: " . $error);
+            $get_hashtag_id = mysqli_insert_id($con);
         }
+        else {
+            $error = mysqli_error($con);
+            print('Ошибка MySQL: ' . $error . '<br>');
+        }
+    }
+
+    //Получили id, добавляем в таблицу posts_hashtags
+    $hashtags_post_add_sql = 'INSERT INTO posts_hashtags(post_id,hashtag_id) VALUES (?,?)';
+    $stmt = db_get_prepare_stmt($con,$hashtags_post_add_sql,[$post_id,$get_hashtag_id]);
+    $res = mysqli_stmt_execute($stmt);
+
+    if ($res) {
+        return true;
+    }
+    else {
+        $error = mysqli_error($con);
+        print("Ошибка MySQL: " . $error);
+    }
+
 }
-
-
-
-

@@ -54,7 +54,7 @@ else {
         }
 
 
-        //Проверяем Форму заполнения поста "Текст"------------------------------------------------------------------------------------
+//------Проверяем Форму заполнения поста "Текст"------------------------------------------------------------------------------------
         if ($get_ct_id == 1) {
             if(empty($errors)) {
 
@@ -68,120 +68,16 @@ else {
                     $post_id = mysqli_insert_id($con);
                     $hashtags = get_hashtags($con, $get_ct_id, $post);
 
-//                    Рабочий код на добавление хэштегов
                     foreach ($hashtags as $hashtag) {
-
-                        //Получаем все необходимые тэги и проверяем их наличие в базе.
-                        // Если каких-то нет, то добавляем и получаем их идшники.
-                        // Если есть то просто получаем их идшники.
-
-                        $get_hashtag_id_sql = "SELECT hashtag_id FROM hashtags h WHERE h.name = '$hashtag'";
-                        $get_hashtag_id_result = mysqli_query($con,$get_hashtag_id_sql);
-                        $get_hashtag_id_array = mysqli_fetch_all($get_hashtag_id_result, MYSQLI_ASSOC);
-
-
-                        if (!empty($get_hashtag_id_array)) {
-                            $get_hashtag_id = $get_hashtag_id_array[0]['hashtag_id'];
-                            print($hashtag . ' hashtag_id = ' .$get_hashtag_id . '<br>');
-                        }
-                        else {
-                            print($hashtag . ' - такого хэштега нет!' . '<br>');
-
-                            //Добавляем данные в таблицу hashtags
-                            $hashtag_add_sql = "INSERT INTO hashtags(name) VALUES (?)";
-                            $stmt = db_get_prepare_stmt($con,$hashtag_add_sql,[$hashtag]);
-                            $res = mysqli_stmt_execute($stmt);
-
-                            if ($res) {
-                                $get_hashtag_id = mysqli_insert_id($con);
-                                print('Новый хэштег с id=' . $get_hashtag_id . ' добавлен' . '<br>');
-                            }
-                            else {
-                                $error = mysqli_error($con);
-                                print('Ошибка MySQL: ' . $error . '<br>');
-                            }
-                        }
-
-                        print('В итоге: ' . $get_hashtag_id . '<br>');
-
-                        //Получили id, добавляем в таблицу posts_hashtags
-                        $hashtags_post_add_sql = 'INSERT INTO posts_hashtags(post_id,hashtag_id) VALUES (?,?)';
-                        $stmt = db_get_prepare_stmt($con,$hashtags_post_add_sql,[$post_id,$get_hashtag_id]);
-                        $res = mysqli_stmt_execute($stmt);
-
-                        if ($res) {
-                            print('Данные добавлены в таблицу posts-hashtags' . '<br>');
+                        //Добавление хэштегов
+                        if (add_hashtags($con,$hashtag,$post_id)) {
+                            header("Location: /post.php/?post_id=" . $post_id);
                         }
                         else {
                             $error = mysqli_error($con);
-                            print("Ошибка MySQL: " . $error);
+                            print("Ошибка MySQL: " . $error . '<br>');
                         }
-                        print('<br>');
-
-
-
-
-
-                        //Добавляем данные в таблицу hashtags
-//                        $hashtag_add_sql = "INSERT INTO hashtags(name) VALUES (?)";
-//                        $stmt = db_get_prepare_stmt($con,$hashtag_add_sql,[$hashtag]);
-//                        $res = mysqli_stmt_execute($stmt);
-
-//                        if ($res) {
-                            //Получем id хэштегов
-//                            $hashtag_id_sql = "SELECT hashtag_id FROM hashtags h WHERE h.name = '$hashtag'";
-//                            $hashtag_id_result = mysqli_query($con,$hashtag_id_sql);
-//                            $hashtag_id_array = mysqli_fetch_all($hashtag_id_result, MYSQLI_ASSOC);
-//                            $hashtag_id = $hashtag_id_array[0]['hashtag_id'];
-
-                            //Добавляем данные в таблицу posts-hashtags
-//                            $hashtags_post_add_sql = 'INSERT INTO posts_hashtags(post_id,hashtag_id) VALUES (?,?)';
-//                            $stmt = db_get_prepare_stmt($con,$hashtags_post_add_sql,[$post_id,$hashtag_id]);
-//                            $res = mysqli_stmt_execute($stmt);
-//
-//                            if($res) {
-//                                print('данные добавлены в таблицу posts-hashtags' . '<br>');
-//                            }
-//                            else {
-//                                $error = mysqli_error($con);
-//                                print("Ошибка MySQL: " . $error);
-//                            }
-//                        }
-//                        else {
-//                            $error = mysqli_error($con);
-//                            print("Ошибка MySQL: " . $error);
-//
-//                        }
                     }
-
-
-
-
-                    // РАБОТАЕТ!!!
-//                    foreach ($hashtags as $hashtag) {
-//                        if (add_hashtags_without_foreach($con,$hashtag,$post_id)) {
-//                            print('Данные добавлены успешно' . '<br>');
-//                        }
-//                        else {
-//                            print('Данные НЕ добавлены' . '<br>');
-//
-//                            $error = mysqli_error($con);
-//                            print("Ошибка MySQL: " . $error . '<br>');
-//                        }
-//                    }
-
-
-
-
-                    // С условием
-//                    if (add_hashtags($con,$hashtags,$post_id)) {
-//                        header("Location: /post.php/?post_id=" . $post_id);
-//                        exit;
-//                    }
-//                    else {
-//                        $error = mysqli_error($con);
-//                        print("Ошибка MySQL: " . $error);
-//                    }
                 }
                 else {
                     $post_add_sql_error = include_template('error.php', [
@@ -191,7 +87,7 @@ else {
             }
         }
 
-        //Проверяем Форму заполнения поста "Цитата"------------------------------------------------------------------------------------
+//------Проверяем Форму заполнения поста "Цитата"------------------------------------------------------------------------------------
         if ($get_ct_id == 2) {
             if(empty($errors)) {
                 //Добавляем данные поста в БД
@@ -203,9 +99,17 @@ else {
                     //Публикация поста
                     $post_id = mysqli_insert_id($con);
                     $hashtags = get_hashtags($con,$get_ct_id,$post);
-                    add_hashtags($con,$hashtags,$post_id);
-                    header("Location: /post.php/?post_id=" . $post_id);
-                    exit;
+
+                    foreach ($hashtags as $hashtag) {
+                        //Добавление хэштегов
+                        if (add_hashtags($con,$hashtag,$post_id)) {
+                            header("Location: /post.php/?post_id=" . $post_id);
+                        }
+                        else {
+                            $error = mysqli_error($con);
+                            print("Ошибка MySQL: " . $error . '<br>');
+                        }
+                    }
                 }
                 else {
                     $post_add_sql_error = include_template('error.php',[
@@ -216,7 +120,7 @@ else {
         }
 
 
-        //Проверяем Форму заполнения поста "Картинка"------------------------------------------------------------------------------------
+//------Проверяем Форму заполнения поста "Картинка"------------------------------------------------------------------------------------
         if ($get_ct_id == 3) {
 
             if (empty($_FILES['userpic-file-photo']['name'])) {
@@ -239,28 +143,52 @@ else {
                 //Проверка типа загружаемой картинки
                 if (checking_image_type($tmp_name)) {
                     if (empty($errors)) {
-                        add_img_post($con,$tmp_name,$post['photo-heading']);
+
+                        //Добавляем пост
+                        move_uploaded_file($tmp_name, $path);
+
+                        $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id)
+                        VALUES (NOW(),?,1,?,3)';
+                        $stmt = db_get_prepare_stmt($con,$post_add_sql,[$post['photo-heading'], $path]);
+                        $res = mysqli_stmt_execute($stmt);
+
+                        if ($res) {
+                            $post_id = mysqli_insert_id($con);
+
+                            //Добавляем хэштеги
+                            $hashtags = get_hashtags($con,$get_ct_id,$post);
+
+                            foreach ($hashtags as $hashtag) {
+                                if (add_hashtags($con,$hashtag,$post_id)) {
+                                    header("Location: /post.php/?post_id=" . $post_id);
+                                }
+                                else {
+                                    $error = mysqli_error($con);
+                                    print("Ошибка MySQL: " . $error . '<br>');
+                                }
+                            }
+                        }
+                        else {
+                            $post_add_sql_error = include_template('error.php', [
+                                'error' => mysqli_error($con)
+                            ]);
+                        }
                     }
                 }
-
                 else {
                     $errors['userpic-file-photo'] = [
                         'field_name_rus' => 'Выбрать фото',
                         'error_title' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
                     ];
                 }
-
             }
 
 //----------Изображение загружено через поле "Ссылка из интернета" ----------------------------------------------------
             if ($photo_link_from_internet) {
                 unset($errors['userpic-file-photo']);
 
-                // Получаем ссылку на изображение из метода POST
-                $photo_link = $_POST['photo-link'];
-
                 //Проверяем корректно ли указана ссылка на изображение
-                if (!filter_var($photo_link, FILTER_VALIDATE_URL)) {
+                if (!filter_var($photo_link_from_internet, FILTER_VALIDATE_URL)) {
                     $errors['photo-link'] = [
                         'field_name_rus' => 'Ссылка из интернета',
                         'error_title' => 'Неверно указана ссылка на изображение',
@@ -270,17 +198,45 @@ else {
                 }
                 else {
                     //Загружаем изображение в переменную
-                    $get_image = file_get_contents($photo_link);
+                    $get_image = file_get_contents($photo_link_from_internet);
 
                     if ($get_image !== FALSE) {
 
                         //Проверка типа загружаемой картинки
                         if (checking_image_type($get_image,false)) {
                             if (empty($errors)) {
-                                add_img_post($con,$get_image,$post['photo-heading'],false);
+
+                                //Публикуем пост
+                                file_put_contents($path,$get_image);
+
+                                $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id)
+                        VALUES (NOW(),?,1,?,3)';
+                                $stmt = db_get_prepare_stmt($con,$post_add_sql,[$post['photo-heading'], $path]);
+                                $res = mysqli_stmt_execute($stmt);
+
+                                if ($res) {
+                                    $post_id = mysqli_insert_id($con);
+
+                                    //Добавляем хэштеги
+                                    $hashtags = get_hashtags($con,$get_ct_id,$post);
+
+                                    foreach ($hashtags as $hashtag) {
+                                        if (add_hashtags($con,$hashtag,$post_id)) {
+                                        header("Location: /post.php/?post_id=" . $post_id);
+                                        }
+                                        else {
+                                            $error = mysqli_error($con);
+                                            print("Ошибка MySQL: " . $error . '<br>');
+                                        }
+                                    }
+                                }
+                                else {
+                                    $post_add_sql_error = include_template('error.php', [
+                                        'error' => mysqli_error($con)
+                                    ]);
+                                }
                             }
                         }
-
                         else {
                             $errors['photo-link'] = [
                                 'field_name_rus' => 'Ссылка из интернета',
@@ -299,7 +255,7 @@ else {
                 }
             }
         }
-        //Проверяем Форму заполнения поста "Видео"------------------------------------------------------------------------------------
+//------Проверяем Форму заполнения поста "Видео"------------------------------------------------------------------------------------
         if ($get_ct_id == 4) {
             //Получаем ссылку на видео из метода POST
             $video_link = $_POST['video-link'];
@@ -333,11 +289,18 @@ else {
                                 //Публикация поста
                                 $post_id = mysqli_insert_id($con);
                                 $hashtags = get_hashtags($con,$get_ct_id,$post);
-                                add_hashtags($con,$hashtags,$post_id);
-                                header("Location: /post.php/?post_id=" . $post_id);
-                                exit;
-                            }
 
+                                //Добавление хэштегов
+                                foreach ($hashtags as $hashtag) {
+                                    if (add_hashtags($con,$hashtag,$post_id)) {
+                                        header("Location: /post.php/?post_id=" . $post_id);
+                                    }
+                                    else {
+                                        $error = mysqli_error($con);
+                                        print("Ошибка MySQL: " . $error . '<br>');
+                                    }
+                                }
+                            }
                             else {
                                 $post_add_sql_error = include_template('error.php',[
                                     'error' => mysqli_error($con)
@@ -356,7 +319,7 @@ else {
 
             }
 
-        //Проверяем Форму заполнения поста "Ссылка"------------------------------------------------------------------------------------
+//------Проверяем Форму заполнения поста "Ссылка"------------------------------------------------------------------------------------
         if ($get_ct_id == 5) {
             $link = $post['post-link'];
 
@@ -378,9 +341,18 @@ else {
                             //Публикация поста
                             $post_id = mysqli_insert_id($con);
                             $hashtags = get_hashtags($con,$get_ct_id,$post);
-                            add_hashtags($con,$hashtags,$post_id);
-                            header("Location: /post.php/?post_id=" . $post_id);
-                            exit;
+
+                            //Добавление хэштегов
+                            foreach ($hashtags as $hashtag) {
+                                if (add_hashtags($con,$hashtag,$post_id)) {
+                                    header("Location: /post.php/?post_id=" . $post_id);
+                                }
+                                else {
+                                    $error = mysqli_error($con);
+                                    print("Ошибка MySQL: " . $error . '<br>');
+                                }
+                            }
+
                         } else {
                             $post_add_sql_error = include_template('error.php', [
                                 'error' => mysqli_error($con)
