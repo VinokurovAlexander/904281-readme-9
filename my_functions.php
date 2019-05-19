@@ -100,52 +100,13 @@ function get_hashtags ($con,int $current_ct_id, array $post ) {
  * Добавляет хэштеги в БД
  **
  * @param $con соединение с БД
- * @param array $hashtags Массив с хэштегами
+ * @param string $hashtag Хэштег, полученный из формы
  * @param int $post_id текущий post id
  *
  * @return
  */
 
-
-//function add_hashtags ($con,array $hashtags, int $post_id) {
-//    foreach ($hashtags as $hashtag) {
-//        //Добавляем данные в таблицу hashtags
-//        $hashtag_add_sql = "INSERT INTO hashtags(name) VALUES (?)";
-//        $stmt = db_get_prepare_stmt($con,$hashtag_add_sql,[$hashtag]);
-//        $res = mysqli_stmt_execute($stmt);
-//
-//        if ($res) {
-//            //Получем id хэштегов
-//            $hashtag_id_sql = "SELECT hashtag_id FROM hashtags h WHERE h.name = '$hashtag'";
-//            $hashtag_id_result = mysqli_query($con,$hashtag_id_sql);
-//            $hashtag_id_array = mysqli_fetch_all($hashtag_id_result, MYSQLI_ASSOC);
-//            $hashtag_id = $hashtag_id_array[0]['hashtag_id'];
-//
-//            //Добавляем данные в таблицу posts-hashtags
-//            $hashtags_post_add_sql = 'INSERT INTO posts_hashtags(post_id,hashtag_id) VALUES (?,?)';
-//            $stmt = db_get_prepare_stmt($con,$hashtags_post_add_sql,[$post_id,$hashtag_id]);
-//            $res = mysqli_stmt_execute($stmt);
-//
-//            if($res) {
-//                $result = true;
-//            }
-//            else {
-//                $result = include_template('error.php',[
-//                    'error' => mysqli_error($con)
-//                ]);
-//            }
-//        }
-//        else {
-//            $result = include_template('error.php',[
-//                'error' => mysqli_error($con)
-//            ]);
-//        }
-//        return $result;
-//    }
-//}
-
-function add_hashtags ($con,array $hashtags, int $post_id) {
-    foreach ($hashtags as $hashtag) {
+function add_hashtags_without_foreach ($con,string $hashtag, int $post_id) {
         //Добавляем данные в таблицу hashtags
         $hashtag_add_sql = "INSERT INTO hashtags(name) VALUES (?)";
         $stmt = db_get_prepare_stmt($con, $hashtag_add_sql, [$hashtag]);
@@ -169,10 +130,9 @@ function add_hashtags ($con,array $hashtags, int $post_id) {
                 $error = mysqli_error($con);
                 print("Ошибка MySQL: " . $error);
             }
+
         } else {
             $error = mysqli_error($con);
             print("Ошибка MySQL: " . $error);
         }
-
-    }
 }

@@ -69,20 +69,41 @@ else {
                     $hashtags = get_hashtags($con, $get_ct_id, $post);
 
 //                    Рабочий код на добавление хэштегов
-//                    foreach ($hashtags as $hashtag) {
-//                        //Добавляем данные в таблицу hashtags
+                    foreach ($hashtags as $hashtag) {
+
+                        //Получаем все необходимые тэги и проверяем их наличие в базе.
+                        // Если каких-то нет, то добавляем и получаем их идшники.
+                        // Если есть то просто получаем их идшники.
+
+                        $get_hashtag_id_sql = "SELECT hashtag_id FROM hashtags h WHERE h.name = '$hashtag'";
+                        $get_hashtag_id_result = mysqli_query($con,$get_hashtag_id_sql);
+                        $get_hashtag_id_array = mysqli_fetch_all($get_hashtag_id_result, MYSQLI_ASSOC);
+
+
+                        if (!empty($get_hashtag_id_array)) {
+                            $get_hashtag_id = $get_hashtag_id_array[0]['hashtag_id'];
+                            print($hashtag . ' hashtag_id = ' .$get_hashtag_id . '<br>');
+
+                        }
+                        else {
+                            print($hashtag . ' - такого хэштега нет!' . '<br>');
+                        }
+
+
+
+                        //Добавляем данные в таблицу hashtags
 //                        $hashtag_add_sql = "INSERT INTO hashtags(name) VALUES (?)";
 //                        $stmt = db_get_prepare_stmt($con,$hashtag_add_sql,[$hashtag]);
 //                        $res = mysqli_stmt_execute($stmt);
-//
+
 //                        if ($res) {
-//                            //Получем id хэштегов
+                            //Получем id хэштегов
 //                            $hashtag_id_sql = "SELECT hashtag_id FROM hashtags h WHERE h.name = '$hashtag'";
 //                            $hashtag_id_result = mysqli_query($con,$hashtag_id_sql);
 //                            $hashtag_id_array = mysqli_fetch_all($hashtag_id_result, MYSQLI_ASSOC);
 //                            $hashtag_id = $hashtag_id_array[0]['hashtag_id'];
-//
-//                            //Добавляем данные в таблицу posts-hashtags
+
+                            //Добавляем данные в таблицу posts-hashtags
 //                            $hashtags_post_add_sql = 'INSERT INTO posts_hashtags(post_id,hashtag_id) VALUES (?,?)';
 //                            $stmt = db_get_prepare_stmt($con,$hashtags_post_add_sql,[$post_id,$hashtag_id]);
 //                            $res = mysqli_stmt_execute($stmt);
@@ -100,16 +121,36 @@ else {
 //                            print("Ошибка MySQL: " . $error);
 //
 //                        }
+                    }
+
+
+
+
+                    // РАБОТАЕТ!!!
+//                    foreach ($hashtags as $hashtag) {
+//                        if (add_hashtags_without_foreach($con,$hashtag,$post_id)) {
+//                            print('Данные добавлены успешно' . '<br>');
+//                        }
+//                        else {
+//                            print('Данные НЕ добавлены' . '<br>');
+//
+//                            $error = mysqli_error($con);
+//                            print("Ошибка MySQL: " . $error . '<br>');
+//                        }
 //                    }
 
-                    if (add_hashtags($con,$hashtags,$post_id)) {
-                        header("Location: /post.php/?post_id=" . $post_id);
-                        exit;
-                    }
-                    else {
-                        $error = mysqli_error($con);
-                        print("Ошибка MySQL: " . $error);
-                    }
+
+
+
+                    // С условием
+//                    if (add_hashtags($con,$hashtags,$post_id)) {
+//                        header("Location: /post.php/?post_id=" . $post_id);
+//                        exit;
+//                    }
+//                    else {
+//                        $error = mysqli_error($con);
+//                        print("Ошибка MySQL: " . $error);
+//                    }
                 }
                 else {
                     $post_add_sql_error = include_template('error.php', [
