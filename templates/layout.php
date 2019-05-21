@@ -22,6 +22,7 @@
                 micro blogging
             </p>
         </div>
+        <?php if ($is_auth == 1): ?>
         <form class="header__search-form form" action="#" method="get">
             <div class="header__search">
                 <label class="visually-hidden">Поиск</label>
@@ -34,10 +35,12 @@
                 </button>
             </div>
         </form>
+        <?php endif; ?>
         <div class="header__nav-wrapper">
             <!-- здесь должен быть PHP код, который показывает следующий тег по условию -->
-            <?php if ($is_auth == 1): ?>
+
                 <nav class="header__nav">
+                    <?php if ($is_auth == 1): ?>
                     <ul class="header__my-nav">
                         <li class="header__my-page header__my-page--popular">
                             <a class="header__page-link header__page-link--active" title="Популярный контент" href="/">
@@ -55,8 +58,10 @@
                             </a>
                         </li>
                     </ul>
+                    <?php endif; ?>
                     <!-- здесь должен быть PHP код, который показывает следующий тег по условию -->
                     <ul class="header__user-nav">
+                        <?php if ($is_auth == 1): ?>
                         <li class="header__profile">
                             <a class="header__profile-link" href="#">
                                 <div class="header__avatar-wrapper">
@@ -111,9 +116,18 @@
                         <li>
                             <a class="header__post-button button button--transparent" href="add.php/?content_type_id=1">Пост</a>
                         </li>
+                        <?php endif; ?>
+                        <?php if ($is_auth == 0): ?>
+                            <li class="header__authorization">
+                                <a class="header__user-button header__authorization-button button" href="login.html">Вход</a>
+                            </li>
+                            <li>
+                                <a class="header__user-button header__user-button--active header__register-button button">Регистрация</a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </nav>
-            <?php endif; ?>
+
         </div>
     </div>
 </header>
