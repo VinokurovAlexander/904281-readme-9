@@ -1,4 +1,8 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
  *
@@ -9,7 +13,7 @@
  * is_date_valid('10.10.2010'); // false
  * is_date_valid('10/10/2010'); // false
  *
- * @param string $date Дата в виде строки
+ * @param string $date Тип файла в виде строки,
  *
  * @return bool true при совпадении с форматом 'ГГГГ-ММ-ДД', иначе false
  */
@@ -153,7 +157,7 @@ function check_youtube_url($youtube_url) {
     $id = extract_youtube_id($youtube_url);
 
     if ($id) {
-        $api_data = ['id' => $id, 'part' => 'id,status', 'key' => 'AIzaSyC-n4aQQk0mZrZNsfswKcaljExfM1UG57c'];
+        $api_data = ['id' => $id, 'part' => 'id,status', 'key' => 'AIzaSyDkxJIV293lh3sfvW4GEi3WRVUvEQml_Mc'];
         $url = "https://www.googleapis.com/youtube/v3/videos?" . http_build_query($api_data);
 
         $resp = file_get_contents($url);

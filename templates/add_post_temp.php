@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>readme: публикация</title>
+    <title>readme: добавление публикации</title>
     <link rel="stylesheet" href="../css/main.css">
 </head>
 <body class="page">
@@ -15,7 +15,7 @@
 <header class="header">
     <div class="header__wrapper container">
         <div class="header__logo-wrapper">
-            <a class="header__logo-link" href="../main.html">
+            <a class="header__logo-link" href="main.html">
                 <img class="header__logo" src="../img/logo.svg" alt="Логотип readme" width="128" height="24">
             </a>
             <p class="header__topic">
@@ -38,7 +38,7 @@
             <nav class="header__nav">
                 <ul class="header__my-nav">
                     <li class="header__my-page header__my-page--popular">
-                        <a class="header__page-link header__page-link--active" href="/" title="Популярный контент">
+                        <a class="header__page-link" href="/" title="Популярный контент">
                             <span class="visually-hidden">Популярный контент</span>
                         </a>
                     </li>
@@ -103,7 +103,7 @@
                         </div>
                     </li>
                     <li>
-                        <a class="header__post-button button button--transparent" href="/add.php/?content_type_id=1">Пост</a>
+                        <a class="header__post-button header__post-button--active button button--transparent" href="#">Закрыть</a>
                     </li>
                 </ul>
             </nav>
@@ -111,177 +111,32 @@
     </div>
 </header>
 
-<main class="page__main page__main--publication">
-    <div class="container">
-        <?php foreach ($posts_rows as $k => $v): ?>
-        <h1 class="page__title page__title--publication"><?=$v['title'];?></h1>
-        <section class="post-details">
-            <h2 class="visually-hidden">Публикация</h2>
-            <div class="post-details__wrapper post-photo">
-                <div class="post-details__main-block post post--details">
-                    <?php if ($v['content_type'] == 'Картинка' ) :?>
-                    <div class="post-details__image-wrapper post-photo__image-wrapper">
-                        <img src="/<?=$v['img']?>" alt="Фото от пользователя" width="760" height="507">
-                    </div>
-                    <?php elseif ($v['content_type'] == 'Цитата' ) :?>
-                    <div class="post-details__image-wrapper post-quote">
-                        <div class="post__main">
-                            <blockquote>
-                                <p>
-                                    <?=htmlspecialchars($v['text'])?>
-                                </p>
-                                <cite><?=htmlspecialchars($v['quote_author'])?></cite>
-                            </blockquote>
-                        </div>
-                    </div>
-                    <?php elseif ($v['content_type'] == 'Ссылка' ) :?>
-                    <div class="post__main">
-                        <div class="post-link__wrapper">
-                            <a class="post-link__external" href="<?=htmlspecialchars($v['link'])?>" title="Перейти по ссылке">
-                                <div class="post-link__info-wrapper">
-                                    <div class="post-link__icon-wrapper">
-                                        <img src="../img/logo-vita.jpg" alt="Иконка">
-                                    </div>
-                                    <div class="post-link__info">
-                                        <h3><?=htmlspecialchars($v['title'])?></h3>
-                                        <p><?=htmlspecialchars($v['text'])?></p>
-                                    </div>
-                                </div>
-                                <span><?=htmlspecialchars($v['link'])?></span>
-                            </a>
-                        </div>
-                    </div>
-                    <?php elseif ($v['content_type'] == 'Текст' ) :?>
-                        <div class="post-details__image-wrapper post-text">
-                            <div class="post__main">
-                                <p>
-                                    <?=htmlspecialchars($v['text'])?>
-                                </p>
-                            </div>
-                        </div>
-                    <?php elseif ($v['content_type'] == 'Видео' ) :?>
-                        <iframe width="760" height="400" src="<?=$v['video']?>" frameborder="0"></iframe>
-                    <?php endif; ?>
-                    <div class="post__indicators">
-                        <div class="post__buttons">
-                            <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
-                                <svg class="post__indicator-icon" width="20" height="17">
-                                    <use xlink:href="#icon-heart"></use>
+<main class="page__main page__main--adding-post">
+    <div class="page__main-section">
+        <div class="container">
+            <h1 class="page__title page__title--adding-post">Добавить публикацию</h1>
+        </div>
+        <div class="adding-post container">
+            <div class="adding-post__tabs-wrapper tabs">
+                <div class="adding-post__tabs filters">
+                    <ul class="adding-post__tabs-list filters__list tabs__list">
+                        <?php foreach ($ct_all_rows as $k => $v): ?>
+                        <li class="adding-post__tabs-item filters__item">
+                            <a class="adding-post__tabs-link filters__button filters__button--<?=$v['icon_class'];?>  tabs__item tabs__item--active button
+                               <?php if ($get_ct_id == $v['content_type_id']) {echo "filters__button--active";} ?>"
+                               href="/add.php/?content_type_id=<?=$v['content_type_id'];?>">
+                                <svg class="filters__icon" width="22" height="18">
+                                    <use xlink:href="#icon-filter-<?=$v['icon_class'];?>"></use>
                                 </svg>
-                                <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
-                                    <use xlink:href="#icon-heart-active"></use>
-                                </svg>
-                                <span>250</span>
-                                <span class="visually-hidden">количество лайков</span>
+                                <span><?=$v['content_type'];?></span>
                             </a>
-                            <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
-                                <svg class="post__indicator-icon" width="19" height="17">
-                                    <use xlink:href="#icon-comment"></use>
-                                </svg>
-                                <span>25</span>
-                                <span class="visually-hidden">количество комментариев</span>
-                            </a>
-                            <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
-                                <svg class="post__indicator-icon" width="19" height="17">
-                                    <use xlink:href="#icon-repost"></use>
-                                </svg>
-                                <span>5</span>
-                                <span class="visually-hidden">количество репостов</span>
-                            </a>
-                        </div>
-                        <span class="post__view">500 просмотров</span>
-                    </div>
-                    <div class="comments">
-                        <form class="comments__form form" action="#" method="post">
-                            <div class="comments__my-avatar">
-                                <img class="comments__picture" src="../img/userpic.jpg" alt="Аватар пользователя">
-                            </div>
-                            <textarea class="comments__textarea form__textarea" placeholder="Ваш комментарий"></textarea>
-                            <label class="visually-hidden">Ваш комментарий</label>
-                            <button class="comments__submit button button--green" type="submit">Отправить</button>
-                        </form>
-                        <div class="comments__list-wrapper">
-                            <ul class="comments__list">
-                                <li class="comments__item user">
-                                    <div class="comments__avatar">
-                                        <a class="user__avatar-link" href="#">
-                                            <img class="comments__picture" src="../img/userpic-larisa.jpg" alt="Аватар пользователя">
-                                        </a>
-                                    </div>
-                                    <div class="comments__info">
-                                        <div class="comments__name-wrapper">
-                                            <a class="comments__user-name" href="#">
-                                                <span>Лариса Роговая</span>
-                                            </a>
-                                            <time class="comments__time" datetime="2019-03-20">1 ч назад</time>
-                                        </div>
-                                        <p class="comments__text">
-                                            Красота!!!1!
-                                        </p>
-                                    </div>
-                                </li>
-                                <li class="comments__item user">
-                                    <div class="comments__avatar">
-                                        <a class="user__avatar-link" href="#">
-                                            <img class="comments__picture" src="../img/userpic-larisa.jpg" alt="Аватар пользователя">
-                                        </a>
-                                    </div>
-                                    <div class="comments__info">
-                                        <div class="comments__name-wrapper">
-                                            <a class="comments__user-name" href="#">
-                                                <span>Лариса Роговая</span>
-                                            </a>
-                                            <time class="comments__time" datetime="2019-03-18">2 дня назад</time>
-                                        </div>
-                                        <p class="comments__text">
-                                            Озеро Байкал – огромное древнее озеро в горах Сибири к северу от монгольской границы. Байкал считается самым глубоким озером в мире. Он окружен сетью пешеходных маршрутов, называемых Большой байкальской тропой. Деревня Листвянка, расположенная на западном берегу озера, – популярная отправная точка для летних экскурсий. Зимой здесь можно кататься на коньках и собачьих упряжках.
-                                        </p>
-                                    </div>
-                                </li>
-                            </ul>
-                            <a class="comments__more-link" href="#">
-                                <span>Показать все комментарии</span>
-                                <sup class="comments__amount">45</sup>
-                            </a>
-                        </div>
-                    </div>
+                        </li>
+                        <?php endforeach;?>
+                    </ul>
                 </div>
-                <div class="post-details__user user">
-                    <div class="post-details__user-info user__info">
-                        <div class="post-details__avatar user__avatar">
-                            <a class="post-details__avatar-link user__avatar-link" href="#">
-                                <img class="post-details__picture user__picture" src="../img/<?=$v['avatar_path']?>" alt="Аватар пользователя">
-                            </a>
-                        </div>
-                        <div class="post-details__name-wrapper user__name-wrapper">
-                            <a class="post-details__name user__name" href="#">
-                                <span><?=htmlspecialchars($v['user_name'])?></span>
-                            </a>
-                            <time class="post-details__time user__time" datetime="2014-03-20">5 лет на сайте</time>
-                        </div>
-                    </div>
-                    <div class="post-details__rating user__rating">
-                        <p class="post-details__rating-item user__rating-item user__rating-item--subscribers">
-                            <span class="post-details__rating-amount user__rating-amount">
-                                <?=$user_followers_count?>
-                            </span>
-                            <span class="post-details__rating-text user__rating-text">подписчиков</span>
-                        </p>
-                        <p class="post-details__rating-item user__rating-item user__rating-item--publications">
-                            <span class="post-details__rating-amount user__rating-amount">
-                                <?=$user_post_count ?>
-                                </span>
-                            <span class="post-details__rating-text user__rating-text">публикаций</span>
-                        </p>
-                    </div>
-                    <div class="post-details__user-buttons user__buttons">
-                        <button class="user__button user__button--subscription button button--main" type="button">Подписаться</button>
-                        <a class="user__button user__button--writing button button--green" href="#">Сообщение</a>
-                    </div>
-                </div>
+                    <?=$post_add;?>
             </div>
-        </section>
-        <?php endforeach; ?>
+        </div>
     </div>
 </main>
 
@@ -321,7 +176,7 @@
                         <a class="footer__page-link" href="feed.html">Моя лента</a>
                     </li>
                     <li class="footer__my-page footer__my-page--popular">
-                        <a class="footer__page-link" href="popular.html">Популярный контент</a>
+                        <a class="footer__page-link" href="/">Популярный контент</a>
                     </li>
                     <li class="footer__my-page footer__my-page--messages">
                         <a class="footer__page-link" href="messages.html">Личные сообщения</a>
@@ -340,6 +195,28 @@
     </div>
 </footer>
 
+<div class="modal modal--adding">
+    <div class="modal__wrapper">
+        <button class="modal__close-button button" type="button">
+            <svg class="modal__close-icon" width="18" height="18">
+                <use xlink:href="#icon-close"></use>
+            </svg>
+            <span class="visually-hidden">Закрыть модальное окно</span></button>
+        <div class="modal__content">
+            <h1 class="modal__title">Пост добавлен</h1>
+            <p class="modal__desc">
+                Озеро Байкал – огромное древнее озеро в горах Сибири к северу от монгольской границы. Байкал считается самым глубоким озером в мире. Он окружен сефтью пешеходных маршрутов, называемых Большой байкальской тропой. Деревня Листвянка, расположенная на западном берегу озера, – популярная отправная точка для летних экскурсий.
+            </p>
+            <div class="modal__buttons">
+                <a class="modal__button button button--main" href="#">Синяя кнопка</a>
+                <a class="modal__button button button--gray" href="#">Серая кнопка</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="libs/dropzone.js"></script>
+<script src="js/dropzone-settings.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

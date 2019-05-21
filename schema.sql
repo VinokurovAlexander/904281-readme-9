@@ -31,6 +31,7 @@ CREATE TABLE posts (
     title CHAR(64),
     text TEXT,
     user_id INT,
+    quote_author CHAR(64),
     img CHAR(128),
     video CHAR(128),
     link CHAR(128),
@@ -81,6 +82,21 @@ CREATE TABLE messages (
     CONSTRAINT messages_users PRIMARY KEY (mes_sender_id,mes_res_id),
     FOREIGN KEY (mes_sender_id) REFERENCES users(user_id),
     FOREIGN KEY (mes_res_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE rf_rus (
+    rf_rus_id INT AUTO_INCREMENT PRIMARY KEY,
+    field_name_rus CHAR(64)
+);
+
+
+CREATE TABLE required_fields (
+    rf_id INT AUTO_INCREMENT PRIMARY KEY,
+    field_name CHAR(64),
+    content_type_id INT,
+    fd_rus_id INT,
+    FOREIGN KEY (content_type_id) REFERENCES content_type(content_type_id),
+    FOREIGN KEY (fd_rus_id) REFERENCES rf_rus(rf_rus_id)
 );
 
 CREATE UNIQUE INDEX email ON users(email);
