@@ -20,6 +20,11 @@ if (isset($_GET['post_id'])) {
     $posts_res = mysqli_query($con,$post);
     $posts_rows = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
 
+    print('<pre>');
+    print('posts_rows: ');
+    print_r($posts_rows);
+    print('</pre>');
+
     if ($posts_rows == null) {
         header('HTTP/1.0 404 not found');
         print('Параметр запроса отсутствует, либо по этому id не нашли ни одной записи');

@@ -3,9 +3,11 @@ require_once ('helpers.php');
 require_once ('sql_connect.php');
 require_once ('my_functions.php');
 
+
 $sql_error = include_template('error.php', [
     'error' => mysqli_error($con)
 ]);
+$get_ct_id = 1;
 
 if ($con == false) {
     $error = mysqli_connect_error();
@@ -74,7 +76,7 @@ else {
             $post['img_path'] = 'uploads/' . uniqid();
 
             //Изображение загружено через поле "Выбор файла" или через оба поля "Выбор файла" и "Ссылка из интернета"
-            if ($photo_from_user or ($photo_link_from_internet and $photo_from_user)) {
+            if ($photo_from_user || ($photo_link_from_internet && $photo_from_user)) {
                 unset($errors['photo-link']);
                 $tmp_name = $_FILES['userpic-file-photo']['tmp_name'];
 
@@ -177,14 +179,14 @@ else {
 
                 //Добавление хэштегов
                 $hashtags = get_hashtags($con, $get_ct_id, $post);
-                foreach ($hashtags as $hashtag) {
 
-                    if (add_hashtags($con, $hashtag, $post_id)) {
+                    if (add_hashtags($con, $hashtags, $post_id)) {
                         header("Location: /post.php/?post_id=" . $post_id);
+                        exit;
                     } else {
                         $post_add_sql_error = $sql_error;
                     }
-                }
+
             } else {
                 $post_add_sql_error = $sql_error;
             }

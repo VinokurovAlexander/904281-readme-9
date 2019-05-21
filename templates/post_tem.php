@@ -128,26 +128,26 @@
                         <div class="post__main">
                             <blockquote>
                                 <p>
-                                    <?=$v['text']?>
+                                    <?=htmlspecialchars($v['text'])?>
                                 </p>
-                                <cite><?=$v['quote_author']?></cite>
+                                <cite><?=htmlspecialchars($v['quote_author'])?></cite>
                             </blockquote>
                         </div>
                     </div>
                     <?php elseif ($v['content_type'] == 'Ссылка' ) :?>
                     <div class="post__main">
                         <div class="post-link__wrapper">
-                            <a class="post-link__external" href="<?= $v['link'] ?>" title="Перейти по ссылке">
+                            <a class="post-link__external" href="<?=htmlspecialchars($v['link'])?>" title="Перейти по ссылке">
                                 <div class="post-link__info-wrapper">
                                     <div class="post-link__icon-wrapper">
                                         <img src="../img/logo-vita.jpg" alt="Иконка">
                                     </div>
                                     <div class="post-link__info">
-                                        <h3><?= $v['title'] ?></h3>
-                                        <p><?= $v['text'] ?></p>
+                                        <h3><?=htmlspecialchars($v['title'])?></h3>
+                                        <p><?=htmlspecialchars($v['text'])?></p>
                                     </div>
                                 </div>
-                                <span><?= $v['link'] ?></span>
+                                <span><?=htmlspecialchars($v['link'])?></span>
                             </a>
                         </div>
                     </div>
@@ -155,12 +155,12 @@
                         <div class="post-details__image-wrapper post-text">
                             <div class="post__main">
                                 <p>
-                                    <?= $v['text'] ?>
+                                    <?=htmlspecialchars($v['text'])?>
                                 </p>
                             </div>
                         </div>
                     <?php elseif ($v['content_type'] == 'Видео' ) :?>
-                        <iframe width="760" height="400" src="<?= $v['video'] ?>" frameborder="0"></iframe>
+                        <iframe width="760" height="400" src="<?=$v['video']?>" frameborder="0"></iframe>
                     <?php endif; ?>
                     <div class="post__indicators">
                         <div class="post__buttons">
@@ -250,12 +250,12 @@
                     <div class="post-details__user-info user__info">
                         <div class="post-details__avatar user__avatar">
                             <a class="post-details__avatar-link user__avatar-link" href="#">
-                                <img class="post-details__picture user__picture" src="../img/<?= $v['avatar_path'] ?>" alt="Аватар пользователя">
+                                <img class="post-details__picture user__picture" src="../img/<?=$v['avatar_path']?>" alt="Аватар пользователя">
                             </a>
                         </div>
                         <div class="post-details__name-wrapper user__name-wrapper">
                             <a class="post-details__name user__name" href="#">
-                                <span><?= $v['user_name'] ?></span>
+                                <span><?=htmlspecialchars($v['user_name'])?></span>
                             </a>
                             <time class="post-details__time user__time" datetime="2014-03-20">5 лет на сайте</time>
                         </div>
