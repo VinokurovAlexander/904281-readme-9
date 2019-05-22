@@ -3,11 +3,10 @@ require_once ('helpers.php');
 require_once ('sql_connect.php');
 require_once ('my_functions.php');
 
-
 $sql_error = include_template('error.php', [
     'error' => mysqli_error($con)
 ]);
-$get_ct_id = 1;
+
 
 if ($con == false) {
     $error = mysqli_connect_error();
@@ -18,6 +17,9 @@ else {
 
     if (isset($_GET['content_type_id'])) {
        $get_ct_id = intval($_GET['content_type_id']);  // ct = content type
+    }
+    else {
+        $get_ct_id = 1;
     }
 
     $ct_all_sql = "SELECT * FROM content_type ct";
