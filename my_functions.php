@@ -162,8 +162,24 @@ function add_data_to_database ($con, int $content_type_id, array $post) {
     }
 }
 
+/**
+ * Проверяет наличие указанного email в БД
+ **
+ * @param $con соединение с БД
+ * @param string $email Почта, которую нужно проверить
+ *
+ *
+ * @return array Массив с данными из БД
+ */
 
+function get_email($con, string $email) {
+    $email = mysqli_real_escape_string($con,$email);
+    $get_email_sql = "SELECT email FROM users u WHERE u.email = '$email'";
+    $get_email_result = mysqli_query($con,$get_email_sql);
+    $get_email = mysqli_fetch_all($get_email_result, MYSQLI_ASSOC);
 
+    return $get_email;
+}
 
 
 
