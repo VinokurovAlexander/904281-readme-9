@@ -45,10 +45,7 @@ else {
             }
             else {
                 //Сравниваем c почтовыми ящиками из БД
-                $email = mysqli_real_escape_string($con,$email);
-                $get_email_sql = "SELECT email FROM users u WHERE u.email = '$email'";
-                $get_email_result = mysqli_query($con,$get_email_sql);
-                $get_email = mysqli_fetch_all($get_email_result, MYSQLI_ASSOC);
+                $get_email = get_email($con,$email);
 
                 if(!empty($get_email)) {
                     $errors['email'] = [
