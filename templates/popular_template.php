@@ -37,7 +37,7 @@
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                        <a class="filters__button filters__button--ellipse filters__button--all <?=$all_content; ?>" href="/">
+                        <a class="filters__button filters__button--ellipse filters__button--all <?=$all_content; ?>" href="/popular.php">
                             <span>Все</span>
                         </a>
                     </li>
@@ -45,7 +45,7 @@
                     <li class="popular__filters-item filters__item">
                         <a class="filters__button filters__button--photo button
                         <?php if (($get_con_id == $ct['content_type_id'])) {echo "filters__button--active";} ?>"
-                           href="/?content_type_id=<?=$ct['content_type_id']; ?>">
+                           href="/popular.php/?content_type_id=<?=$ct['content_type_id']; ?>">
                             <span class="visually-hidden"><?=$ct['content_type']; ?></span>
                             <svg class="filters__icon" width="22" height="18">
                                 <use xlink:href="#icon-filter-<?=$ct['icon_class']; ?>"></use>
@@ -144,7 +144,7 @@
                                 <div class="post__info">
                                     <b class="post__author-name"><?=$val['user_name'];?></b>
                                     <time class="post__time" datetime="<?= $val['pub_date']?>" title="<?=post_time_title($val['pub_date'])?>" >
-                                        <?= rel_post_time($val['pub_date'])?>
+                                        <?= rel_post_time($val['pub_date'])?> назад
                                     </time>
                                 </div>
                             </a>

@@ -1,5 +1,6 @@
 <?php
 require_once('helpers.php');
+require_once('my_functions.php');
 
 session_start();
 if (!isset($_SESSION['user'])) {
@@ -37,39 +38,8 @@ function cut_text ($text) {
 
 date_default_timezone_set("Europe/Moscow");
 
-// Функция, отображающая ОТНОСИТЕЛЬНОЕ время публикации поста
-function rel_post_time ($pub_date) {
-    $cur_date = time(); // текущее время
-//    $gen_date = generate_random_date($k); //время поста
-    $post_date= strtotime($pub_date);  // метка для времени поста
-    $diff = floor($cur_date - $post_date); //разница между временем поста и текущим временем в секундах
-    if ($diff < 3600) {
-        $diff = floor($diff / 60);
-        $decl = get_noun_plural_form($diff, 'минута', 'минуты','минут'); //узнаем необходимое склонение
-    }
-    elseif ($diff >= 60 and $diff < 86400) {
-        $diff = floor($diff / 3600);
-        $decl = get_noun_plural_form($diff, 'час', 'часа','часов');
-    }
-    elseif ($diff >= 86400 and $diff < 604800) {
-        $diff = floor($diff / 86400);
-        $decl = get_noun_plural_form($diff, 'день', 'дня','дней');
-    }
-    elseif ($diff >= 604800 and $diff < 3024000) {
-        $diff = floor($diff / 604800);
-        $decl = get_noun_plural_form($diff, 'неделя', 'недели','недель');
-    }
-    elseif ($diff >= 3024000) {
-        $diff = floor($diff / 2592000);
-        $decl = get_noun_plural_form($diff, 'месяц', 'месяца','месяцев');
-    }
-
-    return("$diff $decl назад <br>");
-}
-
 // Время поста в формате дд.мм.гггг чч:мм
 function post_time_title ($post_date) {
-//    $post_date = generate_random_date($k);
     $ts_post_date = strtotime($post_date);
     $post_date_title = date('j-m-Y G:i', $ts_post_date);
     return $post_date_title;

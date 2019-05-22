@@ -1,5 +1,12 @@
 <?php
 require_once('helpers.php');
+require_once('my_functions.php');
+
+session_start();
+if (!isset($_SESSION['user'])) {
+    header("Location: /");
+    exit();
+}
 
 // Работаем с БД
 $con = mysqli_connect("localhost", "root", "", "readme_db");
@@ -31,13 +38,15 @@ if (isset($_GET['post_id'])) {
     }
 
     else {
-    //Считаем кол-во публикаций
+    //Считаем кол-во публикаций у автора поста
     $get_user_id = $posts_rows[0]['user_id'];
-    $post_count_sql = "SELECT p.post_id FROM posts p
-    JOIN users u ON p.user_id = u.user_id
-    WHERE u.user_id = $get_user_id";
-    $post_count_result = mysqli_query($con,$post_count_sql);
-    $user_post_count = mysqli_num_rows($post_count_result); // считаем количество постов пользователя
+//    $post_count_sql = "SELECT p.post_id FROM posts p
+//    JOIN users u ON p.user_id = u.user_id
+//    WHERE u.user_id = $get_user_id";
+//    $post_count_result = mysqli_query($con,$post_count_sql);
+//    $user_post_count = mysqli_num_rows($post_count_result); // считаем количество постов пользователя
+        $user_post_count = 
+
 
 
     //Считаем количество подписчиков
@@ -47,13 +56,20 @@ if (isset($_GET['post_id'])) {
     $followers_count_result = mysqli_query($con,$followers_count_sql);
     $user_followers_count =  mysqli_num_rows($followers_count_result);
 
-    $post_content = include_template('post_tem.php', [
-    'posts_rows' => $posts_rows,
-    'user_post_count' => $user_post_count,
-    'user_followers_count' => $user_followers_count
-]);
 
-    print($post_content);
+
+    $page_content = include_template('post_tem.php', [
+        'posts_rows' => $posts_rows,
+        'user_post_count' => $user_post_count,
+        'user_followers_count' => $user_followers_count
+    ]);
+
+     $layout_content = include_template('layout.php',[
+         'content' => $page_content ,
+         'title' => 'Просмотр поста'
+     ]);
+
+    print($layout_content);
 
     }
 }

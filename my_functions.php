@@ -182,4 +182,56 @@ function get_email($con, string $email) {
 }
 
 
+/**
+ * Функция, отображающая время относительно даты, указанной в перемиенной $pub_date
+ **
+ * @param string $pub_date Дата, относительно которой нужно рассчитать время
+ *
+ * @return string
+ */
 
+//
+function rel_post_time ($pub_date) {
+    $cur_date = time(); // текущее время
+    $post_date= strtotime($pub_date);  // метка для времени поста
+    $diff = floor($cur_date - $post_date); //разница между временем поста и текущим временем в секундах
+    if ($diff < 3600) {
+        $diff = floor($diff / 60);
+        $decl = get_noun_plural_form($diff, 'минута', 'минуты','минут'); //узнаем необходимое склонение
+    }
+    elseif ($diff >= 60 and $diff < 86400) {
+        $diff = floor($diff / 3600);
+        $decl = get_noun_plural_form($diff, 'час', 'часа','часов');
+    }
+    elseif ($diff >= 86400 and $diff < 604800) {
+        $diff = floor($diff / 86400);
+        $decl = get_noun_plural_form($diff, 'день', 'дня','дней');
+    }
+    elseif ($diff >= 604800 and $diff < 3024000) {
+        $diff = floor($diff / 604800);
+        $decl = get_noun_plural_form($diff, 'неделя', 'недели','недель');
+    }
+    elseif ($diff >= 3024000) {
+        $diff = floor($diff / 2592000);
+        $decl = get_noun_plural_form($diff, 'месяц', 'месяца','месяцев');
+    }
+
+    return("$diff $decl");
+}
+
+/**
+ * Считаем количество публикаций пользователя
+ **
+ * @param
+ *
+ * @return
+ */
+
+function get_user_posts_count($con,$user_id) {
+    $post_count_sql = "SELECT p.post_id FROM posts p
+    JOIN users u ON p.user_id = u.user_id
+    WHERE u.user_id = $user_id";
+    $post_count_result = mysqli_query($con,$post_count_sql);
+    $user_post_count = mysqli_num_rows($post_count_result);
+    return $user_post_count;
+}

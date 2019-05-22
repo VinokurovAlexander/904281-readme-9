@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title; ?></title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="../css/main.css">
 </head>
 <body class="page">
 <div style="display: none">
@@ -16,7 +16,7 @@
     <div class="header__wrapper container">
         <div class="header__logo-wrapper">
             <a class="header__logo-link" href="main.html">
-                <img class="header__logo" src="img/logo.svg" alt="Логотип readme" width="128" height="24">
+                <img class="header__logo" src="../img/logo.svg" alt="Логотип readme" width="128" height="24">
             </a>
             <p class="header__topic">
                 micro blogging
@@ -41,17 +41,17 @@
                     <?php if (isset($_SESSION['user'])) : ?>
                     <ul class="header__my-nav">
                         <li class="header__my-page header__my-page--popular">
-                            <a class="header__page-link <?php if($_SERVER['REQUEST_URI'] == '/popular.php') {echo "header__page-link--active";} ?>" title="Популярный контент" href="/popular.php">
+                            <a class="header__page-link <?php if(strpos($_SERVER['REQUEST_URI'], '/popular.php') !== false) {echo "header__page-link--active";} ?>" title="Популярный контент" href="/popular.php">
                                 <span class="visually-hidden">Популярный контент</span>
                             </a>
                         </li>
                         <li class="header__my-page header__my-page--feed">
-                            <a class="header__page-link <?php if($_SERVER['REQUEST_URI'] == '/feed.php') {echo "header__page-link--active";} ?>" href="/feed.php" title="Моя лента">
+                            <a class="header__page-link <?php if(strpos($_SERVER['REQUEST_URI'], '/feed.php') !== false) {echo "header__page-link--active";} ?>" href="/feed.php" title="Моя лента">
                                 <span class="visually-hidden">Моя лента</span>
                             </a>
                         </li>
                         <li class="header__my-page header__my-page--messages">
-                            <a class="header__page-link <?php if($_SERVER['REQUEST_URI'] == '/messages.php') {echo "header__page-link--active";} ?>" href="messages.html" title="Личные сообщения">
+                            <a class="header__page-link <?php if(strpos($_SERVER['REQUEST_URI'], '/messages.php') !== false) {echo "header__page-link--active";} ?>" href="messages.html" title="Личные сообщения">
                                 <span class="visually-hidden">Личные сообщения</span>
                             </a>
                         </li>
@@ -62,11 +62,11 @@
                         <li class="header__profile">
                             <a class="header__profile-link" href="#">
                                 <div class="header__avatar-wrapper">
-                                    <img class="header__profile-avatar" src="img/userpic.jpg" alt="Аватар профиля">
+                                    <img class="header__profile-avatar" src="<?=$_SESSION['user']['avatar_path'];?>" alt="Аватар профиля">
                                 </div>
                                 <div class="header__profile-name">
                                     <span>
-                                        <?=$user_name;?>
+                                        <?=$_SESSION['user']['user_name'];?>
                                     </span>
                                     <svg class="header__link-arrow" width="10" height="6">
                                         <use xlink:href="#icon-arrow-right-ad"></use>
@@ -77,7 +77,7 @@
                                 <div class="header__profile-tooltip">
                                     <ul class="header__profile-nav">
                                         <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="#">
+                                            <a class="header__profile-nav-link" href="/profile.php/?user_id=<?=$_SESSION['user']['user_id']?>">
                               <span class="header__profile-nav-text">
                                 Мой профиль
                               </span>
@@ -99,7 +99,7 @@
                                             </a>
                                         </li>
                                         <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="logout.php">
+                                            <a class="header__profile-nav-link" href="/logout.php">
                               <span class="header__profile-nav-text">
                                 Выход
                               </span>
