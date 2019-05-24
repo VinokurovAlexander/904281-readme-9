@@ -15,17 +15,6 @@ if (!isset($_GET['content'])) {
     $_GET['content'] = 'posts';
 }
 
-//print('<pre>');
-////
-////print('$_SESSION');
-////print_r($_SESSION);
-////
-////print('$_GET');
-////print_r($_GET);
-////
-////print('</pre>');
-
-
 
 $current_user_id = $_GET['user_id'];
 $user_post_count = get_user_posts_count($con,$current_user_id);
@@ -46,48 +35,90 @@ $posts_sql = "SELECT p.*,ct.icon_class,COUNT(l.like_id) AS likes_count FROM post
 $posts_res = mysqli_query($con, $posts_sql);
 $posts = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
 
-//Получаем список хэштегов
 
-//    $current_post_id = 232;
-//    $hashtags_sql = "SELECT h.name FROM hashtags h
-//JOIN posts_hashtags ph ON h.hashtag_id = ph.hashtag_id
-//WHERE ph.post_id = $current_post_id";
-//    $hashtags_res = mysqli_query($con, $hashtags_sql);
-//    $hashtags_array = mysqli_fetch_all($hashtags_res, MYSQLI_ASSOC);
+//------------------------------------------------------------------------------------------------------
+
+
+
+
+$likes_sql = "SELECT
+                    l.*,
+                    ct.icon_class,
+                    p.img,p.video,p.content_type_id,
+                    u2.user_name as who_like_name, u2.avatar_path as who_like_avatar_path
+                FROM likes l
+                    JOIN posts p ON l.post_id = p.post_id
+                    JOIN users u ON p.user_id = u.user_id
+                    JOIN users u2 ON l.who_like_id = u2.user_id
+                    JOIN content_type ct ON p.content_type_id = ct.content_type_id
+                WHERE u.user_id = $current_user_id
+                ORDER BY dt_add DESC";
+$likes_res = mysqli_query($con, $likes_sql);
+$likes = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
+
+print('<pre>');
+
+//    print('$likes:');
+//    print_r($likes);
+//    print('<br>');
+
+print('</pre>');
+
+
+
+
+
+
+
+//------------------------------------------------------------------------------------------------------
+
+//Получаем массив с необходимой информацией для отображения лайков пользователя
+//$current_post_id = 232;
+//$likes_sql = "SELECT l.*,u.user_name,u.avatar_path,p.post_id,p.content_type_id,p.img,p.video FROM likes l
+//JOIN users u ON l.who_like_id = u.user_id
+//JOIN posts p ON l.post_id = p.post_id
+//WHERE l.post_id = $current_post_id";
+//$likes_res = mysqli_query($con, $likes_sql);
+//$likes = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
+
+
+//    $likes = get_likes($con,$posts);
+
+//    $post_id = 5;
+//    $likes_sql = "SELECT l.*,u.user_name,u.avatar_path,p.post_id,p.content_type_id,p.img,p.video,ct.icon_class FROM likes l
+//            JOIN users u ON l.who_like_id = u.user_id
+//            JOIN posts p ON l.post_id = p.post_id
+//            JOIN content_type ct ON p.content_type_id = ct.content_type_id
+//            WHERE l.post_id = $post_id
+//            ORDER BY dt_add DESC";
+//    $likes_res = mysqli_query($con, $likes_sql);
+//    $likes = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
+
+
+    print('<pre>');
 //
-//foreach ($hashtags_array as $k => $v) {
-//    print('<pre>');
-
 //    print('$k:');
 //    print_r($k);
 //    print('<br>');
 
-//    print('$hashtags:');
-//    $hashtags[] = $hashtags_array[$k]['name'];
-//    print_r($hashtags);
 
-//    print('</pre>');
-//}
+//        print('$v:');
+//        print_r($v);
+//        print('<br>');
+
+    print('</pre>');
 
 
 
-//    print('<pre>');
-//
-//    print('$test:');
-//    print_r($test);
+
+
+print('<pre>');
+
+//    print('$likes:');
+//    print_r($likes);
 //    print('<br>');
 
-//    print('$hashtags:');
-//    print_r($hashtags);
-//    print('<br>');
-
-
-//    print_r($hashtags['230'][0]['name']);
-//    print('<br>');
-//    print_r($hashtags['230'][1]['name']);
-
-
-//    print('</pre>');
+print('</pre>');
 
 
 
@@ -97,6 +128,7 @@ $page_content = include_template('profile_template.php',[
     'user_followers_count' => $user_followers_count,
     'user' => $user,
     'posts' => $posts,
+    'likes' => $likes,
     'con' => $con
 ]);
 
@@ -109,7 +141,13 @@ $layout_content = include_template('layout.php',[
 
 print($layout_content);
 
-
+//print('<pre>');
+//
+//print('$likes:');
+//print_r($likes);
+//print('<br>');
+//
+//print('</pre>');
 
 
 

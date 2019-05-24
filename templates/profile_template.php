@@ -1,25 +1,3 @@
-<?php
-
-print('<pre>');
-
-//print('$posts:');
-//print_r($posts);
-//print('<br>');
-//
-//print('</pre>');
-//
-//print('<pre>');
-//
-//print('$hashtags:');
-//print_r($hashtags);
-//print('<br>');
-
-print('</pre>');
-
-?>
-
-
-
 
 <main class="page__main page__main--profile">
     <h1 class="visually-hidden">Профиль</h1>
@@ -60,13 +38,13 @@ print('</pre>');
                     <b class="profile__tabs-caption filters__caption">Показать:</b>
                     <ul class="profile__tabs-list filters__list tabs__list">
                         <li class="profile__tabs-item filters__item">
-                            <a class="profile__tabs-link filters__button tabs__item tabs__item--active button <? if($_GET['content'] == 'posts') {echo 'filters__button--active';}?>"  href="/profile.php/?user_id=<?=$_SESSION['user']['user_id']?>&content=posts">Посты</a>
+                            <a class="profile__tabs-link filters__button tabs__item tabs__item--active button <? if($_GET['content'] == 'posts') {echo 'filters__button--active';}?>"  href="/profile.php/?user_id=<?=$_GET['user_id']?>&content=posts">Посты</a>
                         </li>
                         <li class="profile__tabs-item filters__item">
-                            <a class="profile__tabs-link filters__button tabs__item button <? if($_GET['content'] == 'likes') {echo 'filters__button--active';}?>" href="/profile.php/?user_id=<?=$_SESSION['user']['user_id']?>&content=likes">Лайки</a>
+                            <a class="profile__tabs-link filters__button tabs__item button <? if($_GET['content'] == 'likes') {echo 'filters__button--active';}?>" href="/profile.php/?user_id=<?=$_GET['user_id']?>&content=likes">Лайки</a>
                         </li>
                         <li class="profile__tabs-item filters__item">
-                            <a class="profile__tabs-link filters__button tabs__item button <? if($_GET['content'] == 'followers') {echo 'filters__button--active';}?>" href="/profile.php/?user_id=<?=$_SESSION['user']['user_id']?>&content=followers">Подписки</a>
+                            <a class="profile__tabs-link filters__button tabs__item button <? if($_GET['content'] == 'followers') {echo 'filters__button--active';}?>" href="/profile.php/?user_id=<?=$_GET['user_id']?>&content=followers">Подписки</a>
                         </li>
                     </ul>
                 </div>
@@ -266,144 +244,65 @@ print('</pre>');
                     <section class="profile__likes tabs__content <? if($_GET['content'] == 'likes') {echo 'tabs__content--active';}?>">
                         <h2 class="visually-hidden">Лайки</h2>
                         <ul class="profile__likes-list">
-                            <li class="post-mini post-mini--photo post user">
-                                <div class="post-mini__user-info user__info">
-                                    <div class="post-mini__avatar user__avatar">
-                                        <a class="user__avatar-link" href="#">
-                                            <img class="post-mini__picture user__picture" src="img/userpic-petro.jpg" alt="Аватар пользователя">
-                                        </a>
-                                    </div>
-                                    <div class="post-mini__name-wrapper user__name-wrapper">
-                                        <a class="post-mini__name user__name" href="#">
-                                            <span>Петр Демин</span>
-                                        </a>
-                                        <div class="post-mini__action">
-                                            <span class="post-mini__activity user__additional">Лайкнул вашу публикацию</span>
-                                            <time class="post-mini__time user__additional" datetime="2014-03-20T20:20">5 минут назад</time>
+
+                            <?php foreach ($likes as $like) : ?>
+                                <li class="post-mini post-mini--<?=$like['icon_class']?> post user">
+                                    <div class="post-mini__user-info user__info">
+                                        <div class="post-mini__avatar user__avatar">
+                                            <a class="user__avatar-link" href="/profile.php/?user_id=<?=$like['who_like_id']?>">
+                                                <img class="post-mini__picture user__picture" src="<?=$like['who_like_avatar_path']?>" alt="Аватар пользователя">
+                                            </a>
+                                        </div>
+                                        <div class="post-mini__name-wrapper user__name-wrapper">
+                                            <a class="post-mini__name user__name" href="/profile.php/?user_id=<?=$like['who_like_id']?>">
+                                                <span><?=$like['who_like_name']?></span>
+                                            </a>
+                                            <div class="post-mini__action">
+                                                <span class="post-mini__activity user__additional">Лайкнул вашу публикацию</span>
+                                                <time class="post-mini__time user__additional" datetime="2014-03-20T20:20"><?=rel_post_time($like['dt_add'])?> назад</time>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="post-mini__preview">
-                                    <a class="post-mini__link" href="#" title="Перейти на публикацию">
-                                        <div class="post-mini__image-wrapper">
-                                            <img class="post-mini__image" src="img/rock-small.png" width="109" height="109" alt="Превью публикации">
-                                        </div>
-                                        <span class="visually-hidden">Фото</span>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="post-mini post-mini--text post user">
-                                <div class="post-mini__user-info user__info">
-                                    <div class="post-mini__avatar user__avatar">
-                                        <a class="user__avatar-link" href="#">
-                                            <img class="post-mini__picture user__picture" src="img/userpic-petro.jpg" alt="Аватар пользователя">
+
+                                    <div class="post-mini__preview">
+                                        <a class="post-mini__link" href="/post.php/?post_id=<?=$like['post_id']?>" title="Перейти на публикацию">
+                                            <?php if($like['content_type_id'] == 3) : ?>
+                                                <img class="post-mini__image" src="<?=$like['img'] ?>" width="109" height="109" alt="Превью публикации">
+                                                <span class="visually-hidden">Фото</span>
+                                            <?php elseif($like['content_type_id'] == 4) : ?>
+                                                <div class="post-mini__image-wrapper">
+                                                    <img class="post-mini__image" src="https://<?=get_youtube_image_preview($like['video']) ?>" width="109" height="109" alt="Превью публикации">
+                                                    <span class="post-mini__play-big">
+                                                            <svg class="post-mini__play-big-icon" width="12" height="13">
+                                                                <use xlink:href="#icon-video-play-big"></use>
+                                                            </svg>
+                                                        </span>
+                                                </div>
+                                                <span class="visually-hidden">Видео</span>
+                                            <?php elseif($like['content_type_id'] == 2) : ?>
+                                                <span class="visually-hidden">Цитата</span>
+                                                <svg class="post-mini__preview-icon" width="21" height="20">
+                                                    <use xlink:href="#icon-filter-quote"></use>
+                                                </svg>
+                                            <?php elseif($like['content_type_id'] == 1) : ?>
+                                                <span class="visually-hidden">Текст</span>
+                                                <svg class="post-mini__preview-icon" width="20" height="21">
+                                                    <use xlink:href="#icon-filter-text"></use>
+                                                </svg>
+                                            <?php elseif($like['content_type_id'] == 5) : ?>
+                                                <span class="visually-hidden">Ссылка</span>
+                                                <svg class="post-mini__preview-icon" width="21" height="18">
+                                                    <use xlink:href="#icon-filter-link"></use>
+                                                </svg>
+                                            <?php endif; ?>
                                         </a>
                                     </div>
-                                    <div class="post-mini__name-wrapper user__name-wrapper">
-                                        <a class="post-mini__name user__name" href="#">
-                                            <span>Петр Демин</span>
-                                        </a>
-                                        <div class="post-mini__action">
-                                            <span class="post-mini__activity user__additional">Лайкнул вашу публикацию</span>
-                                            <time class="post-mini__time user__additional" datetime="2014-03-20T20:05">15 минут назад</time>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="post-mini__preview">
-                                    <a class="post-mini__link" href="#" title="Перейти на публикацию">
-                                        <span class="visually-hidden">Текст</span>
-                                        <svg class="post-mini__preview-icon" width="20" height="21">
-                                            <use xlink:href="#icon-filter-text"></use>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="post-mini post-mini--video post user">
-                                <div class="post-mini__user-info user__info">
-                                    <div class="post-mini__avatar user__avatar">
-                                        <a class="user__avatar-link" href="#">
-                                            <img class="post-mini__picture user__picture" src="img/userpic-petro.jpg" alt="Аватар пользователя">
-                                        </a>
-                                    </div>
-                                    <div class="post-mini__name-wrapper user__name-wrapper">
-                                        <a class="post-mini__name user__name" href="#">
-                                            <span>Петр Демин</span>
-                                        </a>
-                                        <div class="post-mini__action">
-                                            <span class="post-mini__activity user__additional">Лайкнул вашу публикацию</span>
-                                            <time class="post-mini__time user__additional" datetime="2014-03-20T18:20">2 часа назад</time>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="post-mini__preview">
-                                    <a class="post-mini__link" href="#" title="Перейти на публикацию">
-                                        <div class="post-mini__image-wrapper">
-                                            <img class="post-mini__image" src="img/coast-small.png" width="109" height="109" alt="Превью публикации">
-                                            <span class="post-mini__play-big">
-                            <svg class="post-mini__play-big-icon" width="12" height="13">
-                              <use xlink:href="#icon-video-play-big"></use>
-                            </svg>
-                          </span>
-                                        </div>
-                                        <span class="visually-hidden">Видео</span>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="post-mini post-mini--quote post user">
-                                <div class="post-mini__user-info user__info">
-                                    <div class="post-mini__avatar user__avatar">
-                                        <a class="user__avatar-link" href="#">
-                                            <img class="post-mini__picture user__picture" src="img/userpic-petro.jpg" alt="Аватар пользователя">
-                                        </a>
-                                    </div>
-                                    <div class="post-mini__name-wrapper user__name-wrapper">
-                                        <a class="post-mini__name user__name" href="#">
-                                            <span>Петр Демин</span>
-                                        </a>
-                                        <div class="post-mini__action">
-                                            <span class="post-mini__activity user__additional">Лайкнул вашу публикацию</span>
-                                            <time class="post-mini__time user__additional" datetime="2014-03-15T20:05">5 дней назад</time>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="post-mini__preview">
-                                    <a class="post-mini__link" href="#" title="Перейти на публикацию">
-                                        <span class="visually-hidden">Цитата</span>
-                                        <svg class="post-mini__preview-icon" width="21" height="20">
-                                            <use xlink:href="#icon-filter-quote"></use>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="post-mini post-mini--link post user">
-                                <div class="post-mini__user-info user__info">
-                                    <div class="post-mini__avatar user__avatar">
-                                        <a class="user__avatar-link" href="#">
-                                            <img class="post-mini__picture user__picture" src="img/userpic-petro.jpg" alt="Аватар пользователя">
-                                        </a>
-                                    </div>
-                                    <div class="post-mini__name-wrapper user__name-wrapper">
-                                        <a class="post-mini__name user__name" href="#">
-                                            <span>Петр Демин</span>
-                                        </a>
-                                        <div class="post-mini__action">
-                                            <span class="post-mini__activity user__additional">Лайкнул вашу публикацию</span>
-                                            <time class="post-mini__time user__additional" datetime="2014-03-20T20:05">в далеком 2007-ом</time>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="post-mini__preview">
-                                    <a class="post-mini__link" href="#" title="Перейти на публикацию">
-                                        <span class="visually-hidden">Ссылка</span>
-                                        <svg class="post-mini__preview-icon" width="21" height="18">
-                                            <use xlink:href="#icon-filter-link"></use>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </li>
+                                </li>
+                            <? endforeach; ?>
+
                         </ul>
                     </section>
-
+<!------------------------------------------------------------------------------------------------------------------------------------------->
                     <section class="profile__subscriptions tabs__content <? if($_GET['content'] == 'followers') {echo 'tabs__content--active';}?>">
                         <h2 class="visually-hidden">Подписки</h2>
                         <ul class="profile__subscriptions-list">

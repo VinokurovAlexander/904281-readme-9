@@ -310,3 +310,67 @@ WHERE ph.post_id = $post_id";
     }
     return $hashtags;
 }
+
+
+/**
+ * Функция, возвращает массив с информацией о постах и лайках для отображения во вкладке "Лайки" на личной странице пользователя
+ **
+ * @param $con Соединение с БД
+ * @param array $post_id посты пользователя, для которых нужно отобразить информацию по лайкам
+ *
+ *
+ * @return array массив с информацией о постах и лайках для отображения во вкладке "Лайки" на личной странице пользователя
+ *
+ */
+
+//function get_likes ($con,$posts) {
+//    $likes = [];
+//    foreach ($posts as $post) {
+//        $post_id = $post['post_id'];
+//        $likes_sql = "SELECT l.*,u.user_name,u.avatar_path,p.post_id,p.content_type_id,p.img,p.video FROM likes l
+//            JOIN users u ON l.who_like_id = u.user_id
+//            JOIN posts p ON l.post_id = p.post_id
+//            WHERE l.post_id = $post_id
+//            ORDER BY dt_add";
+//        $likes_res = mysqli_query($con, $likes_sql);
+//        $likes[] = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
+//        foreach ($likes as $k => $v) {
+//            $like[] =
+//        }
+//    }
+//    return $likes;
+//}
+
+
+function get_likes ($con,$post_id) {
+    $likes_sql = "SELECT l.*,u.user_name,u.avatar_path,p.post_id,p.content_type_id,p.img,p.video,ct.icon_class FROM likes l 
+            JOIN users u ON l.who_like_id = u.user_id   
+            JOIN posts p ON l.post_id = p.post_id
+            JOIN content_type ct ON p.content_type_id = ct.content_type_id
+            WHERE l.post_id = $post_id
+            ORDER BY dt_add DESC";
+    $likes_res = mysqli_query($con, $likes_sql);
+    $likes = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
+    return $likes;
+}
+
+
+
+
+
+/**
+ * Функция, возвращает ссылку на картинку-превью к видео на youtube
+ **
+ * @param string $youtube_url Ссылка на видео с youtube
+ *
+ * @return string возвращает ссылку на картинку-превью к видео на youtube
+ *
+ */
+
+
+function get_youtube_image_preview ($youtube_url) {
+    $video_url_explode = explode('/',$youtube_url);
+    $img_name = array_pop($video_url_explode);
+    $youtube_image_preview = 'img.youtube.com/vi/' . $img_name . '/sddefault.jpg';
+    return $youtube_image_preview;
+}

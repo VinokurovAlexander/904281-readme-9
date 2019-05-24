@@ -4781,4 +4781,8 @@ img {
     letter-spacing: .85px
 }
 
+.profile__likes-list li {
+    overflow:hidden;
+}
+
 /*# sourceMappingURL=main.css.map */
