@@ -33,7 +33,7 @@ function checking_image_type(string $file_name, bool $isFromClient = true) : boo
 }
 
 /**
- * Получает массив с хэштегами для поста
+ * Получает массив с хэштегами при публикации поста
  **
  * @param $con соединение с БД
  * @param int $current_ct_id Текущий content type id
@@ -42,13 +42,12 @@ function checking_image_type(string $file_name, bool $isFromClient = true) : boo
  * @return array Возвращает массив с хэштегами
  */
 
-function get_hashtags ($con,int $current_ct_id, array $post ) {
+function get_add_hashtags ($con,int $current_ct_id, array $post ) {
 
     $hashtags_sql = "SELECT field_name FROM required_fields WHERE content_type_id = $current_ct_id AND fd_rus_id = 9";
     $hashtags_result = mysqli_query($con, $hashtags_sql);
     $hashtags_fieldname_array = mysqli_fetch_all($hashtags_result, MYSQLI_ASSOC);
     $hashtags_fieldname = $hashtags_fieldname_array[0]['field_name'];
-
 
     if (!empty($post[$hashtags_fieldname])) {
         $hashtags = explode(' ',$post[$hashtags_fieldname]);
@@ -115,7 +114,7 @@ function add_hashtags($con,array $hashtags, int $post_id) {
 }
 
 /**
- * Добавляет данные, переданные через форму в БД
+ * Добавляет данные, переданные через форму добавления поста, в БД
  **
  * @param $con соединение с БД
  * @param int $content_type_id Тип публикуемого поста
@@ -126,30 +125,28 @@ function add_hashtags($con,array $hashtags, int $post_id) {
 
 function add_data_to_database ($con, int $content_type_id, array $post) {
     if ($content_type_id == 1) {
-        $post_text_add_sql = 'INSERT INTO posts(pub_date, title, text, user_id, content_type_id) VALUES (NOW(),?,?,2,1)';
-        $stmt = db_get_prepare_stmt($con, $post_text_add_sql, [$post['text-heading'], $post['post-text']]);
+        $post_text_add_sql = 'INSERT INTO posts(pub_date, title, text, user_id, content_type_id) VALUES (NOW(),?,?,?,?)';
+        $stmt = db_get_prepare_stmt($con, $post_text_add_sql, [$post['text-heading'], $post['post-text'],$post['user_id'],$content_type_id]);
     }
 
     elseif ($content_type_id == 2) {
-        $post_quote_add_sql = 'INSERT INTO posts(pub_date,title,text,quote_author,user_id,content_type_id) VALUES (NOW(),?,?,?,1,2)';
-        $stmt = db_get_prepare_stmt($con,$post_quote_add_sql,[$post['quote-heading'],$post['quote-text'],$post['quote-author']]);
+        $post_quote_add_sql = 'INSERT INTO posts(pub_date,title,text,quote_author,user_id,content_type_id) VALUES (NOW(),?,?,?,?,?)';
+        $stmt = db_get_prepare_stmt($con,$post_quote_add_sql,[$post['quote-heading'],$post['quote-text'],$post['quote-author'],$post['user_id'],$content_type_id]);
     }
 
     elseif ($content_type_id == 3) {
-        $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id) VALUES (NOW(),?,1,?,3)';
-        $stmt = db_get_prepare_stmt($con,$post_add_sql,[$post['photo-heading'], $post['img_path']]);
-
+        $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id) VALUES (NOW(),?,?,?,?)';
+        $stmt = db_get_prepare_stmt($con,$post_add_sql,[$post['photo-heading'],$post['user_id'],$post['img_path'],$content_type_id]);
     }
 
     elseif ($content_type_id == 4) {
-        $post_video_add_sql = 'INSERT INTO posts (pub_date, title, user_id, video, content_type_id)
-                                    VALUES (NOW(),?,2,?,4)';
-        $stmt = db_get_prepare_stmt($con,$post_video_add_sql,[$post['video-heading'],$post['video-link']]);
+        $post_video_add_sql = 'INSERT INTO posts (pub_date, title, user_id, video, content_type_id) VALUES (NOW(),?,?,?,?)';
+        $stmt = db_get_prepare_stmt($con,$post_video_add_sql,[$post['video-heading'],$post['user_id'],$post['video-link'],$content_type_id]);
     }
-
+//
     elseif ($content_type_id == 5) {
-        $post_link_add_sql = 'INSERT INTO posts(pub_date,title,link,user_id,content_type_id) VALUES (NOW(),?,?,2,5)';
-        $stmt = db_get_prepare_stmt($con, $post_link_add_sql, [$post['link-heading'], $post['post-link']]);
+        $post_link_add_sql = 'INSERT INTO posts(pub_date,title,link,user_id,content_type_id) VALUES (NOW(),?,?,?,?)';
+        $stmt = db_get_prepare_stmt($con, $post_link_add_sql, [$post['link-heading'], $post['post-link'],$post['user_id'],$content_type_id]);
     }
 
     $res = mysqli_stmt_execute($stmt);
@@ -222,9 +219,10 @@ function rel_post_time ($pub_date) {
 /**
  * Считаем количество публикаций пользователя
  **
- * @param
+ * @param $con соединение с БД
+ * @param $user_id id пользователя для которого нужно рассчитать количество публикаций
  *
- * @return
+ * @return int Количество публикаций
  */
 
 function get_user_posts_count($con,$user_id) {
@@ -234,4 +232,81 @@ function get_user_posts_count($con,$user_id) {
     $post_count_result = mysqli_query($con,$post_count_sql);
     $user_post_count = mysqli_num_rows($post_count_result);
     return $user_post_count;
+}
+
+/**
+ * Считаем количество подписчиков пользователя
+ **
+ * @param $con соединение с БД
+ * @param $user_id id пользователя для которого нужно рассчитать количество подписчиков
+ *
+ * @return int Количество подписчиков
+ */
+
+function get_user_followers($con,$user_id)
+{
+    $followers_count_sql = "SELECT f.to_sub_id FROM follow f
+        JOIN users u ON u.user_id = f.to_sub_id
+        WHERE u.user_id = $user_id";
+    $followers_count_result = mysqli_query($con, $followers_count_sql);
+    $user_followers_count = mysqli_num_rows($followers_count_result);
+    return $user_followers_count;
+}
+
+/**
+ * Функция, обрезающая текст
+ **
+ * @param string $text Текст
+ * @param int $num_letters Лимит на количество символов
+ *
+ *
+ * @return string Оригинальный текст, если его длина меньше заданного числа символов.
+ * В противном случае урезанный текст с прибавленной к нему ссылкой.
+ */
+
+function cut_text ($text,$num_letters) {
+    $explode_text = explode(" ",$text);
+    $i = 0;
+    $sum = 0;
+    $new_text = [];
+    foreach ($explode_text as $v) {
+        if ($sum < $num_letters) {
+            $len = mb_strlen($v);
+            $sum = $sum + $len;
+            array_push($new_text,$v);
+            $i++;
+        }
+    }
+    if ($sum > $num_letters) {
+        array_pop($new_text);
+        $final_text = implode(" ",$new_text) .'...' . "<br>" . "<a class=\"post-text__more-link\" href=\"#\">Читать далее</a>";
+    }
+    else {
+        $final_text = implode(" ",$new_text);
+    }
+    return $final_text;
+}
+
+/**
+ * Функция, возвращающая массив с хэштегами для поста, указанного в переменной $post_id
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id id поста для которого нужно получить хэштеги
+ *
+ *
+ * @return array Массив с хэштегами для поста, указанного в переменной $post_id
+ *
+ */
+
+function get_hashtags ($con,$post_id) {
+    $hashtags = [];
+    $hashtags_sql = "SELECT h.name FROM hashtags h
+JOIN posts_hashtags ph ON h.hashtag_id = ph.hashtag_id
+WHERE ph.post_id = $post_id";
+    $hashtags_res = mysqli_query($con, $hashtags_sql);
+    $hashtags_array = mysqli_fetch_all($hashtags_res, MYSQLI_ASSOC);
+    foreach ($hashtags_array as $k => $v) {
+        $hashtags[] = $hashtags_array[$k]['name'];
+    }
+    return $hashtags;
 }

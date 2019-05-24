@@ -3,14 +3,23 @@ require_once ('helpers.php');
 require_once ('sql_connect.php');
 require_once ('my_functions.php');
 
+session_start();
+if (!isset($_SESSION['user'])) {
+    header("Location: /");
+    exit();
+}
+
 $sql_error = include_template('error.php', [
-    'error' => mysqli_error($con)
+    'error' => mysqli_error($con),
 ]);
 
 
 if ($con == false) {
     $error = mysqli_connect_error();
-    $page_content = include_template('error.php', ['error' => $error]);
+    $page_content = include_template('error.php', [
+        'error' => $error,
+
+    ]);
 }
 
 else {
@@ -75,7 +84,9 @@ else {
 
             $photo_link_from_internet = $_POST['photo-link'];
             $photo_from_user = $_FILES['userpic-file-photo']['name'];
-            $post['img_path'] = 'uploads/' . uniqid();
+            $path = 'uploads/' . uniqid(); //Для перемещения изображения в указанную директорию
+            $post['img_path'] = '../' . $path; //Путь для добавления его в БД
+
 
             //Изображение загружено через поле "Выбор файла" или через оба поля "Выбор файла" и "Ссылка из интернета"
             if ($photo_from_user || ($photo_link_from_internet && $photo_from_user)) {
@@ -86,7 +97,7 @@ else {
                 if (checking_image_type($tmp_name)) {
 
                     //Загружаем картинку в публичную директорию
-                    move_uploaded_file($tmp_name, $post['img_path']);
+                    move_uploaded_file($tmp_name, $path);
 
                 } else {
 
@@ -113,7 +124,7 @@ else {
                     $get_image = file_get_contents($photo_link_from_internet);
                     if ($get_image) {
                         if (checking_image_type($get_image,false)) {
-                            file_put_contents($post['img_path'],$get_image);
+                            file_put_contents($path,$get_image);
                         }
                         else {
                             $errors['photo-link'] = [
@@ -176,11 +187,12 @@ else {
 
         //Добавляем данные в БД и публикуем пост
         if(empty($errors)) {
+            $post['user_id'] = $_SESSION['user']['user_id'];
             if (add_data_to_database($con, $get_ct_id, $post)) {
                 $post_id = mysqli_insert_id($con);
 
                 //Добавление хэштегов
-                $hashtags = get_hashtags($con, $get_ct_id, $post);
+                $hashtags = get_add_hashtags($con, $get_ct_id, $post);
 
                     if (add_hashtags($con, $hashtags, $post_id)) {
                         header("Location: /post.php/?post_id=" . $post_id);
@@ -207,15 +219,24 @@ else {
     ]);
     }
 
-
     $page_content = include_template('add_post_temp.php',[
         'ct_all_rows' => $ct_all_rows,
         'get_ct_id' => $get_ct_id,
         'post_add' => $post_add
     ]);
+
+    $layout_content = include_template('layout.php',[
+        'content' => $page_content ,
+        'title' => 'Добавление поста'
+    ]);
 }
 
+print($layout_content);
 
-print($page_content);
+
+print('<pre>');
+print_r($post);
+print('</pre>');
+print('<br>');
 
 

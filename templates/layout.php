@@ -77,7 +77,7 @@
                                 <div class="header__profile-tooltip">
                                     <ul class="header__profile-nav">
                                         <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="/profile.php/?user_id=<?=$_SESSION['user']['user_id']?>">
+                                            <a class="header__profile-nav-link" href="/profile.php/?user_id=<?=$_SESSION['user']['user_id']?>&content=posts">
                               <span class="header__profile-nav-text">
                                 Мой профиль
                               </span>
@@ -110,7 +110,7 @@
                             </div>
                         </li>
                         <li>
-                            <a class="header__post-button button button--transparent" href="add.php/?content_type_id=1">Пост</a>
+                            <a class="header__post-button button button--transparent" href="/add.php/?content_type_id=1">Пост</a>
                         </li>
                         <?php endif; ?>
                         <?php if (!isset($_SESSION['user'])) : ?>

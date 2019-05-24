@@ -91,74 +91,73 @@
                     <!--здесь текст-->
                 </p>
             </div>
-            <?php foreach ($posts_rows as $key => $val): ?>
-                <article class="popular__post post post-<?=$val['icon_class'];?>">
+            <?php foreach ($posts_rows as $post): ?>
+                <article class="popular__post post post-<?=$post['icon_class'];?>">
                     <header class="post__header">
                         <h2>
-                            <a href="post.php/?post_id=<?=$val['post_id'];?>">
-                                <?=$val['title'];?>
+                            <a href="/post.php/?post_id=<?=$post['post_id'];?>">
+                                <?=$post['title'];?>
                             </a>
                         </h2>
                     </header>
                     <div class="post__main">
-                        <?php if ($val['icon_class'] == 'quote'): ?>
+                        <?php if ($post['icon_class'] == 'quote'): ?>
                             <blockquote>
                                 <p>
-                                    <?=$val['text'];?>
+                                    <?=$post['text'];?>
                                 </p>
-                                <cite><?=$val['quote_author']?></cite>
+                                <cite><?=$post['quote_author']?></cite>
                             </blockquote>
-                        <?php elseif ($val['icon_class'] == 'text'): ?>
+                        <?php elseif ($post['icon_class'] == 'text'): ?>
                             <p>
-                                <?= cut_text($val['text']) ;?>
+                                <?= cut_text($post['text'],300) ;?>
                             </p>
-                        <?php elseif ($val['icon_class'] == 'photo'): ?>
+                        <?php elseif ($post['icon_class'] == 'photo'): ?>
                             <div class="post-photo__image-wrapper">
-                                <img src="/<?=$val['img'];?>" alt="Фото от пользователя" width="360" height="240">
+                                <img src="/<?=$post['img'];?>" alt="Фото от пользователя" width="360" height="240">
                             </div>
-                        <?php elseif ($val['icon_class'] == 'link'): ?>
+                        <?php elseif ($post['icon_class'] == 'link'): ?>
                             <div class="post-link__wrapper">
-                                <a class="post-link__external" href="http://" title="Перейти по ссылке">
+                                <a class="post-link__external" href="<?=$post['link'];?>" title="Перейти по ссылке">
                                     <div class="post-link__info-wrapper">
                                         <div class="post-link__icon-wrapper">
-                                            <img src="img/logo-vita.jpg" alt="Иконка">
+                                            <img src="../img/logo-vita.jpg" alt="Иконка">
                                         </div>
                                         <div class="post-link__info">
-                                            <h3><?=$val['title'];?></h3>
+                                            <h3><?=$post['title'];?></h3>
                                         </div>
                                     </div>
-                                    <span><?=$val['link'];?></span>
+                                    <span><?=$post['link'];?></span>
                                 </a>
                             </div>
-                        <?php elseif ($val['icon_class'] == 'video'): ?>
-                            <iframe width="360" height="240" src="<?= $val['video'] ?>" frameborder="0"></iframe>
+                        <?php elseif ($post['icon_class'] == 'video'): ?>
+                            <iframe width="360" height="240" src="<?= $post['video'] ?>" frameborder="0"></iframe>
                         <?php endif; ?>
                     </div>
                     <footer class="post__footer">
                         <div class="post__author">
-                            <a class="post__author-link" href="#" title="Автор">
+                            <a class="post__author-link" href="/profile.php/?user_id=<?=$post['user_id'];?>" title="Автор">
                                 <div class="post__avatar-wrapper">
-                                    <!--укажите путь к файлу аватара-->
-                                    <img class="post__author-avatar" src="img/<?=$val['avatar_path'];?>" alt="Аватар пользователя">
+                                    <img class="post__author-avatar" src="<?=$post['avatar_path'];?>" alt="Аватар пользователя">
                                 </div>
                                 <div class="post__info">
-                                    <b class="post__author-name"><?=$val['user_name'];?></b>
-                                    <time class="post__time" datetime="<?= $val['pub_date']?>" title="<?=post_time_title($val['pub_date'])?>" >
-                                        <?= rel_post_time($val['pub_date'])?> назад
+                                    <b class="post__author-name"><?=$post['user_name'];?></b>
+                                    <time class="post__time" datetime="<?= $post['pub_date']?>" title="<?=post_time_title($post['pub_date'])?>" >
+                                        <?= rel_post_time($post['pub_date'])?> назад
                                     </time>
                                 </div>
                             </a>
                         </div>
                         <div class="post__indicators">
                             <div class="post__buttons">
-                                <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
+                                <a class="post__indicator post__indicator--likes button" href="/like.php/?post_id=<?=$post['post_id'] ?>" title="Лайк">
                                     <svg class="post__indicator-icon" width="20" height="17">
                                         <use xlink:href="#icon-heart"></use>
                                     </svg>
                                     <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                                         <use xlink:href="#icon-heart-active"></use>
                                     </svg>
-                                    <span>0</span>
+                                    <span><?= $post['likes_count']?></span>
                                     <span class="visually-hidden">количество лайков</span>
                                 </a>
                                 <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">

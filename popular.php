@@ -9,29 +9,29 @@ if (!isset($_SESSION['user'])) {
 }
 
 //Функция, обрезающая текст в постах
-function cut_text ($text) {
-    $num_letters = 40;
-    $explode_text = explode(" ",$text);
-    $i = 0;
-    $sum = 0;
-    $new_text = [];
-    foreach ($explode_text as $v) {
-        if ($sum < $num_letters) {
-            $len = mb_strlen($v);
-            $sum = $sum + $len;
-            array_push($new_text,$v);
-            $i++;
-        }
-    }
-    if ($sum > $num_letters) {
-        array_pop($new_text);
-        $final_text = implode(" ",$new_text) .'...' . "<br>" . "<a class=\"post-text__more-link\" href=\"#\">Читать далее</a>";
-    }
-    else {
-        $final_text = implode(" ",$new_text);
-    }
-    return $final_text;
-}
+//function cut_text ($text) {
+//    $num_letters = 100;
+//    $explode_text = explode(" ",$text);
+//    $i = 0;
+//    $sum = 0;
+//    $new_text = [];
+//    foreach ($explode_text as $v) {
+//        if ($sum < $num_letters) {
+//            $len = mb_strlen($v);
+//            $sum = $sum + $len;
+//            array_push($new_text,$v);
+//            $i++;
+//        }
+//    }
+//    if ($sum > $num_letters) {
+//        array_pop($new_text);
+//        $final_text = implode(" ",$new_text) .'...' . "<br>" . "<a class=\"post-text__more-link\" href=\"#\">Читать далее</a>";
+//    }
+//    else {
+//        $final_text = implode(" ",$new_text);
+//    }
+//    return $final_text;
+//}
 
 
 //Дата и время публикации поста
@@ -61,9 +61,11 @@ $con_type_res = mysqli_query($con,$con_type);
 $con_type_rows = mysqli_fetch_all($con_type_res, MYSQLI_ASSOC);
 
 // Выгружаем список постов
-$posts = "SELECT p.*,u.user_name,ct.content_type,ct.icon_class,u.avatar_path FROM posts p
+$posts = "SELECT p.*,u.user_name,ct.content_type,ct.icon_class,u.avatar_path,COUNT(l.like_id) AS likes_count FROM posts p
 INNER JOIN users u ON p.user_id  = u.user_id
 INNER JOIN content_type ct ON p.content_type_id = ct.content_type_id
+LEFT JOIN likes l ON p.post_id = l.post_id
+GROUP BY p.post_id
 ORDER BY view_count DESC";
 
 
@@ -107,4 +109,7 @@ $layout_content = include_template('layout.php', [
 print($layout_content);
 
 
-
+print('<pre>');
+print_r($posts_rows);
+print('</pre>');
+print('<br>');

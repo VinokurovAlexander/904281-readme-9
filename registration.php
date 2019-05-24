@@ -84,6 +84,7 @@ else {
                 //Загружаем картинку в публичную директорию
                 $path = 'uploads/avatars/'. uniqid();
                 move_uploaded_file($tmp_name, $path);
+                $path = '../' . $path;
 
             } else {
                 $errors['userpic-file'] = [

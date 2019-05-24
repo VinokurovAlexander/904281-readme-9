@@ -1,64 +1,64 @@
 <main class="page__main page__main--publication">
     <div class="container">
-        <?php foreach ($posts_rows as $k => $v): ?>
-        <h1 class="page__title page__title--publication"><?=$v['title'];?></h1>
+        <?php foreach ($posts_rows as $post): ?>
+        <h1 class="page__title page__title--publication"><?=$post['title'];?></h1>
         <section class="post-details">
             <h2 class="visually-hidden">Публикация</h2>
             <div class="post-details__wrapper post-photo">
                 <div class="post-details__main-block post post--details">
-                    <?php if ($v['content_type'] == 'Картинка' ) :?>
+                    <?php if ($post['content_type'] == 'Картинка' ) :?>
                     <div class="post-details__image-wrapper post-photo__image-wrapper">
-                        <img src="/<?=$v['img']?>" alt="Фото от пользователя" width="760" height="507">
+                        <img src="/<?=$post['img']?>" alt="Фото от пользователя" width="760" height="507">
                     </div>
-                    <?php elseif ($v['content_type'] == 'Цитата' ) :?>
+                    <?php elseif ($post['content_type'] == 'Цитата' ) :?>
                     <div class="post-details__image-wrapper post-quote">
                         <div class="post__main">
                             <blockquote>
                                 <p>
-                                    <?=htmlspecialchars($v['text'])?>
+                                    <?=htmlspecialchars($post['text'])?>
                                 </p>
-                                <cite><?=htmlspecialchars($v['quote_author'])?></cite>
+                                <cite><?=htmlspecialchars($post['quote_author'])?></cite>
                             </blockquote>
                         </div>
                     </div>
-                    <?php elseif ($v['content_type'] == 'Ссылка' ) :?>
+                    <?php elseif ($post['content_type'] == 'Ссылка' ) :?>
                     <div class="post__main">
                         <div class="post-link__wrapper">
-                            <a class="post-link__external" href="<?=htmlspecialchars($v['link'])?>" title="Перейти по ссылке">
+                            <a class="post-link__external" href="<?=htmlspecialchars($post['link'])?>" title="Перейти по ссылке">
                                 <div class="post-link__info-wrapper">
                                     <div class="post-link__icon-wrapper">
                                         <img src="../img/logo-vita.jpg" alt="Иконка">
                                     </div>
                                     <div class="post-link__info">
-                                        <h3><?=htmlspecialchars($v['title'])?></h3>
-                                        <p><?=htmlspecialchars($v['text'])?></p>
+                                        <h3><?=htmlspecialchars($post['title'])?></h3>
+                                        <p><?=htmlspecialchars($post['text'])?></p>
                                     </div>
                                 </div>
-                                <span><?=htmlspecialchars($v['link'])?></span>
+                                <span><?=htmlspecialchars($post['link'])?></span>
                             </a>
                         </div>
                     </div>
-                    <?php elseif ($v['content_type'] == 'Текст' ) :?>
+                    <?php elseif ($post['content_type'] == 'Текст' ) :?>
                         <div class="post-details__image-wrapper post-text">
                             <div class="post__main">
                                 <p>
-                                    <?=htmlspecialchars($v['text'])?>
+                                    <?=htmlspecialchars($post['text'])?>
                                 </p>
                             </div>
                         </div>
-                    <?php elseif ($v['content_type'] == 'Видео' ) :?>
-                        <iframe width="760" height="400" src="<?=$v['video']?>" frameborder="0"></iframe>
+                    <?php elseif ($post['content_type'] == 'Видео' ) :?>
+                        <iframe width="760" height="400" src="<?=$post['video']?>" frameborder="0"></iframe>
                     <?php endif; ?>
                     <div class="post__indicators">
                         <div class="post__buttons">
-                            <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
+                            <a class="post__indicator post__indicator--likes button" href="/like.php/?post_id=<?=$post['post_id'] ?>" title="Лайк">
                                 <svg class="post__indicator-icon" width="20" height="17">
                                     <use xlink:href="#icon-heart"></use>
                                 </svg>
                                 <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                                     <use xlink:href="#icon-heart-active"></use>
                                 </svg>
-                                <span>250</span>
+                                <span><?=$post['likes_count']?></span>
                                 <span class="visually-hidden">количество лайков</span>
                             </a>
                             <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
@@ -137,14 +137,14 @@
                     <div class="post-details__user-info user__info">
                         <div class="post-details__avatar user__avatar">
                             <a class="post-details__avatar-link user__avatar-link" href="#">
-                                <img class="post-details__picture user__picture" src="../img/<?=$v['avatar_path']?>" alt="Аватар пользователя">
+                                <img class="post-details__picture user__picture" src="../img/<?=$post['avatar_path']?>" alt="Аватар пользователя">
                             </a>
                         </div>
                         <div class="post-details__name-wrapper user__name-wrapper">
                             <a class="post-details__name user__name" href="#">
-                                <span><?=htmlspecialchars($v['user_name'])?></span>
+                                <span><?=htmlspecialchars($post['user_name'])?></span>
                             </a>
-                            <time class="post-details__time user__time" datetime="2014-03-20">5 лет на сайте</time>
+                            <time class="post-details__time user__time" datetime="2014-03-20"><?=rel_post_time($_SESSION['user']['reg_date'])?> на сайте</time>
                         </div>
                     </div>
                     <div class="post-details__rating user__rating">

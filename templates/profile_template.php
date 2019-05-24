@@ -1,3 +1,26 @@
+<?php
+
+print('<pre>');
+
+//print('$posts:');
+//print_r($posts);
+//print('<br>');
+//
+//print('</pre>');
+//
+//print('<pre>');
+//
+//print('$hashtags:');
+//print_r($hashtags);
+//print('<br>');
+
+print('</pre>');
+
+?>
+
+
+
+
 <main class="page__main page__main--profile">
     <h1 class="visually-hidden">Профиль</h1>
     <div class="profile profile--default">
@@ -5,27 +28,29 @@
             <div class="profile__user user container">
                 <div class="profile__user-info user__info">
                     <div class="profile__avatar user__avatar">
-                        <img class="profile__picture user__picture" src="<?=$_SESSION['user']['avatar_path'];?>"
+                        <img class="profile__picture user__picture" src="<?=$user['avatar_path'];?>"
                         alt="Аватар пользователя">
                     </div>
                     <div class="profile__name-wrapper user__name-wrapper">
-                        <span class="profile__name user__name"><?=$_SESSION['user']['user_name'];?></span>
-                        <time class="profile__user-time user__time" datetime="<?=$_SESSION['user']['reg_date'] ?>"><?=rel_post_time($_SESSION['user']['reg_date'])?> на сайте</time>
+                        <span class="profile__name user__name"><?=$user['user_name'];?></span>
+                        <time class="profile__user-time user__time" datetime="<?=$user['reg_date'] ?>"><?=rel_post_time($user['reg_date'])?> на сайте</time>
                     </div>
                 </div>
                 <div class="profile__rating user__rating">
                     <p class="profile__rating-item user__rating-item user__rating-item--publications">
-                        <span class="user__rating-amount">556</span>
+                        <span class="user__rating-amount"><?=$user_post_count?></span>
                         <span class="profile__rating-text user__rating-text">публикаций</span>
                     </p>
                     <p class="profile__rating-item user__rating-item user__rating-item--subscribers">
-                        <span class="user__rating-amount">1856</span>
+                        <span class="user__rating-amount"><?=$user_followers_count?></span>
                         <span class="profile__rating-text user__rating-text">подписчиков</span>
                     </p>
                 </div>
                 <div class="profile__user-buttons user__buttons">
+                    <?php if ($user['user_id'] !== $_SESSION['user']['user_id']) :?>
                     <button class="profile__user-button user__button user__button--subscription button button--main" type="button">Подписаться</button>
                     <a class="profile__user-button user__button user__button--writing button button--green" href="#">Сообщение</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -35,63 +60,20 @@
                     <b class="profile__tabs-caption filters__caption">Показать:</b>
                     <ul class="profile__tabs-list filters__list tabs__list">
                         <li class="profile__tabs-item filters__item">
-                            <a class="profile__tabs-link filters__button filters__button--active tabs__item tabs__item--active button">Посты</a>
+                            <a class="profile__tabs-link filters__button tabs__item tabs__item--active button <? if($_GET['content'] == 'posts') {echo 'filters__button--active';}?>"  href="/profile.php/?user_id=<?=$_SESSION['user']['user_id']?>&content=posts">Посты</a>
                         </li>
                         <li class="profile__tabs-item filters__item">
-                            <a class="profile__tabs-link filters__button tabs__item button" href="#">Лайки</a>
+                            <a class="profile__tabs-link filters__button tabs__item button <? if($_GET['content'] == 'likes') {echo 'filters__button--active';}?>" href="/profile.php/?user_id=<?=$_SESSION['user']['user_id']?>&content=likes">Лайки</a>
                         </li>
                         <li class="profile__tabs-item filters__item">
-                            <a class="profile__tabs-link filters__button tabs__item button" href="#">Подписки</a>
+                            <a class="profile__tabs-link filters__button tabs__item button <? if($_GET['content'] == 'followers') {echo 'filters__button--active';}?>" href="/profile.php/?user_id=<?=$_SESSION['user']['user_id']?>&content=followers">Подписки</a>
                         </li>
                     </ul>
                 </div>
                 <div class="profile__tab-content">
-                    <section class="profile__posts tabs__content tabs__content--active">
-                        <h2 class="visually-hidden">Публикации</h2>
-                        <article class="profile__post post post-photo">
-                            <header class="post__header">
-                                <h2><a href="#">Наконец, обработал фотки!</a></h2>
-                            </header>
-                            <div class="post__main">
-                                <div class="post-photo__image-wrapper">
-                                    <img src="img/rock.jpg" alt="Фото от пользователя" width="760" height="396">
-                                </div>
-                            </div>
-                            <footer class="post__footer">
-                                <div class="post__indicators">
-                                    <div class="post__buttons">
-                                        <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
-                                            <svg class="post__indicator-icon" width="20" height="17">
-                                                <use xlink:href="#icon-heart"></use>
-                                            </svg>
-                                            <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
-                                                <use xlink:href="#icon-heart-active"></use>
-                                            </svg>
-                                            <span>250</span>
-                                            <span class="visually-hidden">количество лайков</span>
-                                        </a>
-                                        <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
-                                            <svg class="post__indicator-icon" width="19" height="17">
-                                                <use xlink:href="#icon-repost"></use>
-                                            </svg>
-                                            <span>5</span>
-                                            <span class="visually-hidden">количество репостов</span>
-                                        </a>
-                                    </div>
-                                    <time class="post__time" datetime="2019-01-30T23:41">15 минут назад</time>
-                                </div>
-                                <ul class="post__tags">
-                                    <li><a href="#">#nature</a></li>
-                                    <li><a href="#">#globe</a></li>
-                                    <li><a href="#">#photooftheday</a></li>
-                                    <li><a href="#">#canon</a></li>
-                                    <li><a href="#">#landscape</a></li>
-                                    <li><a href="#">#щикарныйвид</a></li>
-                                </ul>
-                            </footer>
-                            <div class="comments">
-                                <a class="comments__button button" href="#">Показать комментарии</a>
-                            </div>
+                    <!------------------------------------------------------------------------------>
+                    <section class="profile__posts tabs__content <? if($_GET['content'] == 'posts') {echo 'tabs__content--active';}?>">
+
                         </article>
                         <article class="profile__post post post-text">
                             <header class="post__header">
@@ -201,9 +183,87 @@
                                 <button class="comments__submit button button--green" type="submit">Отправить</button>
                             </form>
                         </article>
-                    </section>
+                        <?php foreach ($posts as $post): ?>
+                            <article class="profile__post post post-<?=$post['icon_class'];?>">
+                                <header class="post__header">
+                                    <h2>
+                                        <a href="/post.php/?post_id=<?=$post['post_id'];?>">
+                                            <?=$post['title'];?>
+                                        </a>
+                                    </h2>
+                                </header>
+                                <div class="post__main">
+                                    <?php if ($post['content_type_id'] == 1): ?>
+                                        <p>
+                                            <?=cut_text($post['text'],300) ;?>
+                                        </p>
+                                    <?php elseif ($post['content_type_id'] == 2): ?>
+                                        <blockquote>
+                                            <p>
+                                                <?=$post['text'];?>
+                                            </p>
+                                            <cite><?=$post['quote_author']?></cite>
+                                        </blockquote>
+                                    <?php elseif ($post['content_type_id'] == 3): ?>
+                                        <div class="post-photo__image-wrapper">
+                                            <img src="<?=($post['img']) ;?>" alt="Фото от пользователя" width="760" height="396">
+                                        </div>
+                                    <?php elseif ($post['content_type_id'] == 4): ?>
+                                        <iframe width="760px" height="400px" src="<?= $post['video'] ?>" frameborder="0"></iframe>
+                                    <?php elseif ($post['content_type_id'] == 5): ?>
+                                    <div class="post-link__wrapper">
+                                    <a class="post-link__external" href="<?=$post['link'];?>" title="Перейти по ссылке">
+                                        <div class="post-link__info-wrapper">
+                                            <div class="post-link__icon-wrapper">
+                                                <img src="../img/logo-vita.jpg" alt="Иконка">
+                                            </div>
+                                            <div class="post-link__info">
+                                                <h3><?=$post['title'];?></h3>
+                                            </div>
+                                        </div>
+                                        <span><?=$post['link'];?></span>
+                                    </a>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                                <footer class="post__footer">
+                                    <div class="post__indicators">
+                                        <div class="post__buttons">
+                                            <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
+                                                <svg class="post__indicator-icon" width="20" height="17">
+                                                    <use xlink:href="#icon-heart"></use>
+                                                </svg>
+                                                <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
+                                                    <use xlink:href="#icon-heart-active"></use>
+                                                </svg>
+                                                <span><?=$post['likes_count'];?></span>
+                                                <span class="visually-hidden">количество лайков</span>
+                                            </a>
+                                            <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
+                                                <svg class="post__indicator-icon" width="19" height="17">
+                                                    <use xlink:href="#icon-repost"></use>
+                                                </svg>
+                                                <span>5</span>
+                                                <span class="visually-hidden">количество репостов</span>
+                                            </a>
+                                        </div>
+                                        <time class="post__time" datetime="<?=$post['pub_date'];?>"><?=rel_post_time($post['pub_date']);?> назад</time>
+                                    </div>
+                                    <ul class="post__tags">
+                                        <?php foreach (get_hashtags($con,$post['post_id']) as $hashtag): ?>
+                                            <li><a href="#">#<?=$hashtag;?></a></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </footer>
+                                <div class="comments">
+                                    <a class="comments__button button" href="#">Показать комментарии</a>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
 
-                    <section class="profile__likes tabs__content">
+                    </section>
+<!------------------------------------------------------------------------------>
+                    <section class="profile__likes tabs__content <? if($_GET['content'] == 'likes') {echo 'tabs__content--active';}?>">
                         <h2 class="visually-hidden">Лайки</h2>
                         <ul class="profile__likes-list">
                             <li class="post-mini post-mini--photo post user">
@@ -344,7 +404,7 @@
                         </ul>
                     </section>
 
-                    <section class="profile__subscriptions tabs__content">
+                    <section class="profile__subscriptions tabs__content <? if($_GET['content'] == 'followers') {echo 'tabs__content--active';}?>">
                         <h2 class="visually-hidden">Подписки</h2>
                         <ul class="profile__subscriptions-list">
                             <li class="post-mini post-mini--photo post user">

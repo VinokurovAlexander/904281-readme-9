@@ -62,6 +62,7 @@ CREATE TABLE likes (
     like_id INT AUTO_INCREMENT PRIMARY KEY,
     who_like_id INT,
     post_id INT,
+    dt_add DATETIME,
     FOREIGN KEY (who_like_id) REFERENCES users(user_id),
     FOREIGN KEY (post_id) REFERENCES posts(post_id)
 );
