@@ -411,3 +411,50 @@ function isFollow($con, int $to_sub_id) {
         return true;
     }
 }
+
+/**
+ * Функция, которая отображает время последнего сообщения
+ **
+ * $message_date
+ *
+ * @return string Время в отформатированно формате.
+ * Если сообщение было отправлено/принято в течение текущих суток, то время отображается как %H:%i (14:40)
+ * В ином случае формат отображения $d $month (31 дек)
+ *
+ */
+
+function get_message_time($message_date) {
+    $months = [
+        1 => 'янв',
+        2 => 'фев',
+        3 => 'мар',
+        4 => 'апр',
+        5 => 'май',
+        6 => 'июн',
+        7 => 'июл',
+        8 => 'авг',
+        9 => 'сен',
+        10 => 'окт',
+        11 => 'нояб',
+        12 => 'дек',
+    ];
+
+    $cur_date = time();
+    $message_date = strtotime($message_date);
+    $diff = $cur_date - $message_date;
+
+    if ($diff <= 86400) {
+        $message_date_format = date('H:i',$message_date);
+    }
+    else {
+        $message_date_format = date('d n',$message_date);
+        $message_explode = explode(' ',$message_date_format);
+        foreach ($months as $key => $month) {
+            if ($key == $message_explode[1]) {
+                $message_explode[1] = $month;
+                $message_date_format = implode(' ',$message_explode);
+            }
+        }
+    }
+    return $message_date_format;
+}

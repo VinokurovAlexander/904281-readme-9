@@ -51,7 +51,7 @@
                             </a>
                         </li>
                         <li class="header__my-page header__my-page--messages">
-                            <a class="header__page-link <?php if(strpos($_SERVER['REQUEST_URI'], '/messages.php') !== false) {echo "header__page-link--active";} ?>" href="messages.html" title="Личные сообщения">
+                            <a class="header__page-link <?php if(strpos($_SERVER['REQUEST_URI'], '/messages.php') !== false) {echo "header__page-link--active";} ?>" href="/messages.php" title="Личные сообщения">
                                 <span class="visually-hidden">Личные сообщения</span>
                             </a>
                         </li>
@@ -78,31 +78,31 @@
                                     <ul class="header__profile-nav">
                                         <li class="header__profile-nav-item">
                                             <a class="header__profile-nav-link" href="/profile.php/?user_id=<?=$_SESSION['user']['user_id']?>&content=posts">
-                              <span class="header__profile-nav-text">
-                                Мой профиль
-                              </span>
+                                                <span class="header__profile-nav-text">
+                                                    Мой профиль
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="header__profile-nav-item">
+                                            <a class="header__profile-nav-link" href="/messages.php">
+                                                <span class="header__profile-nav-text">
+                                                    Сообщения
+                                                        <i class="header__profile-indicator">2</i>
+                                                </span>
                                             </a>
                                         </li>
                                         <li class="header__profile-nav-item">
                                             <a class="header__profile-nav-link" href="#">
-                              <span class="header__profile-nav-text">
-                                Сообщения
-                                <i class="header__profile-indicator">2</i>
-                              </span>
-                                            </a>
-                                        </li>
-                                        <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="#">
-                              <span class="header__profile-nav-text">
-                                Настройки
-                              </span>
+                                                <span class="header__profile-nav-text">
+                                                    Настройки
+                                                </span>
                                             </a>
                                         </li>
                                         <li class="header__profile-nav-item">
                                             <a class="header__profile-nav-link" href="/logout.php">
-                              <span class="header__profile-nav-text">
-                                Выход
-                              </span>
+                                                <span class="header__profile-nav-text">
+                                                    Выход
+                                                </span>
                                             </a>
                                         </li>
                                     </ul>

@@ -144,7 +144,7 @@
                             <a class="post-details__name user__name" href="#">
                                 <span><?=htmlspecialchars($post['user_name'])?></span>
                             </a>
-                            <time class="post-details__time user__time" datetime="2014-03-20"><?=rel_post_time($_SESSION['user']['reg_date'])?> на сайте</time>
+                            <time class="post-details__time user__time" datetime="2014-03-20"><?=rel_time($_SESSION['user']['reg_date'])?> на сайте</time>
                         </div>
                     </div>
                     <div class="post-details__rating user__rating">

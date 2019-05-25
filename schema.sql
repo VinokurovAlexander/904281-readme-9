@@ -76,13 +76,13 @@ CREATE TABLE follow (
 );
 
 CREATE TABLE messages (
+    mes_id INT AUTO_INCREMENT PRIMARY KEY,
     pub_date DATETIME,
     content TEXT,
     mes_sender_id INT,
-    mes_res_id INT,
-    CONSTRAINT messages_users PRIMARY KEY (mes_sender_id,mes_res_id),
+    mes_reс_id INT,
     FOREIGN KEY (mes_sender_id) REFERENCES users(user_id),
-    FOREIGN KEY (mes_res_id) REFERENCES users(user_id)
+    FOREIGN KEY (mes_reс_id) REFERENCES users(user_id)
 );
 
 CREATE TABLE rf_rus (

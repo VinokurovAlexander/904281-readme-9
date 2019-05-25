@@ -14,7 +14,6 @@ if (!isset($_GET['content'])) {
     $_GET['content'] = 'posts';
 }
 
-
 $current_user_id = $_GET['user_id'];
 $user_post_count = get_user_posts_count($con,$current_user_id);
 $user_followers_count = get_user_followers($con,$current_user_id);
