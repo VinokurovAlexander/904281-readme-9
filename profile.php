@@ -51,13 +51,24 @@ $likes_sql = "SELECT
 $likes_res = mysqli_query($con, $likes_sql);
 $likes = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
 
+
+//Получаем подписчиков пользователя
+
+$get_followers_sql = "SELECT u.user_id,u.user_name,u.reg_date,u.avatar_path FROM users u
+JOIN follow f ON f.who_sub_id = u.user_id
+WHERE f.to_sub_id = $current_user_id";
+$get_followers_result = mysqli_query($con,$get_followers_sql);
+$followers = mysqli_fetch_all($get_followers_result,MYSQLI_ASSOC);
+
+
 $page_content = include_template('profile_template.php',[
     'user_post_count' => $user_post_count,
     'user_followers_count' => $user_followers_count,
     'user' => $user,
     'posts' => $posts,
     'likes' => $likes,
-    'con' => $con
+    'con' => $con,
+    'followers' => $followers
 ]);
 
 $layout_content = include_template('layout.php',[

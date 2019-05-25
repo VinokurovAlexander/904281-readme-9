@@ -188,7 +188,7 @@ function get_email($con, string $email) {
  */
 
 //
-function rel_post_time ($pub_date) {
+function rel_time ($pub_date) {
     $cur_date = time(); // текущее время
     $post_date= strtotime($pub_date);  // метка для времени поста
     $diff = floor($cur_date - $post_date); //разница между временем поста и текущим временем в секундах
@@ -393,9 +393,9 @@ function show_error(string $error) {
 /**
  * Функция, которая проверяет является ли залогиненный пользователем подписчиком пользователя, указанного в $to_sub_id
  **
- * @param
+ * @param int $to_sub_id
  *
- * @return
+ * @return true если залогиненный пользователь подписан на пользователя, указанного в перемнной $to_sub_id, иначе false
  *
  */
 
