@@ -10,12 +10,10 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
-
-
-
 if (isset($_GET['user_id'])) {
     //Получаем id пользователя на которого будет осуществлена подписка
     $to_sub_id = $_GET['user_id'];
+
     //Проверяем есть пользователь с таким id
     $get_user_sql = "SELECT u.user_id FROM users u WHERE u.user_id = $to_sub_id";
     $get_user_res = mysqli_query($con,$get_user_sql);
@@ -32,7 +30,7 @@ if (isset($_GET['user_id'])) {
         if (isFollow($con,$to_sub_id)) {
             show_error('На этого пользователя вы уже подписаны');
         }
-        
+
         //Добавляем данные в таблицу
         $followers_add_sql = "INSERT INTO follow(who_sub_id, to_sub_id) VALUES (?,?)";
         $stmt = db_get_prepare_stmt($con,$followers_add_sql,[$who_sub_id,$to_sub_id]);
