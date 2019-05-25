@@ -26,8 +26,12 @@
                 </div>
                 <div class="profile__user-buttons user__buttons">
                     <?php if ($user['user_id'] !== $_SESSION['user']['user_id']) :?>
-                    <button class="profile__user-button user__button user__button--subscription button button--main" type="button">Подписаться</button>
-                    <a class="profile__user-button user__button user__button--writing button button--green" href="#">Сообщение</a>
+                        <?php if (isFollow($con,$user['user_id'])) :?>
+                            <a class="profile__user-button user__button user__button--subscription button button--main" href="/unfollow.php/?user_id=<?=$user['user_id']?>">Отписаться</a>
+                            <a class="profile__user-button user__button user__button--writing button button--green" href="#">Сообщение</a>
+                        <?php else : ?>
+                            <a class="profile__user-button user__button user__button--subscription button button--main" href="/follow.php/?user_id=<?=$user['user_id']?>">Подписаться</a>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </div>
@@ -49,7 +53,6 @@
                     </ul>
                 </div>
                 <div class="profile__tab-content">
-                    <!------------------------------------------------------------------------------>
                     <section class="profile__posts tabs__content <? if($_GET['content'] == 'posts') {echo 'tabs__content--active';}?>">
 
                         </article>
@@ -240,7 +243,7 @@
                         <?php endforeach; ?>
 
                     </section>
-<!------------------------------------------------------------------------------>
+
                     <section class="profile__likes tabs__content <? if($_GET['content'] == 'likes') {echo 'tabs__content--active';}?>">
                         <h2 class="visually-hidden">Лайки</h2>
                         <ul class="profile__likes-list">
@@ -302,7 +305,6 @@
 
                         </ul>
                     </section>
-<!------------------------------------------------------------------------------------------------------------------------------------------->
                     <section class="profile__subscriptions tabs__content <? if($_GET['content'] == 'followers') {echo 'tabs__content--active';}?>">
                         <h2 class="visually-hidden">Подписки</h2>
                         <ul class="profile__subscriptions-list">

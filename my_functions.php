@@ -225,7 +225,7 @@ function rel_post_time ($pub_date) {
  * @return int Количество публикаций
  */
 
-function get_user_posts_count($con,$user_id) {
+function get_user_posts_count($con,int $user_id) {
     $post_count_sql = "SELECT p.post_id FROM posts p
     JOIN users u ON p.user_id = u.user_id
     WHERE u.user_id = $user_id";
@@ -243,7 +243,7 @@ function get_user_posts_count($con,$user_id) {
  * @return int Количество подписчиков
  */
 
-function get_user_followers($con,$user_id)
+function get_user_followers($con,int $user_id)
 {
     $followers_count_sql = "SELECT f.to_sub_id FROM follow f
         JOIN users u ON u.user_id = f.to_sub_id
@@ -298,11 +298,11 @@ function cut_text ($text,$num_letters) {
  *
  */
 
-function get_hashtags ($con,$post_id) {
+function get_hashtags ($con,int $post_id) {
     $hashtags = [];
     $hashtags_sql = "SELECT h.name FROM hashtags h
-JOIN posts_hashtags ph ON h.hashtag_id = ph.hashtag_id
-WHERE ph.post_id = $post_id";
+                JOIN posts_hashtags ph ON h.hashtag_id = ph.hashtag_id
+                WHERE ph.post_id = $post_id";
     $hashtags_res = mysqli_query($con, $hashtags_sql);
     $hashtags_array = mysqli_fetch_all($hashtags_res, MYSQLI_ASSOC);
     foreach ($hashtags_array as $k => $v) {
@@ -323,26 +323,7 @@ WHERE ph.post_id = $post_id";
  *
  */
 
-//function get_likes ($con,$posts) {
-//    $likes = [];
-//    foreach ($posts as $post) {
-//        $post_id = $post['post_id'];
-//        $likes_sql = "SELECT l.*,u.user_name,u.avatar_path,p.post_id,p.content_type_id,p.img,p.video FROM likes l
-//            JOIN users u ON l.who_like_id = u.user_id
-//            JOIN posts p ON l.post_id = p.post_id
-//            WHERE l.post_id = $post_id
-//            ORDER BY dt_add";
-//        $likes_res = mysqli_query($con, $likes_sql);
-//        $likes[] = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
-//        foreach ($likes as $k => $v) {
-//            $like[] =
-//        }
-//    }
-//    return $likes;
-//}
-
-
-function get_likes ($con,$post_id) {
+function get_likes ($con,int $post_id) {
     $likes_sql = "SELECT l.*,u.user_name,u.avatar_path,p.post_id,p.content_type_id,p.img,p.video,ct.icon_class FROM likes l 
             JOIN users u ON l.who_like_id = u.user_id   
             JOIN posts p ON l.post_id = p.post_id
@@ -354,10 +335,6 @@ function get_likes ($con,$post_id) {
     return $likes;
 }
 
-
-
-
-
 /**
  * Функция, возвращает ссылку на картинку-превью к видео на youtube
  **
@@ -367,10 +344,70 @@ function get_likes ($con,$post_id) {
  *
  */
 
-
-function get_youtube_image_preview ($youtube_url) {
+function get_youtube_image_preview (string $youtube_url) {
     $video_url_explode = explode('/',$youtube_url);
     $img_name = array_pop($video_url_explode);
     $youtube_image_preview = 'img.youtube.com/vi/' . $img_name . '/sddefault.jpg';
     return $youtube_image_preview;
+}
+
+/**
+ * Функция, возвращает массив с постами для отображения на странице "Популярное"
+ **
+ * @param
+ *
+ * @return
+ *
+ */
+
+//function get_popular_posts ($con, int $content_type_id = null) {
+//    $posts_sql = "SELECT p.*,u.user_name,ct.content_type,ct.icon_class,u.avatar_path,COUNT(l.like_id) AS likes_count FROM posts p
+//        INNER JOIN users u ON p.user_id  = u.user_id
+//        INNER JOIN content_type ct ON p.content_type_id = ct.content_type_id
+//        LEFT JOIN likes l ON p.post_id = l.post_id
+//        (IF !epmty($content_type_id)) THEN WHERE p.content_type_id = $content_type_id
+//        GROUP BY p.post_id
+//        ORDER BY view_count DESC";
+//    $posts_res = mysqli_query($con,$posts_sql);
+//    $posts_rows = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
+//    return $posts_rows;
+//}
+
+
+/**
+ * Функция, отображает шаблон с ошибкой и заканчивает выполнения всего остального сценария
+ **
+ * @param string $error Текст ошибки
+ *
+ * @return string Отображает шаблон с ошибкой и заканчивает выполнения всего остального сценария
+ *
+ */
+
+function show_error(string $error) {
+    $page_content = include_template('error.php', ['error' => $error]);
+    $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'Ошибка']);
+    print($layout_content);
+    exit;
+}
+
+/**
+ * Функция, которая проверяет является ли залогиненный пользователем подписчиком пользователя, указанного в $to_sub_id
+ **
+ * @param
+ *
+ * @return
+ *
+ */
+
+function isFollow($con, int $to_sub_id) {
+    $who_sub_id = $_SESSION['user']['user_id'];
+    $is_follow_sql = "SELECT * FROM follow WHERE who_sub_id = $who_sub_id AND to_sub_id = $to_sub_id";
+    $is_follow_res = mysqli_query($con,$is_follow_sql);
+    $is_follow = mysqli_fetch_all($is_follow_res,MYSQLI_ASSOC);
+    if (empty($is_follow)) {
+        return false;
+    }
+    else {
+        return true;
+    }
 }

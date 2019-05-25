@@ -4,7 +4,6 @@ require_once('helpers.php');
 require_once('sql_connect.php');
 require_once('my_functions.php');
 
-
 session_start();
 if (!isset($_SESSION['user'])) {
     header("Location: /");
@@ -36,11 +35,7 @@ $posts_res = mysqli_query($con, $posts_sql);
 $posts = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
 
 
-//------------------------------------------------------------------------------------------------------
-
-
-
-
+//Получаем массив с необходимой информацией для отображения лайков пользователя
 $likes_sql = "SELECT
                     l.*,
                     ct.icon_class,
@@ -55,73 +50,6 @@ $likes_sql = "SELECT
                 ORDER BY dt_add DESC";
 $likes_res = mysqli_query($con, $likes_sql);
 $likes = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
-
-print('<pre>');
-
-//    print('$likes:');
-//    print_r($likes);
-//    print('<br>');
-
-print('</pre>');
-
-
-
-
-
-
-
-//------------------------------------------------------------------------------------------------------
-
-//Получаем массив с необходимой информацией для отображения лайков пользователя
-//$current_post_id = 232;
-//$likes_sql = "SELECT l.*,u.user_name,u.avatar_path,p.post_id,p.content_type_id,p.img,p.video FROM likes l
-//JOIN users u ON l.who_like_id = u.user_id
-//JOIN posts p ON l.post_id = p.post_id
-//WHERE l.post_id = $current_post_id";
-//$likes_res = mysqli_query($con, $likes_sql);
-//$likes = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
-
-
-//    $likes = get_likes($con,$posts);
-
-//    $post_id = 5;
-//    $likes_sql = "SELECT l.*,u.user_name,u.avatar_path,p.post_id,p.content_type_id,p.img,p.video,ct.icon_class FROM likes l
-//            JOIN users u ON l.who_like_id = u.user_id
-//            JOIN posts p ON l.post_id = p.post_id
-//            JOIN content_type ct ON p.content_type_id = ct.content_type_id
-//            WHERE l.post_id = $post_id
-//            ORDER BY dt_add DESC";
-//    $likes_res = mysqli_query($con, $likes_sql);
-//    $likes = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
-
-
-    print('<pre>');
-//
-//    print('$k:');
-//    print_r($k);
-//    print('<br>');
-
-
-//        print('$v:');
-//        print_r($v);
-//        print('<br>');
-
-    print('</pre>');
-
-
-
-
-
-print('<pre>');
-
-//    print('$likes:');
-//    print_r($likes);
-//    print('<br>');
-
-print('</pre>');
-
-
-
 
 $page_content = include_template('profile_template.php',[
     'user_post_count' => $user_post_count,
@@ -141,13 +69,6 @@ $layout_content = include_template('layout.php',[
 
 print($layout_content);
 
-//print('<pre>');
-//
-//print('$likes:');
-//print_r($likes);
-//print('<br>');
-//
-//print('</pre>');
 
 
 
