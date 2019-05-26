@@ -77,13 +77,15 @@ CREATE TABLE follow (
 
 CREATE TABLE messages (
     mes_id INT AUTO_INCREMENT PRIMARY KEY,
+    sen_id INT,
+    rec_id INT,
     pub_date DATETIME,
     content TEXT,
-    mes_sender_id INT,
-    mes_reс_id INT,
-    FOREIGN KEY (mes_sender_id) REFERENCES users(user_id),
-    FOREIGN KEY (mes_reс_id) REFERENCES users(user_id)
+    dialog_id CHAR(256),
+    FOREIGN KEY (sen_id) REFERENCES users(user_id),
+    FOREIGN KEY (rec_id) REFERENCES users(user_id)
 );
+
 
 CREATE TABLE rf_rus (
     rf_rus_id INT AUTO_INCREMENT PRIMARY KEY,

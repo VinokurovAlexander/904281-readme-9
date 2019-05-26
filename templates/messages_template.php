@@ -85,21 +85,21 @@
                         </div>
                     </a>
                 </li>
-                <?php foreach ($contacts as $contact) :?>
+                <?php foreach ($dialogs as $dialog) :?>
                     <li class="messages__contacts-item">
                         <a class="messages__contacts-tab tabs__item" href="#">
                             <div class="messages__avatar-wrapper">
-                                <img class="messages__avatar" src="<?=$contact['dialog_user_avatar'] ?>" alt="Аватар пользователя">
+                                <img class="messages__avatar" src="<?=get_dialog_avatar($con,$dialog)?>" alt="Аватар пользователя">
                             </div>
                             <div class="messages__info">
-                                <span class="messages__contact-name"><?=$contact['dialog_user_name'] ?></span>
+                                <span class="messages__contact-name"><?=get_dialog_username($con,$dialog)?></span>
                                 <div class="messages__preview">
                                     <p class="messages__preview-text">
-                                        <? if ($contact['mes_sender_id'] == $_SESSION['user']['user_id']) echo 'Вы:'  ?>
-                                        <?=$contact['content'] ?>
+                                        <?php if ($dialog['sen_id'] == $_SESSION['user']['user_id']) {echo 'Вы: ';} ?>
+                                        <?=$dialog['content']?>
                                     </p>
-                                    <time class="messages__preview-time" datetime="<?=$contact['pub_date']?>">
-                                        <?=get_message_time($contact['pub_date'])?>
+                                    <time class="messages__preview-time" datetime="<?=$dialog['pub_date']?>">
+                                        <?=get_message_time($dialog['pub_date'])?>
                                     </time>
                                 </div>
                             </div>
@@ -111,6 +111,28 @@
         <div class="messages__chat">
             <div class="messages__chat-wrapper">
                 <ul class="messages__list tabs__content tabs__content--active">
+
+                        <li class="messages__item">
+                            <div class="messages__info-wrapper">
+                                <div class="messages__item-avatar">
+                                    <a class="messages__author-link" href="#">
+                                        <img class="messages__avatar" src="img/userpic-larisa-small.jpg" alt="Аватар пользователя">
+                                    </a>
+                                </div>
+                                <div class="messages__item-info">
+                                    <a class="messages__author" href="#">
+                                        Лариса Роговая
+                                    </a>
+                                    <time class="messages__time" datetime="2019-05-01T14:40">
+                                        1 ч назад
+                                    </time>
+                                </div>
+                            </div>
+                            <p class="messages__text">
+                                Озеро Байкал – огромное древнее озеро в горах Сибири к северу от монгольской границы. Байкал считается самым глубоким озером в мире. Он окружен сетью пешеходных маршрутов, называемых Большой байкальской тропой. Деревня Листвянка, расположенная на западном берегу озера, – популярная отправная точка для летних экскурсий. Зимой здесь можно кататься на коньках и собачьих упряжках.
+                            </p>
+                        </li>
+
                     <li class="messages__item">
                         <div class="messages__info-wrapper">
                             <div class="messages__item-avatar">
@@ -367,7 +389,8 @@
                     <div class="comments__my-avatar">
                         <img class="comments__picture" src="img/userpic.jpg" alt="Аватар пользователя">
                     </div>
-                    <textarea class="comments__textarea form__textarea" placeholder="<? if (isset($errors['text-message'])) {echo $errors['text-message'];} else {echo 'Введите ваше сообщение';}?>" name="message-text"></textarea>
+                    <textarea class="comments__textarea form__textarea <? if (isset($errors['message-text'])) {echo 'message-text-error';}?>"
+                              placeholder="<? if (isset($errors['message-text'])) {echo $errors['message-text'];} else {echo 'Введите ваше сообщение';}?>" name="message-text"></textarea>
                     <label class="visually-hidden">Ваше сообщение</label>
                     <button class="comments__submit button button--green" type="submit">Отправить</button>
                 </form>

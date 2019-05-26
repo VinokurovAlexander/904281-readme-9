@@ -28,7 +28,7 @@
                     <?php if ($user['user_id'] !== $_SESSION['user']['user_id']) :?>
                         <?php if (isFollow($con,$user['user_id'])) :?>
                             <a class="profile__user-button user__button user__button--subscription button button--main" href="/unfollow.php/?user_id=<?=$user['user_id']?>">Отписаться</a>
-                            <a class="profile__user-button user__button user__button--writing button button--green" href="#">Сообщение</a>
+                            <a class="profile__user-button user__button user__button--writing button button--green" href="/messages.php/?user_id=<?=$user['user_id']?>">Сообщение</a>
                         <?php else : ?>
                             <a class="profile__user-button user__button user__button--subscription button button--main" href="/follow.php/?user_id=<?=$user['user_id']?>">Подписаться</a>
                         <?php endif; ?>

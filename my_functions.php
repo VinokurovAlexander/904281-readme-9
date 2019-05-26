@@ -387,8 +387,26 @@ function show_error(string $error) {
     $page_content = include_template('error.php', ['error' => $error]);
     $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'Ошибка']);
     print($layout_content);
+
     exit;
 }
+
+/**
+ * Функция, отображает шаблон с ошибкой SQL и заканчивает выполнения всего остального сценария
+ **
+ * @param $con Соединение с БД
+ *
+ * @return string Отображает шаблон с ошибкой и заканчивает выполнения всего остального сценария
+ *
+ */
+function show_sql_error($con) {
+    $error =  mysqli_error($con);
+    $page_content = include_template('error.php', ['error' => $error]);
+    $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'Ошибка']);
+    print($layout_content);
+    exit;
+}
+
 
 /**
  * Функция, которая проверяет является ли залогиненный пользователем подписчиком пользователя, указанного в $to_sub_id
@@ -458,3 +476,46 @@ function get_message_time($message_date) {
     }
     return $message_date_format;
 }
+
+/**
+ * Получаем имя пользователя в диалоге
+ **
+ *
+ *
+ * @return
+ *
+ */
+
+function get_dialog_username($con,array $dialog) {
+    $user_id = $dialog['sen_id'];
+    $current_user_id = $_SESSION['user']['user_id'];
+    if ($user_id == $current_user_id) {
+        $user_id = $dialog['rec_id'];
+    }
+    $get_username_sql = "SELECT user_name FROM users u WHERE u.user_id = $user_id";
+    $get_username_res = mysqli_query($con,$get_username_sql);
+    $username = mysqli_fetch_row($get_username_res);
+    return $username = $username[0];
+}
+
+/**
+ * Получаем аватар пользователя в диалоге
+ **
+ *
+ *
+ * @return
+ *
+ */
+
+function get_dialog_avatar($con,array $dialog) {
+    $user_id = $dialog['sen_id'];
+    $current_user_id = $_SESSION['user']['user_id'];
+    if ($user_id == $current_user_id) {
+        $user_id = $dialog['rec_id'];
+    }
+    $get_avatar_sql = "SELECT avatar_path FROM users u WHERE u.user_id = $user_id";
+    $get_avatar_res = mysqli_query($con,$get_avatar_sql);
+    $avatar = mysqli_fetch_row($get_avatar_res);
+    return $avatar = $avatar[0];
+}
+
