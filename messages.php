@@ -19,7 +19,7 @@ $dialog_user_id = null;
 if (!empty($_GET['user_id'])) {
     $dialog_user_id = $_GET['user_id'];
     //Проверяем существование пользователя
-    if (isUser($con, $dialog_user_id) == false) {
+    if (is_user($con, $dialog_user_id) == false) {
         show_error('Пользователя с таким id не существует');
     }
 
@@ -28,12 +28,12 @@ if (!empty($_GET['user_id'])) {
     }
 
     //Проверяем подписку на пользователя
-    if (!isFollow($con,$dialog_user_id)) {
+    if (!is_follow($con,$dialog_user_id)) {
         show_error('Вы не подписаны на данного пользователя');
     }
-    
+
     //Проверяем есть ли диалог с указанным пользователем
-    if (!isDialog($con, $current_user_id, $dialog_user_id)) {
+    if (!is_dialog($con, $current_user_id, $dialog_user_id)) {
         $dialogs[0] = [
             'pub_date' => null,
             'content' => null,
@@ -72,9 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $recipient_id = $_GET['user_id'];
 
         //Проверяем создан ли у данных пользователей диалог
-        if (isDialog($con,$sender_id,$recipient_id)) {
+        if (is_dialog($con,$sender_id,$recipient_id)) {
             //диалог есть
-            $dialog_id = isDialog($con,$sender_id,$recipient_id);
+            $dialog_id = is_dialog($con,$sender_id,$recipient_id);
         }
         else {
             //диалога нет, нужно создавать

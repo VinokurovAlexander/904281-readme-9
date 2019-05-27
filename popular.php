@@ -102,7 +102,8 @@ $page_content = include_template('popular_template.php', [
     'posts_rows' => $posts_rows,
     'con_type_rows' => $con_type_rows,
     'get_con_id' => $get_con_id,
-    'all_content' => $all_content
+    'all_content' => $all_content,
+    'con' => $con
 ]);
 
 }

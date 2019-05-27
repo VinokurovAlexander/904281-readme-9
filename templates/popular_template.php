@@ -164,7 +164,7 @@
                                     <svg class="post__indicator-icon" width="19" height="17">
                                         <use xlink:href="#icon-comment"></use>
                                     </svg>
-                                    <span>0</span>
+                                    <span><?=get_comments_count($con,$post['post_id'])?></span>
                                     <span class="visually-hidden">количество комментариев</span>
                                 </a>
                             </div>

@@ -27,7 +27,7 @@ if (isset($_GET['user_id'])) {
         $who_sub_id = $_SESSION['user']['user_id'];
 
         //Исключаем случай подписки на одного и того же пользователя
-        if (isFollow($con,$to_sub_id)) {
+        if (is_follow($con,$to_sub_id)) {
             show_error('На этого пользователя вы уже подписаны');
         }
 

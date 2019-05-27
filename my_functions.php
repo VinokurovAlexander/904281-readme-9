@@ -418,7 +418,7 @@ function show_sql_error($con) {
  *
  */
 
-function isFollow($con, int $to_sub_id) {
+function is_follow($con, int $to_sub_id) {
     $who_sub_id = $_SESSION['user']['user_id'];
     $is_follow_sql = "SELECT * FROM follow WHERE who_sub_id = $who_sub_id AND to_sub_id = $to_sub_id";
     $is_follow_res = mysqli_query($con,$is_follow_sql);
@@ -612,7 +612,7 @@ ORDER BY m.pub_date";
  *
  */
 
-function isUser($con,$user_id) {
+function is_user($con,$user_id) {
     $user_id_sql = "SELECT u.user_id FROM users u WHERE u.user_id = $user_id";
     $user_id_res = mysqli_query($con,$user_id_sql);
     $user_id_array = mysqli_fetch_all($user_id_res,MYSQLI_ASSOC);
@@ -635,17 +635,17 @@ function isUser($con,$user_id) {
  *
  */
 
-function isDialog ($con, int $user_id_1,int $user_id_2) {
-    $isDialog_sql = "SELECT m.dialog_id FROM messages m
+function is_dialog ($con, int $user_id_1,int $user_id_2) {
+    $is_dialog_sql = "SELECT m.dialog_id FROM messages m
                          WHERE (m.sen_id = $user_id_1 AND m.rec_id = $user_id_2) 
                          OR (m.sen_id = $user_id_2 AND m.rec_id = $user_id_1)";
-    $isDialog_res = mysqli_query($con,$isDialog_sql);
-    $isDialog = mysqli_fetch_array($isDialog_res, MYSQLI_ASSOC);
-    if (empty($isDialog)) {
+    $is_dialog_res = mysqli_query($con,$is_dialog_sql);
+    $is_dialog = mysqli_fetch_array($is_dialog_res, MYSQLI_ASSOC);
+    if (empty($is_dialog)) {
         return false;
     }
     else {
-        return $isDialog = $isDialog['dialog_id'];
+        return $is_dialog = $is_dialog['dialog_id'];
     }
 }
 
@@ -672,6 +672,141 @@ function add_message($con,int $sender_id,int $recipient_id,string $message_text,
     else {
         return false;
     }
+}
+
+/**
+ * Возвращает количество комментариев для поста
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id id поста
+ *
+ * @return int Количество комментариев
+ *
+ */
+
+function get_comments_count($con, string $post_id) {
+    $get_comments_count_sql = "SELECT count(c.comment_id) AS comments_count FROM comments c WHERE c.post_id = $post_id";
+    $get_comments_count_res = mysqli_query($con,$get_comments_count_sql);
+    $comments_count_array = mysqli_fetch_array($get_comments_count_res,MYSQLI_ASSOC);
+    $comments_count = $comments_count_array['comments_count'];
+    return $comments_count;
+}
+
+/**
+ * Возвращает количество просмотров поста
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id id поста
+ *
+ * @return int Количество просмотров
+ *
+ */
+
+function get_view_count($con, string $post_id) {
+    $get_view_count_sql = "SELECT p.view_count FROM posts p WHERE p.post_id = $post_id";
+    $get_view_count_res = mysqli_query($con,$get_view_count_sql);
+    $get_view_count_array = mysqli_fetch_array($get_view_count_res, MYSQLI_ASSOC);
+    $get_view_count = $get_view_count_array['view_count'];
+    return $get_view_count;
+}
+
+/**
+ * Обновляет данные о количестве просмотров поста
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id id поста
+ * @param int $view_count кол-во просмотров
+ *
+ * @return true если данные добавлены, если иначе false
+ *
+ */
+
+function add_view_count($con,int $post_id, int $view_count) {
+    $add_view_count_sql = "UPDATE posts p SET p.view_count = $view_count WHERE p.post_id = $post_id";
+    $add_view_count_res = mysqli_query($con,$add_view_count_sql);
+    if ($add_view_count_res) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+/**
+ * Получает данные для отображения поста на странице просмотра поста
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id id поста
+ *
+ *
+ * @return array $post Массив с данными поста, если данные не удалось получить из БД - false
+ *
+ */
+
+function get_post($con,$post_id) {
+    $post_sql = "SELECT p.*,ct.content_type,u.user_name,u.avatar_path,COUNT(l.like_id) AS likes_count FROM posts p 
+JOIN content_type ct ON  p.content_type_id = ct.content_type_id
+JOIN users u ON p.user_id = u.user_id
+LEFT JOIN likes l ON p.post_id = l.post_id
+WHERE p.post_id = $post_id";
+    $posts_res = mysqli_query($con,$post_sql);
+    if(!$posts_res) {
+        return false;
+    }
+    else {
+        $post = mysqli_fetch_array($posts_res, MYSQLI_ASSOC);
+        return $post;
+    }
+}
+
+/**
+ * Добавляем комментарий в БД
+ *
+ **
+ * @param $con Соединение с БД
+ * @param string $text Текст комментария
+ * @param int $user_id Автор комментария
+ * @param int $post_id Пост к которому оставляется комментарий
+ *
+ * @return bool Если комментарий добавлен true, иначе false
+ *
+ */
+
+function add_comment($con,string $text,int $user_id,int $post_id) {
+    $add_comment_sql = "INSERT INTO comments(pub_date,content,user_id,post_id) VALUES (NOW(),?,?,?)";
+    $stmt = db_get_prepare_stmt($con,$add_comment_sql,[$text,$user_id,$post_id]);
+    $res = mysqli_stmt_execute($stmt);
+    if ($res) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+/**
+ * Получаем комменатрии для поста
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id Пост для которого нужно получить комментарии
+ *
+ * @return array Массив с комментариями
+ *
+ */
+
+function get_comments($con,int $post_id) {
+    $get_comments_sql = "SELECT c.pub_date,c.content,c.user_id,u.avatar_path,u.user_name FROM comments c 
+                        JOIN users u ON u.user_id = c.user_id
+                        WHERE c.post_id = $post_id
+                        ORDER BY c.pub_date DESC LIMIT 3";
+    $get_comments_res = mysqli_query($con, $get_comments_sql);
+    $get_comments = mysqli_fetch_all($get_comments_res,MYSQLI_ASSOC);
+    return $get_comments;
 }
 
 
