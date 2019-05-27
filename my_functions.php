@@ -188,7 +188,7 @@ function get_email($con, string $email) {
  */
 
 //
-function rel_time ($pub_date) {
+function rel_time($pub_date) {
     $cur_date = time(); // текущее время
     $post_date= strtotime($pub_date);  // метка для времени поста
     $diff = floor($cur_date - $post_date); //разница между временем поста и текущим временем в секундах
@@ -441,7 +441,8 @@ function isFollow($con, int $to_sub_id) {
  *
  */
 
-function get_message_time($message_date) {
+function get_message_time($message_date)
+{
     $months = [
         1 => 'янв',
         2 => 'фев',
@@ -457,20 +458,20 @@ function get_message_time($message_date) {
         12 => 'дек',
     ];
 
-    $cur_date = time();
-    $message_date = strtotime($message_date);
-    $diff = $cur_date - $message_date;
+    $dt_mes = date_create($message_date);
+    $dt_mes_format = date_format($dt_mes, "d.m.Y");
+    $dt_now = date_create('now');
+    $dt_now_format = date_format($dt_now, "d.m.Y");
 
-    if ($diff <= 86400) {
-        $message_date_format = date('H:i',$message_date);
-    }
-    else {
-        $message_date_format = date('d n',$message_date);
-        $message_explode = explode(' ',$message_date_format);
+    if ($dt_mes_format == $dt_now_format) {
+        $message_date_format = date_format($dt_mes, "G:H");
+    } else {
+        $message_date_format = date_format($dt_mes, "j n");
+        $message_explode = explode(' ', $message_date_format);
         foreach ($months as $key => $month) {
             if ($key == $message_explode[1]) {
                 $message_explode[1] = $month;
-                $message_date_format = implode(' ',$message_explode);
+                $message_date_format = implode(' ', $message_explode);
             }
         }
     }
@@ -517,5 +518,50 @@ function get_dialog_avatar($con,array $dialog) {
     $get_avatar_res = mysqli_query($con,$get_avatar_sql);
     $avatar = mysqli_fetch_row($get_avatar_res);
     return $avatar = $avatar[0];
+}
+
+/**
+ * Возвращает id собеседника в диалоге
+ **
+ *
+ *
+ * @return
+ *
+ */
+
+function get_dialog_id($con,$dialog) {
+    $user_id = $dialog['sen_id'];
+    $current_user_id = $_SESSION['user']['user_id'];
+    if ($user_id == $current_user_id) {
+        $user_id = $dialog['rec_id'];
+    }
+    $get_user_id_sql = "SELECT user_id FROM users u WHERE u.user_id = $user_id";
+    $get_avatar_res = mysqli_query($con,$get_user_id_sql);
+    $user_id = mysqli_fetch_row($get_avatar_res);
+    return $user_id = $user_id[0];
+}
+
+/**
+ * Получаем id пользователя с которым в рамках всех диалогов есть самое свежее сообщение
+ * Необходимо для задания id по умолчанию для страницы с сообщениями
+ **
+ *
+ *
+ * @return
+ *
+ */
+
+function get_deafult_id_for_messages($con) {
+    $current_user_id = $_SESSION['user']['user_id'];
+    $get_message_id_sql = "SELECT m.rec_id,m.sen_id FROM messages m
+                            WHERE m.rec_id = $current_user_id OR m.sen_id = $current_user_id
+                            ORDER BY m.mes_id DESC LIMIT 1";
+    $get_message_id_res = mysqli_query($con,$get_message_id_sql);
+    $get_message_id_array = mysqli_fetch_array($get_message_id_res,MYSQLI_ASSOC);
+    $get_message_id = $get_message_id_array['sen_id'];
+    if ($get_message_id == $current_user_id) {
+        $get_message_id = $get_message_id_array['rec_id'];
+    }
+    return $get_message_id;
 }
 

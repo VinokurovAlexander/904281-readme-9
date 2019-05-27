@@ -11,18 +11,26 @@ if (!isset($_SESSION['user'])) {
 }
 $errors = [];
 
-//Проверяем существование отправителя
-$recipient_user_id = $_GET['user_id'];
-$recipient_user_id_sql = "SELECT u.user_id FROM users u WHERE u.user_id = $recipient_user_id";
-$recipient_user_id_res = mysqli_query($con,$recipient_user_id_sql);
-$recipient_user_id_array = mysqli_fetch_all($recipient_user_id_res,MYSQLI_ASSOC);
-
-
-if (empty($recipient_user_id_array)) {
-    show_error('Пользователя с таким id не существует');
+//Получаем id пользователя с которым в рамках всех диалогов есть самое свежее сообщение
+//Необходимо для задания id по умолчанию для данной страницы
+if (!isset($_GET['user_id'])) {
+    $_GET['user_id'] = get_deafult_id_for_messages($con);
 }
+
+
 //---------------------------Отправка сообщения---------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    //Проверяем существование отправителя
+    $recipient_user_id = $_GET['user_id'];
+    $recipient_user_id_sql = "SELECT u.user_id FROM users u WHERE u.user_id = $recipient_user_id";
+    $recipient_user_id_res = mysqli_query($con,$recipient_user_id_sql);
+    $recipient_user_id_array = mysqli_fetch_all($recipient_user_id_res,MYSQLI_ASSOC);
+
+    if (empty($recipient_user_id_array)) {
+        show_error('Пользователя с таким id не существует');
+    }
+
     $post = $_POST;
     //Проверяем заполнение полей
     if (empty($post['message-text'])) {
@@ -72,71 +80,32 @@ $dialogs_sql = "SELECT pub_date, content, sen_id, rec_id,  dialog_id
 $dialogs_res = mysqli_query($con,$dialogs_sql);
 $dialogs = mysqli_fetch_all($dialogs_res,MYSQLI_ASSOC);
 
+//Получаем все сообщения из диалога
+$dialog_user_id = $_GET['user_id'];
+$messages_sql = "SELECT m.pub_date,m.content,m.sen_id,m.rec_id, u.user_name,u.avatar_path FROM messages m
+JOIN users u ON m.sen_id = u.user_id
+WHERE (m.sen_id = $current_user_id AND m.rec_id = $dialog_user_id) 
+   OR (m.sen_id = $dialog_user_id AND m.rec_id = $current_user_id)
+ORDER BY m.pub_date";
+$messages_res = mysqli_query($con,$messages_sql);
+$messages = mysqli_fetch_all($messages_res, MYSQLI_ASSOC);
 
 
-print('<pre>');
-
-print('$dialogs');
-print_r($dialogs);
-
-print('</pre>');
 
 
 
-//---------------------------Отправка сообщения---------------------------------------------
-//if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-//    $post = $_POST;
-//    //Проверяем заполнение полей
-//    if (empty($post['message-text'])) {
-//        $errors = [
-//            'message-text' => 'Это поле необходимо заполнить'
-//        ];
-//    }
-//    else {
-        //Добавляем данные в таблицу messages
-//        $sender_id = $_SESSION['user']['user_id'];
-//        $recipient_id = $_GET['user_id'];
+
+
+//print('<pre>');
 //
-//        $add_messages_sql = "INSERT INTO messages(pub_date,content,mes_sender_id,mes_reс_id) VALUES (NOW(),?,?,?)";
-//        $stmt = db_get_prepare_stmt($con,$add_messages_sql,[$post['message-text'],$sender_id,$recipient_id]);
-//        $res = mysqli_stmt_execute($stmt);
+//print('$messages');
+//print_r($messages);
 //
-//        if (!$res) {
-//            show_sql_error($con);
-//        }
+//print('$session user ');
+//print_r($_SESSION);
+//
+//print('</pre>');
 
-        //Добавляем или обновляем данные в таблице user_message
-//        $message_id = mysqli_insert_id($con);
-
-        //Проверяем есть ли диалог между данными пользователями
-//        $is_dialog_sql = "SELECT * FROM users_messages um
-//        WHERE (um.mes_sender_id = $sender_id AND um.mes_reс_id = $recipient_id)";
-//        $is_dialog_res = mysqli_query($con,$is_dialog_sql);
-//        $is_dialog = mysqli_fetch_all($is_dialog_res,MYSQLI_ASSOC);
-//        if (empty($is_dialog)) {
-            //диалог новый, нужно добавлять данные
-//            $add_user_messages_sql = "INSERT INTO
-//                users_messages(mes_sender_id, mes_reс_id, last_message_id) VALUES (?,?,?)";
-//            $stmt = db_get_prepare_stmt($con,$add_user_messages_sql,[$sender_id,$recipient_id,$message_id]);
-//            $res = mysqli_stmt_execute($stmt);
-//            if (!$res) {
-//                show_sql_error($con);
-//            }
-//        }
-//        else {
-            //диалог есть, нужно обновлять данные
-//            $add_user_messages_sql = "UPDATE users_messages
-//                SET last_message_id = $message_id
-//                WHERE (mes_sender_id = $sender_id AND mes_reс_id = $recipient_id)";
-//            $add_user_messages_res = mysqli_query($con,$add_user_messages_sql);
-//            if (!$add_user_messages_res) {
-//                show_sql_error($con);
-//            }
-//        }
-//    }
-//}
-
-//-----------------------------------------------------------------------------------
 
 //Получаем список сообщений в диалоге
 //$dialog_messages_sql = "SELECT * FROM messages m
@@ -157,7 +126,8 @@ print('</pre>');
 $page_content = include_template('messages_template.php',[
     'errors' => $errors,
     'con' => $con,
-    'dialogs' => $dialogs
+    'dialogs' => $dialogs,
+    'messages' => $messages
 ]);
 
 $layout_content = include_template('layout.php', [
