@@ -411,7 +411,8 @@ function show_sql_error($con) {
 /**
  * Функция, которая проверяет является ли залогиненный пользователем подписчиком пользователя, указанного в $to_sub_id
  **
- * @param int $to_sub_id
+ * @param $con Соединение с БД
+ * @param int $to_sub_id Пользователь для которого осуществляется проверка
  *
  * @return true если залогиненный пользователь подписан на пользователя, указанного в перемнной $to_sub_id, иначе false
  *
@@ -433,7 +434,7 @@ function isFollow($con, int $to_sub_id) {
 /**
  * Функция, которая отображает время последнего сообщения
  **
- * $message_date
+ * $message_date Дата публикаци сообщения
  *
  * @return string Время в отформатированно формате.
  * Если сообщение было отправлено/принято в течение текущих суток, то время отображается как %H:%i (14:40)
@@ -481,9 +482,10 @@ function get_message_time($message_date)
 /**
  * Получаем имя пользователя в диалоге
  **
+ * @param $con Соединение с БД
+ * @param array $dialog Массив с диалогами пользователя, который получается в результате работы функции get_dialogs()
  *
- *
- * @return
+ * @return string Имя пользователя
  *
  */
 
@@ -502,9 +504,10 @@ function get_dialog_username($con,array $dialog) {
 /**
  * Получаем аватар пользователя в диалоге
  **
+ * @param $con Соединение с БД
+ * @param array $dialog Массив с диалогами пользователя, который получается в результате работы функции get_dialogs()
  *
- *
- * @return
+ * @return string Путь к аватару
  *
  */
 
@@ -523,9 +526,10 @@ function get_dialog_avatar($con,array $dialog) {
 /**
  * Возвращает id собеседника в диалоге
  **
+ * @param $con Соединение с БД
+ * @param array $dialog Массив с диалогами пользователя, который получается в результате работы функции get_dialogs()
  *
- *
- * @return
+ * @return int id собеседника в диалоге
  *
  */
 
@@ -542,26 +546,132 @@ function get_dialog_id($con,$dialog) {
 }
 
 /**
- * Получаем id пользователя с которым в рамках всех диалогов есть самое свежее сообщение
- * Необходимо для задания id по умолчанию для страницы с сообщениями
- **
+ * Получает список диалогов для пользователя
  *
+ **
+ *  @param $con Соединение с БД
+ *  @param int $user_id Пользователь для которого мы хотим получить массив с активными диалогами
+ *
+ * @return array Массив с активными диалогами, иначе false
+ *
+ */
+function get_dialogs($con, int $user_id) {
+    $dialogs_sql = "SELECT pub_date, content, sen_id, rec_id,  dialog_id
+                    FROM messages
+                    WHERE mes_id
+                          IN(SELECT max(mes_id)
+                          FROM messages
+                          WHERE sen_id = $user_id OR rec_id = $user_id
+                          GROUP BY dialog_id)
+                    ORDER BY pub_date DESC";
+    $dialogs_res = mysqli_query($con,$dialogs_sql);
+    $dialogs = mysqli_fetch_all($dialogs_res,MYSQLI_ASSOC);
+    if (empty($dialogs)) {
+        return false;
+    }
+    else {
+        return $dialogs;
+    }
+}
+
+/**
+ * Загружает все сообщения для диалога
+ *
+ **
+ *  @param $con Соединение с БД
+ *  @param int $current_user_id Пользователь из сессии
+ * @param int $dialog_user_id Собеседник в диалоге
+ *
+ * @return array Массив с сообщениями в рамках диалога, иначе false
+ *
+ */
+
+function get_dialog_messages($con,int $current_user_id, int $dialog_user_id) {
+    $messages_sql = "SELECT m.pub_date,m.content,m.sen_id,m.rec_id, u.user_name,u.avatar_path FROM messages m
+JOIN users u ON m.sen_id = u.user_id
+WHERE (m.sen_id = $current_user_id AND m.rec_id = $dialog_user_id)
+   OR (m.sen_id = $dialog_user_id AND m.rec_id = $current_user_id)
+ORDER BY m.pub_date";
+    $messages_res = mysqli_query($con,$messages_sql);
+    $messages = mysqli_fetch_all($messages_res, MYSQLI_ASSOC);
+    if (empty($messages)) {
+        $messages = [];
+    }
+    return $messages;
+}
+
+
+/**
+ * //Проверяем существование пользователя в БД
+ *
+ **
+ *  @param $con Соединение с БД
+ *  @param int $user_id_Пользователь существование которого необходимо проверить
+ *
+ * @return bool true если пользователь существует, иначе false
+ *
+ */
+
+function isUser($con,$user_id) {
+    $user_id_sql = "SELECT u.user_id FROM users u WHERE u.user_id = $user_id";
+    $user_id_res = mysqli_query($con,$user_id_sql);
+    $user_id_array = mysqli_fetch_all($user_id_res,MYSQLI_ASSOC);
+    if (empty($user_id_array)) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+/**
+ * Проверяет существование диалога у указанных пользователей
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $user_id_1,$user_id_2 Пользователи между которыми нужно проверить существование диалога
+ *
+ * @return bool Если диалог существует - true, иначе false.
+ *
+ */
+
+function isDialog ($con, int $user_id_1,int $user_id_2) {
+    $isDialog_sql = "SELECT m.dialog_id FROM messages m
+                         WHERE (m.sen_id = $user_id_1 AND m.rec_id = $user_id_2) 
+                         OR (m.sen_id = $user_id_2 AND m.rec_id = $user_id_1)";
+    $isDialog_res = mysqli_query($con,$isDialog_sql);
+    $isDialog = mysqli_fetch_array($isDialog_res, MYSQLI_ASSOC);
+    if (empty($isDialog)) {
+        return false;
+    }
+    else {
+        return $isDialog = $isDialog['dialog_id'];
+    }
+}
+
+/**
+ * Добавление данных в таблицу messages
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $sender_id id пользователя отправителя сообщения
+ * @param int $recipient_id id пользователя принимающего сообщения
+ * @param string $message_text Текст сообщения
+ * @param int $dialog_id Уникальный идентификатор диалога
  *
  * @return
  *
  */
-
-function get_deafult_id_for_messages($con) {
-    $current_user_id = $_SESSION['user']['user_id'];
-    $get_message_id_sql = "SELECT m.rec_id,m.sen_id FROM messages m
-                            WHERE m.rec_id = $current_user_id OR m.sen_id = $current_user_id
-                            ORDER BY m.mes_id DESC LIMIT 1";
-    $get_message_id_res = mysqli_query($con,$get_message_id_sql);
-    $get_message_id_array = mysqli_fetch_array($get_message_id_res,MYSQLI_ASSOC);
-    $get_message_id = $get_message_id_array['sen_id'];
-    if ($get_message_id == $current_user_id) {
-        $get_message_id = $get_message_id_array['rec_id'];
+function add_message($con,int $sender_id,int $recipient_id,string $message_text,$dialog_id) {
+    $add_message = "INSERT INTO messages(sen_id, rec_id, pub_date, content, dialog_id) VALUES (?,?,NOW(),?,?)";
+    $stmt = db_get_prepare_stmt($con,$add_message,[$sender_id,$recipient_id,$message_text,$dialog_id]);
+    $res = mysqli_stmt_execute($stmt);
+    if ($res) {
+        return true;
     }
-    return $get_message_id;
+    else {
+        return false;
+    }
 }
+
 
