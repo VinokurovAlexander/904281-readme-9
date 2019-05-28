@@ -37,7 +37,7 @@
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                        <a class="filters__button filters__button--ellipse filters__button--all <?if ($_GET['content_type_id'] == 'all') {echo 'filters__button--active';} ?> " href="/new_popular.php/?content_type_id=all&sorting=popular_desc">
+                        <a class="filters__button filters__button--ellipse filters__button--all <?if ($_GET['content_type_id'] == 'all') {echo 'filters__button--active';} ?> " href="/popular.php/?content_type_id=all&sorting=popular_desc&page=1">
                             <span>Все</span>
                         </a>
                     </li>
@@ -45,7 +45,7 @@
                     <li class="popular__filters-item filters__item">
                         <a class="filters__button filters__button--photo button
                         <?php if (($_GET['content_type_id'] == $content_type['content_type_id'])) {echo "filters__button--active";} ?>"
-                           href="/popular.php/?content_type_id=<?=$content_type['content_type_id']; ?>&sorting=popular_desc">
+                           href="/popular.php/?content_type_id=<?=$content_type['content_type_id']; ?>&sorting=popular_desc&page=1">
                             <span class="visually-hidden"><?=$content_type['content_type']; ?></span>
                             <svg class="filters__icon" width="22" height="18">
                                 <use xlink:href="#icon-filter-<?=$content_type['icon_class']; ?>"></use>
@@ -141,6 +141,20 @@
                     </footer>
                 </article>
             <?php endforeach; ?>
+        </div>
+        <div class="popular__page-links">
+            <? if($pages_count > 1) : ?>
+                <? if($_GET['page'] !== '1') : ?>
+                    <a class="popular__page-link popular__page-link--prev button button--gray" href="<?=get_page_link('prev')?>">
+                        Предыдущая страница
+                    </a>
+                <? endif;?>
+                <? if($_GET['page'] != $pages_count) : ?>
+                    <a class="popular__page-link popular__page-link--next button button--gray" href="<?=get_page_link('next')?>">
+                        Следующая страница
+                    </a>
+                <? endif;?>
+            <? endif;?>
         </div>
     </div>
 </section>

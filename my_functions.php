@@ -955,7 +955,7 @@ function my_session_start() {
  **
  * @param $con Соединение с БД
  *
- * @return
+ * @return array $content_type Массив с информацией о всех типов контента
  *
  */
 
@@ -972,7 +972,7 @@ function get_content_types ($con) {
  **
  * @param string $sorting_link_name сортировки
  *
- * @return
+ * @return string $result Строка с названием класса.
  *
  */
 
@@ -993,7 +993,7 @@ function get_sorting_link_class($sorting_link_name) {
  **
  * @param string $sorting_link_name Название сортировки
  *
- * @return
+ * @return string $sorting_type Возвращает тип сортировки asc или desc
  *
  */
 
@@ -1024,7 +1024,7 @@ function get_sorting_type($sorting_link_name) {
  *
  */
 
-function get_posts($con) {
+function get_posts($con,int $pages_items,int $offset) {
     $sorting = $_GET['sorting'];
     $sorting_explode = explode('_',$sorting);
     $sorting_name = array_shift($sorting_explode);
@@ -1058,7 +1058,7 @@ function get_posts($con) {
                      LEFT JOIN likes l ON p.post_id = l.post_id
                      $content_type_sql
                      GROUP BY p.post_id
-                     ORDER BY $sorting_name $sorting_type";
+                     ORDER BY $sorting_name $sorting_type LIMIT $pages_items OFFSET $offset";
     $get_posts_res = mysqli_query($con,$get_posts_sql);
     $posts = mysqli_fetch_all($get_posts_res, MYSQLI_ASSOC);
     return $posts;
@@ -1070,22 +1070,77 @@ function get_posts($con) {
  **
  * @param $con Соединение с БД
  *
- * @return
+ * @return string Переправляет на старницу "Популярное" с параметрами GET по умолчанию
  *
  */
 
 function check_get() {
     if (empty($_GET) || empty($_GET['content_type_id'])) {
-        header("Location: /popular.php/?content_type_id=all&sorting=popular_desc");
+        header("Location: /popular.php/?content_type_id=all&sorting=popular_desc&page=1");
         exit();
     }
     else {
         $content_type_id = $_GET['content_type_id'];
-        if (empty($_GET['sorting'])) {
-            $url = '/popular.php/?content_type_id=' . $content_type_id . '&sorting=popular_desc';
+        if (empty($_GET['sorting']) || empty($_GET['page'])) {
+            $url = '/popular.php/?content_type_id=' . $content_type_id . '&sorting=popular_desc&page=1';
             header("Location: $url");
             exit();
         }
     }
 }
+/**
+ * Получает количество страниц для отображения постов
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $page_items Количество постов на странице
+ *
+ * @return int $pages_count Количество страниц
+ *
+ */
+
+function get_pages_count($con,$page_items) {
+    $content_type_id = $_GET['content_type_id'];
+    if ($content_type_id == 'all') {
+        $content_type = '';
+    }
+    else {
+        $content_type = 'WHERE content_type_id=' . $content_type_id;
+    }
+
+    $result = mysqli_query($con, "SELECT COUNT(*) as cnt FROM posts $content_type");
+    $items_count = mysqli_fetch_assoc($result)['cnt'];
+    $pages_count = ceil($items_count / $page_items);
+    return $pages_count;
+}
+
+/**
+ * Получаем ссылку для кнопок "Следующая и предыдущая страница"
+ *
+ **
+ * @param string $link_type 'prev' если нужно ссылка на предыдущую страницу или 'next' если на следующую
+ *
+ * @return string $link возвращает ссылку на необходимую страницу
+ *
+ */
+
+function get_page_link($link_type) {
+    $content_type_id = $_GET['content_type_id'];
+    $sorting = $_GET['sorting'];
+    $page = $_GET['page'];
+    if ($link_type == 'prev') {
+        $page = $page - 1;
+    }
+    elseif ($link_type == 'next') {
+        $page = $page + 1;
+    }
+    $link = '/popular.php/?content_type_id=' . $content_type_id . '&sorting=' . $sorting . '&page=' . $page;
+    return $link;
+}
+
+
+
+
+
+
 
