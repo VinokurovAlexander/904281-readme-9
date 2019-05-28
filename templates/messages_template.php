@@ -57,7 +57,7 @@
             </div>
             <?php if (isset($_GET['user_id']) && !empty($_GET['user_id'])) : ?>
             <div class="comments">
-                <form class="comments__form form" action="#" method="post">
+                <form class="comments__form form" action="/messages.php/?user_id=<?=$_GET['user_id']?>" method="post">
                     <div class="comments__my-avatar">
                         <img class="comments__picture" src="<?=$_SESSION['user']['avatar_path'];?>" alt="Аватар пользователя">
                     </div>

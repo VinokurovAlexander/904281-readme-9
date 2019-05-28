@@ -51,12 +51,15 @@
                     <div class="post__indicators">
                         <div class="post__buttons">
                             <a class="post__indicator post__indicator--likes button" href="/like.php/?post_id=<?=$post['post_id'] ?>" title="Лайк">
-                                <svg class="post__indicator-icon" width="20" height="17">
-                                    <use xlink:href="#icon-heart"></use>
-                                </svg>
-                                <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
-                                    <use xlink:href="#icon-heart-active"></use>
-                                </svg>
+                                <?php if(is_like($con,$post['post_id'])) : ?>
+                                    <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
+                                        <use xlink:href="#icon-heart-active"></use>
+                                    </svg>
+                                <?php else : ?>
+                                    <svg class="post__indicator-icon" width="20" height="17">
+                                        <use xlink:href="#icon-heart"></use>
+                                    </svg>
+                                <?endif;?>
                                 <span><?=$post['likes_count']?></span>
                                 <span class="visually-hidden">количество лайков</span>
                             </a>
@@ -78,7 +81,7 @@
                         <span class="post__view"><?=get_view_count($con,$post['post_id'])?> просмотров</span>
                     </div>
                     <div class="comments">
-                        <form class="comments__form form" action="#" method="post">
+                        <form class="comments__form form" action="/post.php/?post_id=<?=$post['post_id']?>" method="post">
                             <div class="comments__my-avatar">
                                 <img class="comments__picture" src="<?=$_SESSION['user']['avatar_path']?>" alt="Аватар пользователя">
                             </div>
@@ -106,17 +109,22 @@
                                             </time>
                                         </div>
                                         <p class="comments__text">
-                                            <?=$comment['content']?>
+                                            <?=trim($comment['content'])?>
                                         </p>
                                     </div>
                                 </li>
                                 <?endforeach;?>
                             </ul>
-                            <?php if (get_comments_count($con,$post['post_id']) > 3) : ?>
-                            <a class="comments__more-link" href="#">
+                            <?php if ((get_comments_count($con,$post['post_id']) > 3) && !isset($_GET['comments'])) : ?>
+                            <a class="comments__more-link" href="/post.php/?post_id=<?=$post['post_id']?>&comments=full">
                                 <span>Показать все комментарии</span>
                                 <sup class="comments__amount"><?=get_comments_count($con,$post['post_id']) ?></sup>
                             </a>
+                            <?endif;?>
+                            <?php if ((isset($_GET['comments'])) && $_GET['comments'] == 'full') : ?>
+                                <a class="comments__more-link" href="/post.php/?post_id=<?=$post['post_id']?>">
+                                    <span>Оставить 3 последних комментария</span>
+                                </a>
                             <?endif;?>
                         </div>
                     </div>
@@ -124,8 +132,8 @@
                 <div class="post-details__user user">
                     <div class="post-details__user-info user__info">
                         <div class="post-details__avatar user__avatar">
-                            <a class="post-details__avatar-link user__avatar-link" href="#">
-                                <img class="post-details__picture user__picture" src="../img/<?=$post['avatar_path']?>" alt="Аватар пользователя">
+                            <a class="post-details__avatar-link user__avatar-link" href="/profile.php/?user_id=<?=$post['user_id']?>">
+                                <img class="post-details__picture user__picture" src="<?=$post['avatar_path']?>" alt="Аватар пользователя">
                             </a>
                         </div>
                         <div class="post-details__name-wrapper user__name-wrapper">

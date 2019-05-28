@@ -1,6 +1,7 @@
 <?php
 require_once('helpers.php');
 require_once('my_functions.php');
+require_once('sql_connect.php');
 
 session_start();
 if (!isset($_SESSION['user'])) {
@@ -11,24 +12,6 @@ if (!isset($_SESSION['user'])) {
 //Дата и время публикации поста
 
 date_default_timezone_set("Europe/Moscow");
-
-// Время поста в формате дд.мм.гггг чч:мм
-function post_time_title ($post_date) {
-    $ts_post_date = strtotime($post_date);
-    $post_date_title = date('j-m-Y G:i', $ts_post_date);
-    return $post_date_title;
-}
-
-// Работаем с БД
-$con = mysqli_connect("localhost", "root", "", "readme_db");
-mysqli_set_charset($con, "utf8");
-
-if ($con == false) {
-    $error = mysqli_connect_error();
-    $page_content = include_template('error.php', ['error' => $error]);
-}
-
-else {
 
 
 //Постраничный вывод
@@ -93,10 +76,6 @@ $posts_rows = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
 //$posts_rows = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
 
 
-
-
-
-
 //Загружаем шаблоны
 $page_content = include_template('popular_template.php', [
     'posts_rows' => $posts_rows,
@@ -106,7 +85,7 @@ $page_content = include_template('popular_template.php', [
     'con' => $con
 ]);
 
-}
+
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content ,

@@ -799,14 +799,132 @@ function add_comment($con,string $text,int $user_id,int $post_id) {
  *
  */
 
-function get_comments($con,int $post_id) {
+function get_comments($con,int $post_id, bool $limit = false) {
     $get_comments_sql = "SELECT c.pub_date,c.content,c.user_id,u.avatar_path,u.user_name FROM comments c 
                         JOIN users u ON u.user_id = c.user_id
                         WHERE c.post_id = $post_id
-                        ORDER BY c.pub_date DESC LIMIT 3";
+                        ORDER BY c.pub_date DESC";
+    if ($limit) {
+        $get_comments_sql = $get_comments_sql . ' LIMIT 3';
+    }
     $get_comments_res = mysqli_query($con, $get_comments_sql);
     $get_comments = mysqli_fetch_all($get_comments_res,MYSQLI_ASSOC);
     return $get_comments;
 }
 
+/**
+ * Функция проверяет наличие лайка на публикации от залогиненного пользователя
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id Пост для которого нужно проверить наличие лайка
+ *
+ * @return true если лайк поставлен, в ином случае false
+ *
+ */
 
+function is_like($con, int $post_id) {
+    $user_id = $_SESSION['user']['user_id'];
+    $is_like_sql = "SELECT l.like_id FROM likes l
+                    WHERE l.post_id = $post_id AND l.who_like_id = $user_id";
+    $is_like_res = mysqli_query($con,$is_like_sql);
+    $is_like = mysqli_fetch_array($is_like_res);
+    if (empty($is_like)) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+/**
+ * Функция проверяет наличие поста с указанным id
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id id Поста наличие которого нужно проверить
+ *
+ * @return true если пост существует, иначе false
+ *
+ */
+
+function is_post($con, int $post_id) {
+    $is_post_sql = "SELECT p.post_id FROM posts p WHERE p.post_id = $post_id";
+    $is_post_res = mysqli_query($con,$is_post_sql);
+    $is_post = mysqli_fetch_all($is_post_res,MYSQLI_ASSOC);
+    if (empty($is_post)) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+/**
+ * Функция добавляет лайк в таблицу БД
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id id Пост которому ставится лайк
+ *
+ * @return bool false если лайк не добавлен
+ *
+ */
+
+function add_like($con, int $post_id) {
+    $who_like_id = $_SESSION['user']['user_id'];
+    $add_like_sql = 'INSERT INTO likes(who_like_id, post_id,dt_add) VALUES (?,?,NOW())';
+    $stmt = db_get_prepare_stmt($con,$add_like_sql,[$who_like_id,$post_id]);
+    $res = mysqli_stmt_execute($stmt);
+    if ($res) {
+        $referer_url = $_SERVER['HTTP_REFERER'];
+        header("Location: $referer_url");
+        exit;
+    }
+    else {
+        return false;
+    }
+}
+
+/**
+ * Функция удаляет лайк из таблицы
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id id Пост у которого удаляется лайк
+ *
+ * @return false если лайк не удален
+ *
+ */
+
+function delete_like($con, int $post_id) {
+    $who_like_id = $_SESSION['user']['user_id'];
+    $delete_like_sql = "DELETE FROM likes WHERE post_id = $post_id AND who_like_id = $who_like_id";
+    $delete_like_res = mysqli_query($con,$delete_like_sql);
+    if ($delete_like_res) {
+        $referer_url = $_SERVER['HTTP_REFERER'];
+        header("Location: $referer_url");
+        exit;
+    }
+    else {
+        return false;
+    }
+}
+
+
+/**
+ * Отображает время в формате дд.мм.гггг чч:мм
+ *
+ **
+ * @param string $time Время которое необхоимо оформатировать
+ *
+ *
+ * @return string время в формате дд.мм.гггг чч:мм
+ *
+ */
+
+function post_time_title ($time) {
+    $ts_time = strtotime($time);
+    $format_time = date('j-m-Y G:i', $ts_time);
+    return $format_time;
+}

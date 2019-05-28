@@ -332,7 +332,7 @@
                                 </div>
                                 <div class="post-mini__user-buttons user__buttons">
                                     <?php if ($follower['user_id'] !== $_SESSION['user']['user_id']) :?>
-                                        <?php if (isFollow($con,$follower['user_id'])) : ?>
+                                        <?php if (is_follow($con,$follower['user_id'])) : ?>
                                             <a class="post-mini__user-button user__button user__button--subscription button button--main" href="/unfollow.php/?user_id=<?=$follower['user_id']?>">Отписаться</a>
                                         <?php else : ?>
                                             <a class="post-mini__user-button user__button user__button--subscription button button--main" href="/follow.php/?user_id=<?=$follower['user_id']?>">Подписаться</a>
