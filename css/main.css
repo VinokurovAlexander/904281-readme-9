@@ -3739,7 +3739,7 @@ img {
     margin-bottom: 41px
 }
 
-.popular__post:nth-child(3n+1) {
+.popular__post:nth-child(3n) {
     margin-right: 0;
 }
 

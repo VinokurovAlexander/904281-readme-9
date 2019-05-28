@@ -8,7 +8,7 @@
                 <b class="popular__sorting-caption sorting__caption">Сортировка:</b>
                 <ul class="popular__sorting-list sorting__list">
                     <li class="sorting__item sorting__item--popular">
-                        <a class="sorting__link sorting__link--active" href="#">
+                        <a class="sorting__link <?=get_sorting_link_class('popular')?>" href="/popular.php/?content_type_id=<?=$_GET['content_type_id']?>&sorting=popular_<?=get_sorting_type('popular')?>">
                             <span>Популярность</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -16,7 +16,7 @@
                         </a>
                     </li>
                     <li class="sorting__item">
-                        <a class="sorting__link" href="#">
+                        <a class="sorting__link <?=get_sorting_link_class('likes')?>" href="/popular.php/?content_type_id=<?=$_GET['content_type_id']?>&sorting=likes_<?=get_sorting_type('likes')?>">
                             <span>Лайки</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -24,7 +24,7 @@
                         </a>
                     </li>
                     <li class="sorting__item">
-                        <a class="sorting__link" href="#">
+                        <a class="sorting__link <?=get_sorting_link_class('date')?>" href="/popular.php/?content_type_id=<?=$_GET['content_type_id']?>&sorting=date_<?=get_sorting_type('date')?>">
                             <span>Дата</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -37,18 +37,18 @@
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                        <a class="filters__button filters__button--ellipse filters__button--all <?=$all_content; ?>" href="/popular.php">
+                        <a class="filters__button filters__button--ellipse filters__button--all <?if ($_GET['content_type_id'] == 'all') {echo 'filters__button--active';} ?> " href="/new_popular.php/?content_type_id=all&sorting=popular_desc">
                             <span>Все</span>
                         </a>
                     </li>
-                    <?php foreach ($con_type_rows as $ct): ?>
+                    <?php foreach ($content_types as $content_type): ?>
                     <li class="popular__filters-item filters__item">
                         <a class="filters__button filters__button--photo button
-                        <?php if (($get_con_id == $ct['content_type_id'])) {echo "filters__button--active";} ?>"
-                           href="/popular.php/?content_type_id=<?=$ct['content_type_id']; ?>">
-                            <span class="visually-hidden"><?=$ct['content_type']; ?></span>
+                        <?php if (($_GET['content_type_id'] == $content_type['content_type_id'])) {echo "filters__button--active";} ?>"
+                           href="/popular.php/?content_type_id=<?=$content_type['content_type_id']; ?>&sorting=popular_desc">
+                            <span class="visually-hidden"><?=$content_type['content_type']; ?></span>
                             <svg class="filters__icon" width="22" height="18">
-                                <use xlink:href="#icon-filter-<?=$ct['icon_class']; ?>"></use>
+                                <use xlink:href="#icon-filter-<?=$content_type['icon_class']; ?>"></use>
                             </svg>
                         </a>
                      </li>
@@ -57,41 +57,7 @@
             </div>
         </div>
         <div class="popular__posts">
-            <div class="visually-hidden" id="donor">
-                <!--содержимое для поста-цитаты-->
-                <blockquote>
-                    <p>
-                        <!--здесь текст-->
-                    </p>
-                    <cite>Неизвестный Автор</cite>
-                </blockquote>
-
-                <!--содержимое для поста-ссылки-->
-                <div class="post-link__wrapper">
-                    <a class="post-link__external" href="http://" title="Перейти по ссылке">
-                        <div class="post-link__info-wrapper">
-                            <div class="post-link__icon-wrapper">
-                                <img src="img/logo-vita.jpg" alt="Иконка">
-                            </div>
-                            <div class="post-link__info">
-                                <h3><!--здесь заголовок--></h3>
-                            </div>
-                        </div>
-                        <span><!--здесь ссылка--></span>
-                    </a>
-                </div>
-
-                <!--содержимое для поста-фото-->
-                <div class="post-photo__image-wrapper">
-                    <img src="img/" alt="Фото от пользователя" width="360" height="240">
-                </div>
-
-                <!--содержимое для поста-текста-->
-                <p>
-                    <!--здесь текст-->
-                </p>
-            </div>
-            <?php foreach ($posts_rows as $post): ?>
+            <?php foreach ($posts as $post): ?>
                 <article class="popular__post post post-<?=$post['icon_class'];?>">
                     <header class="post__header">
                         <h2>

@@ -41,7 +41,7 @@
                     <?php if (isset($_SESSION['user'])) : ?>
                     <ul class="header__my-nav">
                         <li class="header__my-page header__my-page--popular">
-                            <a class="header__page-link <?php if(strpos($_SERVER['REQUEST_URI'], '/popular.php') !== false) {echo "header__page-link--active";} ?>" title="Популярный контент" href="/popular.php">
+                            <a class="header__page-link <?php if(strpos($_SERVER['REQUEST_URI'], '/popular.php') !== false) {echo "header__page-link--active";} ?>" title="Популярный контент" href="/popular.php/?content_type_id=all&sorting=popular_desc">
                                 <span class="visually-hidden">Популярный контент</span>
                             </a>
                         </li>

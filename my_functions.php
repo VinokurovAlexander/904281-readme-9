@@ -928,3 +928,164 @@ function post_time_title ($time) {
     $format_time = date('j-m-Y G:i', $ts_time);
     return $format_time;
 }
+
+/**
+ * Функция проверяет наличие сесии
+ *
+ **
+ *
+ * @return Если сессия есть возвращает true, в ином случае перенаправляет на страницу авторизации
+ *
+ */
+
+function my_session_start() {
+    session_start();
+    if (!isset($_SESSION['user'])) {
+        header("Location: /");
+        exit();
+    }
+    else {
+        return true;
+    }
+}
+
+/**
+ * Возвращает типы контента постов
+ *
+ **
+ * @param $con Соединение с БД
+ *
+ * @return
+ *
+ */
+
+function get_content_types ($con) {
+    $con_type_sql = "SELECT content_type_id,content_type,icon_class FROM content_type";
+    $con_type_res = mysqli_query($con,$con_type_sql);
+    $content_types = mysqli_fetch_all($con_type_res, MYSQLI_ASSOC);
+    return $content_types;
+}
+
+/**
+ * Функция возвращает названия класса для кнопок сортировки
+ *
+ **
+ * @param string $sorting_link_name сортировки
+ *
+ * @return
+ *
+ */
+
+function get_sorting_link_class($sorting_link_name) {
+     if (($_GET['sorting']) == $sorting_link_name . '_desc') {
+         $result = 'sorting__link--active';
+     }
+     elseif (($_GET['sorting']) == $sorting_link_name . '_asc') {
+         $result = 'sorting__link--active sorting__link--reverse';
+     }
+     return $result;
+}
+
+
+/**
+ * Функция вовращает тип сортировки
+ *
+ **
+ * @param string $sorting_link_name Название сортировки
+ *
+ * @return
+ *
+ */
+
+function get_sorting_type($sorting_link_name) {
+    $current_link = $_GET['sorting'];
+    $current_link_explode = explode('_',$current_link);
+    $current_sorting = array_shift($current_link_explode);
+    $current_sorting_type = array_pop($current_link_explode);
+    if ($current_sorting !== $sorting_link_name) {
+        $sorting_type = 'desc';
+    }
+    elseif ($current_sorting == $sorting_link_name && $current_sorting_type == 'desc') {
+        $sorting_type = 'asc';
+    }
+    elseif ($current_sorting == $sorting_link_name && $current_sorting_type == 'asc') {
+        $sorting_type = 'desc';
+    }
+    return $sorting_type;
+}
+
+/**
+ * Функция вовращает посты для отображения на странице "Популярное"
+ *
+ **
+ * @param $con Соединение с БД
+ *
+ * @return array Массив с постами
+ *
+ */
+
+function get_posts($con) {
+    $sorting = $_GET['sorting'];
+    $sorting_explode = explode('_',$sorting);
+    $sorting_name = array_shift($sorting_explode);
+    $sorting_type = array_pop($sorting_explode);
+
+    if ($sorting_name == 'popular') {
+        $sorting_name = 'p.view_count';
+    }
+    elseif ($sorting_name == 'likes') {
+        $sorting_name = 'likes_count';
+    }
+    elseif ($sorting_name == 'date') {
+        $sorting_name = 'p.pub_date';
+    }
+
+    $content_type_id = $_GET['content_type_id'];
+    if ($content_type_id == 'all') {
+        $content_type_sql = '';
+    }
+    else {
+        $content_type_sql = 'WHERE p.content_type_id=' . $content_type_id;
+    }
+
+    $get_posts_sql = "SELECT p.*,
+                     u.user_name,u.avatar_path,
+                     ct.content_type,ct.icon_class,
+                     COUNT(l.like_id) AS likes_count 
+                     FROM posts p
+                     INNER JOIN users u ON p.user_id  = u.user_id
+                     INNER JOIN content_type ct ON p.content_type_id = ct.content_type_id
+                     LEFT JOIN likes l ON p.post_id = l.post_id
+                     $content_type_sql
+                     GROUP BY p.post_id
+                     ORDER BY $sorting_name $sorting_type";
+    $get_posts_res = mysqli_query($con,$get_posts_sql);
+    $posts = mysqli_fetch_all($get_posts_res, MYSQLI_ASSOC);
+    return $posts;
+}
+
+/**
+ * Функция предотвращает переход на страницу popular.php без всех необходимых данных GET запроса
+ *
+ **
+ * @param $con Соединение с БД
+ *
+ * @return
+ *
+ */
+
+function check_get() {
+    if (empty($_GET) || empty($_GET['content_type_id'])) {
+        header("Location: /popular.php/?content_type_id=all&sorting=popular_desc");
+        exit();
+    }
+    else {
+        $content_type_id = $_GET['content_type_id'];
+        if (empty($_GET['sorting'])) {
+            $url = '/popular.php/?content_type_id=' . $content_type_id . '&sorting=popular_desc';
+            header("Location: $url");
+            exit();
+        }
+    }
+}
+
