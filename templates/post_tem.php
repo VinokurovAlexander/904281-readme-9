@@ -115,11 +115,11 @@
                                 </li>
                                 <?endforeach;?>
                             </ul>
-                            <?php if ((get_comments_count($con,$post['post_id']) > 3) && !isset($_GET['comments'])) : ?>
-                            <a class="comments__more-link" href="/post.php/?post_id=<?=$post['post_id']?>&comments=full">
-                                <span>Показать все комментарии</span>
-                                <sup class="comments__amount"><?=get_comments_count($con,$post['post_id']) ?></sup>
-                            </a>
+                            <?php if ((get_comments_count($con,$post['post_id']) > 3) && (!isset($_GET['comments']) || $_GET['comments'] !== 'full')) : ?>
+                                <a class="comments__more-link" href="/post.php/?post_id=<?=$post['post_id']?>&comments=full">
+                                    <span>Показать все комментарии</span>
+                                    <sup class="comments__amount"><?=get_comments_count($con,$post['post_id']) ?></sup>
+                                </a>
                             <?endif;?>
                             <?php if ((isset($_GET['comments'])) && $_GET['comments'] == 'full') : ?>
                                 <a class="comments__more-link" href="/post.php/?post_id=<?=$post['post_id']?>">

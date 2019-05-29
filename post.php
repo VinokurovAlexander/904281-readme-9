@@ -9,7 +9,7 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
-if (!isset($_GET['post_id'])) {
+if (!isset($_GET['post_id']) || empty($_GET['post_id'])) {
     header('HTTP/1.0 404 not found');
     show_error('Параметр запроса отсутствует, либо по этому id не нашли ни одной записи');
 }
@@ -49,27 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-
-if (isset($_GET['comments']) && $_GET['comments'] == 'full') {
-    $comments = get_comments($con,$post_id);
-}
-else {
-    $comments = get_comments($con,$post_id,true);
-}
-
-
-//-------------------------------------------------
-
-//$test = "SELECT c.pub_date,c.content,c.user_id,u.avatar_path,u.user_name FROM comments c
-//                        JOIN users u ON u.user_id = c.user_id
-//                        WHERE c.post_id = $post_id
-//                        ORDER BY c.pub_date DESC";
-//$test = $test . 'LIMIT 3';
-//print($test);
-
-
-//-------------------------------------------------
-
+$comments = get_comments($con,$post_id);
 
 $page_content = include_template('post_tem.php', [
     'post' => $post,

@@ -16,11 +16,11 @@
                 </div>
                 <div class="profile__rating user__rating">
                     <p class="profile__rating-item user__rating-item user__rating-item--publications">
-                        <span class="user__rating-amount"><?=$user_post_count?></span>
+                        <span class="user__rating-amount"><?=get_user_posts_count($con,$user['user_id'])?></span>
                         <span class="profile__rating-text user__rating-text">публикаций</span>
                     </p>
                     <p class="profile__rating-item user__rating-item user__rating-item--subscribers">
-                        <span class="user__rating-amount"><?=$user_followers_count?></span>
+                        <span class="user__rating-amount"><?=get_user_followers($con,$user['user_id'])?></span>
                         <span class="profile__rating-text user__rating-text">подписчиков</span>
                     </p>
                 </div>
@@ -209,14 +209,24 @@
                                     <div class="post__indicators">
                                         <div class="post__buttons">
                                             <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
-                                                <svg class="post__indicator-icon" width="20" height="17">
-                                                    <use xlink:href="#icon-heart"></use>
-                                                </svg>
-                                                <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
-                                                    <use xlink:href="#icon-heart-active"></use>
-                                                </svg>
+                                                <?php if(is_like($con,$post['post_id'])) : ?>
+                                                    <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
+                                                        <use xlink:href="#icon-heart-active"></use>
+                                                    </svg>
+                                                <?php else : ?>
+                                                    <svg class="post__indicator-icon" width="20" height="17">
+                                                        <use xlink:href="#icon-heart"></use>
+                                                    </svg>
+                                                <?endif;?>
                                                 <span><?=$post['likes_count'];?></span>
                                                 <span class="visually-hidden">количество лайков</span>
+                                            </a>
+                                            <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
+                                                <svg class="post__indicator-icon" width="19" height="17">
+                                                    <use xlink:href="#icon-comment"></use>
+                                                </svg>
+                                                <span><?=get_comments_count($con,$post['post_id']) ?></span>
+                                                <span class="visually-hidden">количество комментариев</span>
                                             </a>
                                             <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
                                                 <svg class="post__indicator-icon" width="19" height="17">
@@ -234,16 +244,64 @@
                                         <?php endforeach; ?>
                                     </ul>
                                 </footer>
-                                <div class="comments">
-                                    <a class="comments__button button" href="#">Показать комментарии</a>
-                                </div>
+                                <?php if (isset($_GET['comments_post_id']) && $_GET['comments_post_id'] == $post['post_id']) : ?>
+                                    <div class="comments">
+                                        <div class="comments__list-wrapper">
+                                            <ul class="comments__list">
+                                                <? foreach (get_comments($con,$post['post_id']) as $comment): ?>
+                                                    <li class="comments__item user">
+                                                        <div class="comments__avatar">
+                                                            <a class="user__avatar-link" href="/profile.php/?user_id=<?=$comment['user_id']?>">
+                                                                <img class="comments__picture" src="<?=$comment['avatar_path']?>" alt="Аватар пользователя">
+                                                            </a>
+                                                        </div>
+                                                        <div class="comments__info">
+                                                            <div class="comments__name-wrapper">
+                                                                <a class="comments__user-name" href="/profile.php/?user_id=<?=$comment['user_id']?>">
+                                                                    <span><?=$comment['user_name']?></span>
+                                                                </a>
+                                                                <time class="comments__time" datetime="<?=$comment['pub_date']?>">
+                                                                    <?=rel_time($comment['pub_date'])?> назад
+                                                                </time>
+                                                            </div>
+                                                            <p class="comments__text">
+                                                                <?=trim($comment['content'])?>
+                                                            </p>
+                                                        </div>
+                                                    </li>
+                                                <?endforeach;?>
+                                            </ul>
+                                            <?php if (!isset($_GET['show_all'])) : ?>
+                                                <a class="comments__more-link" href="<?=get_show_comments_link($post['post_id'])?>&show_all">
+                                                    <span>Показать все комментарии</span>
+                                                    <sup class="comments__amount"><?=get_comments_count($con,$post['post_id']) ?></sup>
+                                                </a>
+                                            <?php else :?>
+                                                <a class="comments__more-link" href="<?=get_show_comments_link($post['post_id'])?>">
+                                                    <span>Оставить 3 последних комментария</span>
+                                                </a>
+                                            <?php endif;?>
+                                    </div>
+                                    <form class="comments__form form" action="#" method="post">
+                                        <div class="comments__my-avatar">
+                                            <img class="comments__picture" src="<?=$_SESSION['user']['avatar_path']?>" alt="Аватар пользователя">
+                                        </div>
+                                        <textarea class="comments__textarea form__textarea <? if (isset($errors['message-text'])) {echo 'message-text-error';}?>"
+                                                  placeholder="<? if (isset($errors['message-text'])) {echo $errors['message-text'];} else {echo 'Введите ваше сообщение';}?>" name="message-text"></textarea>
+                                        <label class="visually-hidden">Ваш комментарий</label>
+                                        <button class="comments__submit button button--green" type="submit">Отправить</button>
+                                    </form>
+                                <?php else :?>
+                                    <div class="comments">
+                                        <a class="comments__button button" href="<?=get_show_comments_link($post['post_id'])?>">Показать комментарии</a>
+                                    </div>
+                                <? endif; ?>
                             </article>
                         <?php endforeach; ?>
                     </section>
                     <section class="profile__likes tabs__content <? if($_GET['content'] == 'likes') {echo 'tabs__content--active';}?>">
                         <h2 class="visually-hidden">Лайки</h2>
                         <ul class="profile__likes-list">
-
                             <?php foreach ($likes as $like) : ?>
                                 <li class="post-mini post-mini--<?=$like['icon_class']?> post user">
                                     <div class="post-mini__user-info user__info">
@@ -298,14 +356,12 @@
                                     </div>
                                 </li>
                             <? endforeach; ?>
-
                         </ul>
                     </section>
                     <section class="profile__subscriptions tabs__content <? if($_GET['content'] == 'followers') {echo 'tabs__content--active';}?>">
                         <h2 class="visually-hidden">Подписки</h2>
                         <ul class="profile__subscriptions-list">
                             <?php foreach ($followers as $follower) : ?>
-
                             <li class="post-mini post-mini--photo post user">
                                 <div class="post-mini__user-info user__info">
                                     <div class="post-mini__avatar user__avatar">

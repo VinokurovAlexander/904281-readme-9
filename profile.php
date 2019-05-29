@@ -4,77 +4,63 @@ require_once('helpers.php');
 require_once('sql_connect.php');
 require_once('my_functions.php');
 
-session_start();
-if (!isset($_SESSION['user'])) {
-    header("Location: /");
+my_session_start();
+
+$title = 'Профиль пользователя';
+
+if (!isset($_GET['user_id']) || empty($_GET['user_id'])) {
+    header('HTTP/1.0 404 not found');
+    show_error('Параметр запроса отсутствует, либо по этому id не нашли ни одной записи');
+}
+
+else {
+    $current_user_id = intval($_GET['user_id']);
+}
+
+if (empty($_GET['content'])) {
+    $url = '/profile.php/?user_id=' . $current_user_id . '&content=posts';
+    header("Location: $url");
     exit();
 }
 
-if (!isset($_GET['content'])) {
-    $_GET['content'] = 'posts';
+$errors = [];
+$user = get_user_info($con,$current_user_id);
+$posts = get_profile_posts($con,$current_user_id);
+$likes = get_profile_likes($con,$current_user_id);
+$followers = get_profile_followers($con,$current_user_id);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (empty($_POST['message-text'])) {
+        $errors = [
+            'message-text' => 'Это поле необходимо заполнить'
+        ];
+    }
+    else {
+        $message_text = $_POST['message-text'];
+        if (strlen($message_text) < 4) {
+            $errors = [
+                'message-text' => 'Длина комментария не дожна быть меньше 4 символов'
+            ];
+        }
+    }
+    if (empty($errors)) {
+        $post_id = intval($_GET['comments_post_id']);
+        add_comment($con,$_POST['message-text'],$_SESSION['user']['user_id'],$post_id);
+    }
 }
 
-$current_user_id = $_GET['user_id'];
-$user_post_count = get_user_posts_count($con,$current_user_id);
-$user_followers_count = get_user_followers($con,$current_user_id);
-
-//Получаем информацию о пользователе, указанном в GET запросе
-$user_sql = "SELECT * FROM users u WHERE u.user_id = $current_user_id";
-$user_res = mysqli_query($con, $user_sql);
-$user = mysqli_fetch_array($user_res, MYSQLI_ASSOC);
-
-//Получаем список постов пользователя
-$posts_sql = "SELECT p.*,ct.icon_class,COUNT(l.like_id) AS likes_count FROM posts p
-    JOIN content_type ct ON p.content_type_id = ct.content_type_id
-    LEFT JOIN likes l ON p.post_id = l.post_id
-    WHERE p.user_id = $current_user_id
-    GROUP BY p.post_id
-    ORDER BY pub_date DESC";
-$posts_res = mysqli_query($con, $posts_sql);
-$posts = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
-
-
-//Получаем массив с необходимой информацией для отображения лайков пользователя
-$likes_sql = "SELECT
-                    l.*,
-                    ct.icon_class,
-                    p.img,p.video,p.content_type_id,
-                    u2.user_name as who_like_name, u2.avatar_path as who_like_avatar_path
-                FROM likes l
-                    JOIN posts p ON l.post_id = p.post_id
-                    JOIN users u ON p.user_id = u.user_id
-                    JOIN users u2 ON l.who_like_id = u2.user_id
-                    JOIN content_type ct ON p.content_type_id = ct.content_type_id
-                WHERE u.user_id = $current_user_id
-                ORDER BY dt_add DESC";
-$likes_res = mysqli_query($con, $likes_sql);
-$likes = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
-
-
-//Получаем подписчиков пользователя
-
-$get_followers_sql = "SELECT u.user_id,u.user_name,u.reg_date,u.avatar_path FROM users u
-JOIN follow f ON f.who_sub_id = u.user_id
-WHERE f.to_sub_id = $current_user_id";
-$get_followers_result = mysqli_query($con,$get_followers_sql);
-$followers = mysqli_fetch_all($get_followers_result,MYSQLI_ASSOC);
-
-
 $page_content = include_template('profile_template.php',[
-    'user_post_count' => $user_post_count,
-    'user_followers_count' => $user_followers_count,
     'user' => $user,
     'posts' => $posts,
     'likes' => $likes,
     'con' => $con,
-    'followers' => $followers
+    'followers' => $followers,
+    'errors' => $errors
 ]);
 
 $layout_content = include_template('layout.php',[
     'content' => $page_content ,
-    'title' => 'Мой профиль',
-
-
+    'title' => $title,
 ]);
 
 print($layout_content);

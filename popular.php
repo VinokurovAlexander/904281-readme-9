@@ -4,7 +4,7 @@ require_once('my_functions.php');
 require_once('sql_connect.php');
 
 my_session_start();
-check_get();
+check_get_popular();
 
 $title = 'Популярное';
 

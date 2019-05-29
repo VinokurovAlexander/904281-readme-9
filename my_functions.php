@@ -352,29 +352,6 @@ function get_youtube_image_preview (string $youtube_url) {
 }
 
 /**
- * Функция, возвращает массив с постами для отображения на странице "Популярное"
- **
- * @param
- *
- * @return
- *
- */
-
-//function get_popular_posts ($con, int $content_type_id = null) {
-//    $posts_sql = "SELECT p.*,u.user_name,ct.content_type,ct.icon_class,u.avatar_path,COUNT(l.like_id) AS likes_count FROM posts p
-//        INNER JOIN users u ON p.user_id  = u.user_id
-//        INNER JOIN content_type ct ON p.content_type_id = ct.content_type_id
-//        LEFT JOIN likes l ON p.post_id = l.post_id
-//        (IF !epmty($content_type_id)) THEN WHERE p.content_type_id = $content_type_id
-//        GROUP BY p.post_id
-//        ORDER BY view_count DESC";
-//    $posts_res = mysqli_query($con,$posts_sql);
-//    $posts_rows = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
-//    return $posts_rows;
-//}
-
-
-/**
  * Функция, отображает шаблон с ошибкой и заканчивает выполнения всего остального сценария
  **
  * @param string $error Текст ошибки
@@ -686,7 +663,9 @@ function add_message($con,int $sender_id,int $recipient_id,string $message_text,
  */
 
 function get_comments_count($con, string $post_id) {
-    $get_comments_count_sql = "SELECT count(c.comment_id) AS comments_count FROM comments c WHERE c.post_id = $post_id";
+    $get_comments_count_sql = "SELECT count(c.comment_id) AS comments_count 
+                               FROM comments c 
+                               WHERE c.post_id = $post_id";
     $get_comments_count_res = mysqli_query($con,$get_comments_count_sql);
     $comments_count_array = mysqli_fetch_array($get_comments_count_res,MYSQLI_ASSOC);
     $comments_count = $comments_count_array['comments_count'];
@@ -786,30 +765,6 @@ function add_comment($con,string $text,int $user_id,int $post_id) {
     else {
         return false;
     }
-}
-
-/**
- * Получаем комменатрии для поста
- *
- **
- * @param $con Соединение с БД
- * @param int $post_id Пост для которого нужно получить комментарии
- *
- * @return array Массив с комментариями
- *
- */
-
-function get_comments($con,int $post_id, bool $limit = false) {
-    $get_comments_sql = "SELECT c.pub_date,c.content,c.user_id,u.avatar_path,u.user_name FROM comments c 
-                        JOIN users u ON u.user_id = c.user_id
-                        WHERE c.post_id = $post_id
-                        ORDER BY c.pub_date DESC";
-    if ($limit) {
-        $get_comments_sql = $get_comments_sql . ' LIMIT 3';
-    }
-    $get_comments_res = mysqli_query($con, $get_comments_sql);
-    $get_comments = mysqli_fetch_all($get_comments_res,MYSQLI_ASSOC);
-    return $get_comments;
 }
 
 /**
@@ -1074,7 +1029,7 @@ function get_posts($con,int $pages_items,int $offset) {
  *
  */
 
-function check_get() {
+function check_get_popular() {
     if (empty($_GET) || empty($_GET['content_type_id'])) {
         header("Location: /popular.php/?content_type_id=all&sorting=popular_desc&page=1");
         exit();
@@ -1137,6 +1092,155 @@ function get_page_link($link_type) {
     $link = '/popular.php/?content_type_id=' . $content_type_id . '&sorting=' . $sorting . '&page=' . $page;
     return $link;
 }
+
+/**
+ * Получаем ссылку для открытия комментариев на странице просмотра постов в профиле пользователя
+ *
+ **
+ * @param int $post_id Пост для которого нужно открыть комментарии
+ *
+ * @return string $link Возвращает ссылку для открытия комментариев
+ *
+ */
+
+function get_show_comments_link($post_id) {
+    $user_id = $_GET['user_id'];
+    $link = '/profile.php/?user_id=' . $user_id . '&content=posts&comments_post_id=' . $post_id;
+    return $link;
+}
+
+
+/**
+ * Получаем комменатрии для поста
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id Пост для которого нужно получить комментарии
+ *
+ * @return array Массив с комментариями
+ *
+ */
+
+function get_comments($con,int $post_id) {
+
+    if ((isset($_GET['comments']) && $_GET['comments'] == 'full') || (isset($_GET['show_all']))) {
+        $limit = '';
+        }
+    else {
+        $limit = 'LIMIT 3';
+    }
+
+    $get_comments_sql = "SELECT c.pub_date,c.content,c.user_id,u.avatar_path,u.user_name FROM comments c
+                        JOIN users u ON u.user_id = c.user_id
+                        WHERE c.post_id = $post_id
+                        ORDER BY c.pub_date DESC $limit";
+
+    $get_comments_res = mysqli_query($con, $get_comments_sql);
+    $get_comments = mysqli_fetch_all($get_comments_res,MYSQLI_ASSOC);
+    return $get_comments;
+}
+
+/**
+ * Получаем всю информацию о пользователе из таблицы users
+ *
+ **
+ * param $con Соединение с БД
+ * @param int $user_id id пользователя
+ *
+ * @return array $user Массив с информацией о пользователе из таблицы users
+ *
+ */
+
+function get_user_info ($con,int $user_id) {
+    $user_sql = "SELECT * FROM users u WHERE u.user_id = $user_id";
+    $user_res = mysqli_query($con, $user_sql);
+    $user = mysqli_fetch_array($user_res, MYSQLI_ASSOC);
+    return $user;
+}
+
+/**
+ * Получаем посты для отображения на странице профиля пользователя
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $user_id id пользователя
+ *
+ * @return array Массив с постами пользователя
+ *
+ */
+
+function get_profile_posts ($con,int $user_id) {
+    $posts_sql = "SELECT p.*,ct.icon_class,COUNT(l.like_id) AS likes_count FROM posts p
+    JOIN content_type ct ON p.content_type_id = ct.content_type_id
+    LEFT JOIN likes l ON p.post_id = l.post_id
+    WHERE p.user_id = $user_id
+    GROUP BY p.post_id
+    ORDER BY pub_date DESC";
+    $posts_res = mysqli_query($con, $posts_sql);
+    $posts = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
+    return $posts;
+}
+
+/**
+ * Массив с необходимой информацией для отображения списка лайков на странице профиля пользователя
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $user_id id пользователя
+ *
+ * @return array Массив с необходимой информацией для отображения списка лайков на странице профиля пользователя
+ *
+ */
+
+function get_profile_likes($con,int $user_id) {
+    $likes_sql = "SELECT
+                    l.*,
+                    ct.icon_class,
+                    p.img,p.video,p.content_type_id,
+                    u2.user_name as who_like_name, u2.avatar_path as who_like_avatar_path
+                FROM likes l
+                    JOIN posts p ON l.post_id = p.post_id
+                    JOIN users u ON p.user_id = u.user_id
+                    JOIN users u2 ON l.who_like_id = u2.user_id
+                    JOIN content_type ct ON p.content_type_id = ct.content_type_id
+                WHERE u.user_id = $user_id
+                ORDER BY dt_add DESC";
+    $likes_res = mysqli_query($con, $likes_sql);
+    $likes = mysqli_fetch_all($likes_res, MYSQLI_ASSOC);
+    return $likes;
+}
+
+/**
+ * Массив с необходимой информацией для отображения списка подписчиков на странице профиля пользователя
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $user_id id пользователя
+ *
+ * @return array Массив с необходимой информацией для отображения списка подписчиков на странице профиля пользователя
+ *
+ */
+
+function get_profile_followers ($con,int $user_id) {
+    $get_followers_sql = "SELECT u.user_id,u.user_name,u.reg_date,u.avatar_path FROM users u
+                          JOIN follow f ON f.who_sub_id = u.user_id
+                          WHERE f.to_sub_id = $user_id";
+    $get_followers_result = mysqli_query($con,$get_followers_sql);
+    $followers = mysqli_fetch_all($get_followers_result,MYSQLI_ASSOC);
+    return $followers;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
