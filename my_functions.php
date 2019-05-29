@@ -662,7 +662,7 @@ function add_message($con,int $sender_id,int $recipient_id,string $message_text,
  *
  */
 
-function get_comments_count($con, string $post_id) {
+function get_comments_count($con, int $post_id) {
     $get_comments_count_sql = "SELECT count(c.comment_id) AS comments_count 
                                FROM comments c 
                                WHERE c.post_id = $post_id";
@@ -1230,6 +1230,47 @@ function get_profile_followers ($con,int $user_id) {
     return $followers;
 }
 
+/**
+ *
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $user_id id пользователя
+ *
+ * @return array
+ *
+ */
+
+function get_posts_for_feed($con, int $user_id) {
+    $get_post_sql = "SELECT f.*,p.*,ct.icon_class,u.avatar_path,u.user_name FROM follow f
+                     JOIN posts p ON f.to_sub_id = p.user_id
+                     JOIN content_type ct ON ct.content_type_id = p.content_type_id 
+                     JOIN users u ON u.user_id = p.user_id
+                     WHERE f.who_sub_id = $user_id
+                     ORDER BY p.pub_date DESC";
+    $get_posts_res = mysqli_query($con,$get_post_sql);
+    $posts = mysqli_fetch_all($get_posts_res,MYSQLI_ASSOC);
+    return $posts;
+}
+
+/**
+ *
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $user_id id пользователя
+ *
+ * @return array
+ *
+ */
+
+function get_post_likes_count ($con,int $post_id) {
+    $get_post_likes_count_sql = "SELECT COUNT(l.like_id) AS likes_count FROM likes l WHERE l.post_id = $post_id";
+    $get_post_likes_count_res = mysqli_query($con,$get_post_likes_count_sql);
+    $get_post_likes_count_array = mysqli_fetch_array($get_post_likes_count_res, MYSQLI_ASSOC);
+    $likes_count = $get_post_likes_count_array['likes_count'];
+    return $likes_count;
+}
 
 
 

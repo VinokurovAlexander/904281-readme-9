@@ -208,7 +208,7 @@
                                 <footer class="post__footer">
                                     <div class="post__indicators">
                                         <div class="post__buttons">
-                                            <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
+                                            <a class="post__indicator post__indicator--likes button" href="/like.php/?post_id=<?=$post['post_id'] ?>" title="Лайк">
                                                 <?php if(is_like($con,$post['post_id'])) : ?>
                                                     <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                                                         <use xlink:href="#icon-heart-active"></use>
