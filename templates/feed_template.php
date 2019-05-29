@@ -85,11 +85,11 @@
                                         <span><?=get_comments_count($con,$post['post_id'])?></span>
                                         <span class="visually-hidden">количество комментариев</span>
                                     </a>
-                                    <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
+                                    <a class="post__indicator post__indicator--repost button" href="/repost.php/?post_id=<?=$post['post_id']?>" title="Репост">
                                         <svg class="post__indicator-icon" width="19" height="17">
                                             <use xlink:href="#icon-repost"></use>
                                         </svg>
-                                        <span>5</span>
+                                        <span><?=get_repost_count($con,$post['post_id']) ?></span>
                                         <span class="visually-hidden">количество репостов</span>
                                     </a>
                                 </div>

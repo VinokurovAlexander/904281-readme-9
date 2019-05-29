@@ -4,11 +4,7 @@ require_once('sql_connect.php');
 require_once('helpers.php');
 require_once('my_functions.php');
 
-session_start();
-if (!isset($_SESSION['user'])) {
-    header("Location: /");
-    exit();
-}
+my_session_start();
 
 if (isset($_GET['post_id'])) {
     $post_id = $_GET['post_id'];

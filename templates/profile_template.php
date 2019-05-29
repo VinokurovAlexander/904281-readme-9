@@ -54,122 +54,28 @@
                 </div>
                 <div class="profile__tab-content">
                     <section class="profile__posts tabs__content <? if($_GET['content'] == 'posts') {echo 'tabs__content--active';}?>">
-                        <article class="profile__post post post-text">
-                            <header class="post__header">
-                                <div class="post__author">
-                                    <a class="post__author-link" href="#" title="Автор">
-                                        <div class="post__avatar-wrapper post__avatar-wrapper--repost">
-                                            <img class="post__author-avatar" src="img/userpic-tanya.jpg" alt="Аватар пользователя">
-                                        </div>
-                                        <div class="post__info">
-                                            <b class="post__author-name">Репост: Таня Фирсова</b>
-                                            <time class="post__time" datetime="2019-03-30T14:31">25 минут назад</time>
-                                        </div>
-                                    </a>
-                                </div>
-                            </header>
-                            <div class="post__main">
-                                <h2><a href="#">Полезный пост про Байкал</a></h2>
-                                <p>
-                                    Озеро Байкал – огромное древнее озеро в горах Сибири к северу от монгольской границы. Байкал считается самым глубоким озером в мире. Он окружен сетью пешеходных маршрутов, называемых Большой байкальской тропой. Деревня Листвянка, расположенная на западном берегу озера, – популярная отправная точка для летних экскурсий. Зимой здесь можно кататься на коньках и собачьих упряжках.
-                                </p>
-                                <a class="post-text__more-link" href="#">Читать далее</a>
-                            </div>
-                            <footer class="post__footer">
-                                <div class="post__indicators">
-                                    <div class="post__buttons">
-                                        <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
-                                            <svg class="post__indicator-icon" width="20" height="17">
-                                                <use xlink:href="#icon-heart"></use>
-                                            </svg>
-                                            <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
-                                                <use xlink:href="#icon-heart-active"></use>
-                                            </svg>
-                                            <span>250</span>
-                                            <span class="visually-hidden">количество лайков</span>
-                                        </a>
-                                        <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
-                                            <svg class="post__indicator-icon" width="19" height="17">
-                                                <use xlink:href="#icon-repost"></use>
-                                            </svg>
-                                            <span>5</span>
-                                            <span class="visually-hidden">количество репостов</span>
-                                        </a>
-                                    </div>
-                                    <time class="post__time" datetime="2019-01-30T23:41">15 минут назад</time>
-                                </div>
-                                <ul class="post__tags">
-                                    <li><a href="#">#nature</a></li>
-                                    <li><a href="#">#globe</a></li>
-                                    <li><a href="#">#photooftheday</a></li>
-                                    <li><a href="#">#canon</a></li>
-                                    <li><a href="#">#landscape</a></li>
-                                    <li><a href="#">#щикарныйвид</a></li>
-                                </ul>
-                            </footer>
-                            <div class="comments">
-                                <div class="comments__list-wrapper">
-                                    <ul class="comments__list">
-                                        <li class="comments__item user">
-                                            <div class="comments__avatar">
-                                                <a class="user__avatar-link" href="#">
-                                                    <img class="comments__picture" src="img/userpic-larisa.jpg" alt="Аватар пользователя">
-                                                </a>
-                                            </div>
-                                            <div class="comments__info">
-                                                <div class="comments__name-wrapper">
-                                                    <a class="comments__user-name" href="#">
-                                                        <span>Лариса Роговая</span>
-                                                    </a>
-                                                    <time class="comments__time" datetime="2019-03-20">1 ч назад</time>
-                                                </div>
-                                                <p class="comments__text">
-                                                    Красота!!!1!
-                                                </p>
-                                            </div>
-                                        </li>
-                                        <li class="comments__item user">
-                                            <div class="comments__avatar">
-                                                <a class="user__avatar-link" href="#">
-                                                    <img class="comments__picture" src="img/userpic-larisa.jpg" alt="Аватар пользователя">
-                                                </a>
-                                            </div>
-                                            <div class="comments__info">
-                                                <div class="comments__name-wrapper">
-                                                    <a class="comments__user-name" href="#">
-                                                        <span>Лариса Роговая</span>
-                                                    </a>
-                                                    <time class="comments__time" datetime="2019-03-18">2 дня назад</time>
-                                                </div>
-                                                <p class="comments__text">
-                                                    Озеро Байкал – огромное древнее озеро в горах Сибири к северу от монгольской границы. Байкал считается самым глубоким озером в мире. Он окружен сетью пешеходных маршрутов, называемых Большой байкальской тропой. Деревня Листвянка, расположенная на западном берегу озера, – популярная отправная точка для летних экскурсий. Зимой здесь можно кататься на коньках и собачьих упряжках.
-                                                </p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    <a class="comments__more-link" href="#">
-                                        <span>Показать все комментарии</span>
-                                        <sup class="comments__amount">45</sup>
-                                    </a>
-                                </div>
-                            </div>
-                            <form class="comments__form form" action="#" method="post">
-                                <div class="comments__my-avatar">
-                                    <img class="comments__picture" src="img/userpic.jpg" alt="Аватар пользователя">
-                                </div>
-                                <textarea class="comments__textarea form__textarea" placeholder="Ваш комментарий"></textarea>
-                                <label class="visually-hidden">Ваш комментарий</label>
-                                <button class="comments__submit button button--green" type="submit">Отправить</button>
-                            </form>
-                        </article>
                         <?php foreach ($posts as $post): ?>
                             <article class="profile__post post post-<?=$post['icon_class'];?>">
                                 <header class="post__header">
+                                    <?php if ($post['is_repost'] == true) : ?>
+                                        <div class="post__author">
+                                            <a class="post__author-link" href="/profile.php/?user_id=<?=$post['post_author']?>" title="Автор">
+                                                <div class="post__avatar-wrapper post__avatar-wrapper--repost">
+                                                    <img class="post__author-avatar" src="<?=$post['author_avatar']?>" alt="Аватар пользователя">
+                                                </div>
+                                                <div class="post__info">
+                                                    <b class="post__author-name">Репост: <?=$post['author_name']?></b>
+                                                    <time class="post__time" datetime="<?=$post['pub_date']?>"><?=rel_time($post['pub_date'])?> назад</time>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    <? else : ?>
                                     <h2>
                                         <a href="/post.php/?post_id=<?=$post['post_id'];?>">
                                             <?=$post['title'];?>
                                         </a>
                                     </h2>
+                                    <?endif; ?>
                                 </header>
                                 <div class="post__main">
                                     <?php if ($post['content_type_id'] == 1): ?>
@@ -228,11 +134,11 @@
                                                 <span><?=get_comments_count($con,$post['post_id']) ?></span>
                                                 <span class="visually-hidden">количество комментариев</span>
                                             </a>
-                                            <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
+                                            <a class="post__indicator post__indicator--repost button" href="/repost.php/?post_id=<?=$post['post_id']?>" title="Репост">
                                                 <svg class="post__indicator-icon" width="19" height="17">
                                                     <use xlink:href="#icon-repost"></use>
                                                 </svg>
-                                                <span>5</span>
+                                                <span><?=get_repost_count($con,$post['post_id']) ?></span>
                                                 <span class="visually-hidden">количество репостов</span>
                                             </a>
                                         </div>
@@ -271,12 +177,13 @@
                                                     </li>
                                                 <?endforeach;?>
                                             </ul>
-                                            <?php if (!isset($_GET['show_all'])) : ?>
+                                            <?php if (!isset($_GET['show_all']) && (get_comments_count($con,$post['post_id']) > 3)) : ?>
                                                 <a class="comments__more-link" href="<?=get_show_comments_link($post['post_id'])?>&show_all">
                                                     <span>Показать все комментарии</span>
                                                     <sup class="comments__amount"><?=get_comments_count($con,$post['post_id']) ?></sup>
                                                 </a>
-                                            <?php else :?>
+                                            <?endif;?>
+                                            <?php if ((isset($_GET['comments'])) && isset($_GET['comments'])) : ?>
                                                 <a class="comments__more-link" href="<?=get_show_comments_link($post['post_id'])?>">
                                                     <span>Оставить 3 последних комментария</span>
                                                 </a>

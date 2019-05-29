@@ -1000,7 +1000,7 @@ function get_posts($con,int $pages_items,int $offset) {
         $content_type_sql = '';
     }
     else {
-        $content_type_sql = 'WHERE p.content_type_id=' . $content_type_id;
+        $content_type_sql = 'AND p.content_type_id=' . $content_type_id;
     }
 
     $get_posts_sql = "SELECT p.*,
@@ -1011,7 +1011,7 @@ function get_posts($con,int $pages_items,int $offset) {
                      INNER JOIN users u ON p.user_id  = u.user_id
                      INNER JOIN content_type ct ON p.content_type_id = ct.content_type_id
                      LEFT JOIN likes l ON p.post_id = l.post_id
-                     $content_type_sql
+                     WHERE p.post_author IS NULL $content_type_sql
                      GROUP BY p.post_id
                      ORDER BY $sorting_name $sorting_type LIMIT $pages_items OFFSET $offset";
     $get_posts_res = mysqli_query($con,$get_posts_sql);
@@ -1170,12 +1170,16 @@ function get_user_info ($con,int $user_id) {
  */
 
 function get_profile_posts ($con,int $user_id) {
-    $posts_sql = "SELECT p.*,ct.icon_class,COUNT(l.like_id) AS likes_count FROM posts p
-    JOIN content_type ct ON p.content_type_id = ct.content_type_id
-    LEFT JOIN likes l ON p.post_id = l.post_id
-    WHERE p.user_id = $user_id
-    GROUP BY p.post_id
-    ORDER BY pub_date DESC";
+    $posts_sql = "SELECT p.*,ct.icon_class,COUNT(l.like_id) AS likes_count,
+                u.user_name AS author_name,
+                u.avatar_path AS author_avatar
+                FROM posts p
+                JOIN content_type ct ON p.content_type_id = ct.content_type_id
+                LEFT JOIN likes l ON p.post_id = l.post_id
+                LEFT JOIN users u ON u.user_id = p.post_author
+                WHERE p.user_id = $user_id
+                GROUP BY p.post_id
+                ORDER BY pub_date DESC";
     $posts_res = mysqli_query($con, $posts_sql);
     $posts = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
     return $posts;
@@ -1301,6 +1305,93 @@ function get_content_types_count($con) {
     $get_ct_count = $get_ct_count_array['ct_count'];
     return $get_ct_count;
 }
+
+/**
+ * Возвращает количество репостов
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id id поста
+ *
+ *
+ * @return int Возвращает количество репостов
+ *
+ */
+
+function get_repost_count($con, int $post_id) {
+    $get_repost_count_sql = "SELECT COUNT(p.is_repost) AS repost_cnt FROM posts p 
+                            WHERE p.is_repost = TRUE AND p.post_id = $post_id";
+    $get_repost_count_res = mysqli_query($con,$get_repost_count_sql);
+    $get_repost_count_array = mysqli_fetch_array($get_repost_count_res,MYSQLI_ASSOC);
+    $get_repost_count = $get_repost_count_array['repost_cnt'];
+    return $get_repost_count;
+}
+
+/**
+ * Добавляет репост в БД
+ *
+ **
+ * @param $con Соединение с БД
+ * @param array $repost_post Публикация, для которой нужно сделать репост. Массив полученный с помощью функции get_post().
+ *
+ *
+ * @return bool Если данные добавлены в БД - true, в ином случае - false
+ *
+ */
+
+function add_repost ($con,array $repost_post) {
+    $new_user_id = $_SESSION['user']['user_id'];
+    $repost_add_sql = "INSERT INTO posts(pub_date,title,text,user_id,img,video,
+                                         link,view_count,content_type_id,quote_author,
+                                         post_author,is_repost)
+                       VALUES (NOW(),?,?,?,?,?,?,?,?,?,?,?)";
+    $stmt = db_get_prepare_stmt($con,$repost_add_sql, [
+        $repost_post['title'],$repost_post['text'],$new_user_id,$repost_post['img'],$repost_post['video'],
+        $repost_post['link'],0, $repost_post['content_type_id'],$repost_post['quote_author'],
+        $repost_post['user_id'],FALSE
+    ]);
+    $res = mysqli_stmt_execute($stmt);
+    if (!$res) {
+        return false;;
+    }
+    else {
+        //Обновляем поле is_repost у оригинального поста
+        $original_post_id = $repost_post['post_id'];
+        $is_repost_update_sql = "UPDATE posts p SET p.is_repost = TRUE WHERE p.post_id = $original_post_id";
+        $is_repost_update_res = mysqli_query($con,$is_repost_update_sql);
+        if (!$is_repost_update_res) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+}
+
+/**
+ * Обновляет столбец is_repost в БД для публикации при её репосте
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $post_id id публикации для которой был сделан репост
+ *
+ *
+ * @return Если данные добавлены в БД - true, иначе false
+ *
+ */
+
+function is_repost_update($con,int $post_id) {
+    $is_repost_update_sql = "UPDATE posts p SET p.is_repost = TRUE WHERE p.post_id = $post_id";
+    $is_repost_update_res = mysqli_query($con,$is_repost_update_sql);
+    if ($is_repost_update_res) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+
 
 
 

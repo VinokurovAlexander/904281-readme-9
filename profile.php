@@ -66,5 +66,14 @@ $layout_content = include_template('layout.php',[
 print($layout_content);
 
 
+print('<pre>');
+
+print('$posts:');
+print_r($posts);
+print('<br>');
+
+print('</pre>');
+
+
 
 
