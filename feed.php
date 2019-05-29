@@ -6,13 +6,29 @@ require_once('my_functions.php');
 
 
 my_session_start();
+
 $current_user_id = $_SESSION['user']['user_id'];
+$content_types = get_content_types($con);
+
+if (!isset($_GET['content_type_id']) || empty($_GET['content_type_id'])) {
+    header("Location: /feed.php/?content_type_id=all");
+    exit();
+}
+
+elseif ($_GET['content_type_id'] !== 'all') {
+    $current_content_type_id = $_GET['content_type_id'];
+    if ($current_content_type_id > get_content_types_count($con)) {
+        show_error('Такой страницы не существует');
+    }
+}
 
 $posts = get_posts_for_feed($con,$current_user_id);
 
 $page_content = include_template('feed_template.php', [
     'posts' => $posts,
-    'con' => $con
+    'con' => $con,
+    'content_types' => $content_types
+
 ]);
 
 $layout_content = include_template('layout.php', [
