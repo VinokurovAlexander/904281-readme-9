@@ -15,7 +15,7 @@
                                         <img class="post__author-avatar" src="<?=$post['avatar_path'] ?>" alt="Аватар пользователя" width="60" height="60">
                                     </div>
                                     <div class="post__info">
-                                        <b class="post__author-name"><?=$post['user_name']?></b>
+                                        <b class="post__author-name"><?=htmlspecialchars($post['user_name'])?></b>
                                         <span class="post__time"><?=rel_time($post['pub_date']) ?> назад</span>
                                     </div>
                                 </a>

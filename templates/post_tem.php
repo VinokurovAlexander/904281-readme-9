@@ -102,14 +102,14 @@
                                     <div class="comments__info">
                                         <div class="comments__name-wrapper">
                                             <a class="comments__user-name" href="/profile.php/?user_id=<?=$comment['user_id']?>">
-                                                <span><?=$comment['user_name']?></span>
+                                                <span><?=htmlspecialchars($comment['user_name'])?></span>
                                             </a>
                                             <time class="comments__time" datetime="<?=$comment['pub_date']?>">
                                                 <?=rel_time($comment['pub_date'])?> назад
                                             </time>
                                         </div>
                                         <p class="comments__text">
-                                            <?=trim($comment['content'])?>
+                                            <?=htmlspecialchars(trim($comment['content']))?>
                                         </p>
                                     </div>
                                 </li>

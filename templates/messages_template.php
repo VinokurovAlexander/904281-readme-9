@@ -18,7 +18,7 @@
                                 <div class="messages__preview">
                                     <p class="messages__preview-text">
                                         <?php if ($dialog['sen_id'] == $_SESSION['user']['user_id']) {echo 'Вы: ';} ?>
-                                        <?=$dialog['content']?>
+                                        <?=htmlspecialchars($dialog['content'])?>
                                     </p>
                                     <time class="messages__preview-time" datetime="<?=$dialog['pub_date']?>">
                                         <?=get_message_time($dialog['pub_date'])?>
@@ -44,7 +44,7 @@
                                 </div>
                                 <div class="messages__item-info">
                                     <a class="messages__author" href="/profile.php/?user_id=<?=$message['sen_id']?>">
-                                        <?=$message['user_name']?>
+                                        <?=htmlspecialchars($message['user_name'])?>
                                     </a>
                                     <time class="messages__time" datetime="<?=$message['pub_date']?>">
                                         <?=rel_time($message['pub_date'])?> назад
@@ -52,7 +52,7 @@
                                 </div>
                             </div>
                             <p class="messages__text">
-                                <?=$message['content']?>
+                                <?=htmlspecialchars($message['content'])?>
                             </p>
                         </li>
                     <?php endforeach;?>

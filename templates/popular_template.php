@@ -62,7 +62,7 @@
                     <header class="post__header">
                         <h2>
                             <a href="/post.php/?post_id=<?=$post['post_id'];?>">
-                                <?=$post['title'];?>
+                                <?=htmlspecialchars($post['title']);?>
                             </a>
                         </h2>
                     </header>
@@ -70,13 +70,13 @@
                         <?php if ($post['icon_class'] == 'quote'): ?>
                             <blockquote>
                                 <p>
-                                    <?=$post['text'];?>
+                                    <?=htmlspecialchars($post['text']);?>
                                 </p>
-                                <cite><?=$post['quote_author']?></cite>
+                                <cite><?=htmlspecialchars($post['quote_author'])?></cite>
                             </blockquote>
                         <?php elseif ($post['icon_class'] == 'text'): ?>
                             <p>
-                                <?= cut_text($post['text'],300) ;?>
+                                <?= htmlspecialchars(cut_text($post['text'],300)) ;?>
                             </p>
                         <?php elseif ($post['icon_class'] == 'photo'): ?>
                             <div class="post-photo__image-wrapper">
@@ -90,10 +90,10 @@
                                             <img src="../img/logo-vita.jpg" alt="Иконка">
                                         </div>
                                         <div class="post-link__info">
-                                            <h3><?=$post['title'];?></h3>
+                                            <h3><?=htmlspecialchars($post['title']);?></h3>
                                         </div>
                                     </div>
-                                    <span><?=$post['link'];?></span>
+                                    <span><?=htmlspecialchars($post['link']);?></span>
                                 </a>
                             </div>
                         <?php elseif ($post['icon_class'] == 'video'): ?>
@@ -107,7 +107,7 @@
                                     <img class="post__author-avatar" src="<?=$post['avatar_path'];?>" alt="Аватар пользователя">
                                 </div>
                                 <div class="post__info">
-                                    <b class="post__author-name"><?=$post['user_name'];?></b>
+                                    <b class="post__author-name"><?=htmlspecialchars($post['user_name']);?></b>
                                     <time class="post__time" datetime="<?= $post['pub_date']?>" title="<?=post_time_title($post['pub_date'])?>" >
                                         <?= rel_time($post['pub_date'])?> назад
                                     </time>

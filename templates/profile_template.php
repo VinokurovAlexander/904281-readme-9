@@ -10,7 +10,7 @@
                         alt="Аватар пользователя">
                     </div>
                     <div class="profile__name-wrapper user__name-wrapper">
-                        <span class="profile__name user__name"><?=$user['user_name'];?></span>
+                        <span class="profile__name user__name"><?=htmlspecialchars($user['user_name']);?></span>
                         <time class="profile__user-time user__time" datetime="<?=$user['reg_date'] ?>"><?=rel_time($user['reg_date'])?> на сайте</time>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                                                     <img class="post__author-avatar" src="<?=$post['author_avatar']?>" alt="Аватар пользователя">
                                                 </div>
                                                 <div class="post__info">
-                                                    <b class="post__author-name">Репост: <?=$post['author_name']?></b>
+                                                    <b class="post__author-name">Репост: <?=htmlspecialchars($post['author_name'])?></b>
                                                     <time class="post__time" datetime="<?=$post['pub_date']?>"><?=rel_time($post['pub_date'])?> назад</time>
                                                 </div>
                                             </a>
@@ -72,7 +72,7 @@
                                     <? else : ?>
                                     <h2>
                                         <a href="/post.php/?post_id=<?=$post['post_id'];?>">
-                                            <?=$post['title'];?>
+                                            <?=htmlspecialchars($post['title']);?>
                                         </a>
                                     </h2>
                                     <?endif; ?>
@@ -80,14 +80,14 @@
                                 <div class="post__main">
                                     <?php if ($post['content_type_id'] == 1): ?>
                                         <p>
-                                            <?=cut_text($post['text'],300) ;?>
+                                            <?=htmlspecialchars(cut_text($post['text'],300)) ;?>
                                         </p>
                                     <?php elseif ($post['content_type_id'] == 2): ?>
                                         <blockquote>
                                             <p>
-                                                <?=$post['text'];?>
+                                                <?=htmlspecialchars($post['text']);?>
                                             </p>
-                                            <cite><?=$post['quote_author']?></cite>
+                                            <cite><?=htmlspecialchars($post['quote_author'])?></cite>
                                         </blockquote>
                                     <?php elseif ($post['content_type_id'] == 3): ?>
                                         <div class="post-photo__image-wrapper">
@@ -103,10 +103,10 @@
                                                 <img src="../img/logo-vita.jpg" alt="Иконка">
                                             </div>
                                             <div class="post-link__info">
-                                                <h3><?=$post['title'];?></h3>
+                                                <h3><?=htmlspecialchars($post['title']);?></h3>
                                             </div>
                                         </div>
-                                        <span><?=$post['link'];?></span>
+                                        <span><?=htmlspecialchars($post['link']);?></span>
                                     </a>
                                     </div>
                                     <?php endif; ?>
@@ -146,7 +146,7 @@
                                     </div>
                                     <ul class="post__tags">
                                         <?php foreach (get_hashtags($con,$post['post_id']) as $hashtag): ?>
-                                            <li><a href="#">#<?=$hashtag;?></a></li>
+                                            <li><a href="#">#<?=htmlspecialchars($hashtag);?></a></li>
                                         <?php endforeach; ?>
                                     </ul>
                                 </footer>
@@ -164,14 +164,14 @@
                                                         <div class="comments__info">
                                                             <div class="comments__name-wrapper">
                                                                 <a class="comments__user-name" href="/profile.php/?user_id=<?=$comment['user_id']?>">
-                                                                    <span><?=$comment['user_name']?></span>
+                                                                    <span><?=htmlspecialchars($comment['user_name'])?></span>
                                                                 </a>
                                                                 <time class="comments__time" datetime="<?=$comment['pub_date']?>">
                                                                     <?=rel_time($comment['pub_date'])?> назад
                                                                 </time>
                                                             </div>
                                                             <p class="comments__text">
-                                                                <?=trim($comment['content'])?>
+                                                                <?=htmlspecialchars(trim($comment['content']))?>
                                                             </p>
                                                         </div>
                                                     </li>
@@ -278,7 +278,7 @@
                                     </div>
                                     <div class="post-mini__name-wrapper user__name-wrapper">
                                         <a class="post-mini__name user__name" href="/profile.php/?user_id=<?=$follower['user_id']?>">
-                                            <span><?=$follower['user_name']?></span>
+                                            <span><?=htmlspecialchars($follower['user_name'])?></span>
                                         </a>
                                         <time class="post-mini__time user__additional" datetime="<?=$follower['reg_date']?>"><?=rel_time($follower['reg_date'])?> на сайте</time>
                                     </div>
