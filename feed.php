@@ -19,7 +19,7 @@ if (!isset($_GET['content_type_id']) || empty($_GET['content_type_id'])) {
 elseif ($_GET['content_type_id'] !== 'all') {
     $current_content_type_id = $_GET['content_type_id'];
     if ($current_content_type_id > get_content_types_count($con)) {
-        show_error('Такой страницы не существует');
+        show_error($con,'Такой страницы не существует');
     }
 }
 

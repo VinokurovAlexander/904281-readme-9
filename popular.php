@@ -6,8 +6,6 @@ require_once('sql_connect.php');
 my_session_start();
 check_get_popular();
 
-
-
 $title = 'Популярное';
 
 $cur_page = $_GET['page'] ?? 1;
@@ -16,7 +14,7 @@ $pages_count = get_pages_count($con,$page_items);
 $offset = ($cur_page - 1) * $page_items;
 
 if ($_GET['page'] > $pages_count || $_GET['page'] == 0) {
-    show_error('Такой страницы не существует');
+    show_error($con,'Такой страницы не существует');
 }
 
 $content_types = get_content_types($con);

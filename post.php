@@ -8,7 +8,7 @@ my_session_start();
 
 if (!isset($_GET['post_id']) || empty($_GET['post_id'])) {
     header('HTTP/1.0 404 not found');
-    show_error('Параметр запроса отсутствует, либо по этому id не нашли ни одной записи');
+    show_error($con,'Параметр запроса отсутствует, либо по этому id не нашли ни одной записи');
 }
 
 $post_id = intval($_GET['post_id']);
@@ -24,7 +24,7 @@ if (get_post($con,$post_id)) {
  $post = get_post($con,$post_id);
 }
 else {
- show_sql_error();
+ show_sql_error($con);
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

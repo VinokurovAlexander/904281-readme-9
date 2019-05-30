@@ -1,8 +1,8 @@
-<?php if ($get_ct_id == '1') : ?>    <!-- ct = 'Текст'-->
+<?php if ($_GET['content_type_id'] == '1') : ?>    <!-- ct = 'Текст'-->
 
 <section class="adding-post__text tabs__content tabs__content--active">
     <h2 class="visually-hidden">Форма добавления текста</h2>
-    <form class="adding-post__form form" action="/add.php/?content_type_id=<?= $get_ct_id; ?>" method="post">
+    <form class="adding-post__form form" action="/add.php/?content_type_id=<?= intval($_GET['content_type_id']); ?>" method="post">
         <div class="form__text-inputs-wrapper">
 
             <div class="form__text-inputs">
@@ -59,11 +59,11 @@
     </form>
 </section>
 
-<?php elseif ($get_ct_id == '2') : ?>    <!-- ct = 'Цитата'  -->
+<?php elseif ($_GET['content_type_id'] == '2') : ?>    <!-- ct = 'Цитата'  -->
 
 <section class="adding-post__quote tabs__content tabs__content--active">
     <h2 class="visually-hidden">Форма добавления цитаты</h2>
-    <form class="adding-post__form form" action="/add.php/?content_type_id=<?= $get_ct_id; ?>" method="post">
+    <form class="adding-post__form form" action="/add.php/?content_type_id=<?=intval($_GET['content_type_id']);?>" method="post">
         <div class="form__text-inputs-wrapper">
             <div class="form__text-inputs">
                 <div class="adding-post__input-wrapper form__input-wrapper">
@@ -129,11 +129,11 @@
     </form>
 </section>
 
-<?php elseif ($get_ct_id == '3') : ?>    <!-- ct = 'Картинка'  -->
+<?php elseif ($_GET['content_type_id'] == '3') : ?>    <!-- ct = 'Картинка'  -->
 
 <section class="adding-post__photo tabs__content tabs__content--active tabs__content--active">
     <h2 class="visually-hidden">Форма добавления фото</h2>
-    <form class="adding-post__form form" action="/add.php/?content_type_id=<?= $get_ct_id; ?>" method="post" enctype="multipart/form-data">
+    <form class="adding-post__form form" action="/add.php/?content_type_id=<?=intval($_GET['content_type_id']);?>" method="post" enctype="multipart/form-data">
         <div class="form__text-inputs-wrapper">
             <div class="form__text-inputs">
                 <div class="adding-post__input-wrapper form__input-wrapper">
@@ -207,11 +207,11 @@
     </form>
 </section>
 
-<?php elseif ($get_ct_id == '4') : ?>    <!-- ct = 'Видео'  -->
+<?php elseif ($_GET['content_type_id'] == '4') : ?>    <!-- ct = 'Видео'  -->
 
 <section class="adding-post__video tabs__content tabs__content--active">
     <h2 class="visually-hidden">Форма добавления видео</h2>
-    <form class="adding-post__form form" action="/add.php/?content_type_id=<?= $get_ct_id; ?>" method="post" enctype="multipart/form-data">
+    <form class="adding-post__form form" action="/add.php/?content_type_id=<?=intval($_GET['content_type_id']);?>" method="post" enctype="multipart/form-data">
         <div class="form__text-inputs-wrapper">
             <div class="form__text-inputs">
                 <div class="adding-post__input-wrapper form__input-wrapper">
@@ -267,11 +267,11 @@
     </form>
 </section>
 
-<?php elseif ($get_ct_id == '5') : ?>    <!-- ct = 'Ссылка'  -->
+<?php elseif ($_GET['content_type_id'] == '5') : ?>    <!-- ct = 'Ссылка'  -->
 
 <section class="adding-post__link tabs__content tabs__content--active">
     <h2 class="visually-hidden">Форма добавления ссылки</h2>
-    <form class="adding-post__form form" action="/add.php/?content_type_id=<?= $get_ct_id; ?>" method="post">
+    <form class="adding-post__form form" action="/add.php/?content_type_id=<?=intval($_GET['content_type_id']);?>" method="post">
         <div class="form__text-inputs-wrapper">
             <div class="form__text-inputs">
                 <div class="adding-post__input-wrapper form__input-wrapper">

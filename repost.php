@@ -4,8 +4,6 @@ require_once('sql_connect.php');
 require_once('helpers.php');
 require_once('my_functions.php');
 
-
-
 my_session_start();
 
 $repost_post_id = $_GET['post_id'];
@@ -16,7 +14,7 @@ if (is_post($con,$repost_post_id)) {
     $original_post_user_id = $repost_post['user_id'];
 
     if ($new_user_id == $original_post_user_id) {
-        show_error('Вы не можете делать репосты своих публикаций');
+        show_error($con,'Вы не можете делать репосты своих публикаций');
     }
 
     //Добавляем репост в БД
@@ -31,5 +29,5 @@ if (is_post($con,$repost_post_id)) {
     }
 }
 else {
-    show_error('Поста с таким id не существует');
+    show_error($con,'Поста с таким id не существует');
 }

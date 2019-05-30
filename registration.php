@@ -65,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         else {
             $password_hash = password_hash($password,PASSWORD_DEFAULT);
+            $post['password_hash'] = $password_hash;
         }
     }
 
@@ -94,13 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $path = '../img/avatar.jpg';
     }
 
+    $post['path'] = $path;
+
     //Добавляем данные в БД
     if (empty($errors)) {
-        $add_user_sql = 'INSERT INTO users(reg_date, email, user_name, password, avatar_path,contacts) VALUES (NOW(),?,?,?,?,?)';
-        $stmt = db_get_prepare_stmt($con, $add_user_sql, [$post['email'], $post['login'], $password_hash,$path,'Здесь должны быть контакты']);
-        $res = mysqli_stmt_execute($stmt);
-
-        if ($res) {
+        if (add_user($con,$post)) {
             header("Location: /");
             exit;
         }

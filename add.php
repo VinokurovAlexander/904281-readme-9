@@ -6,37 +6,25 @@ require_once ('my_functions.php');
 my_session_start();
 $title = 'Добавление поста';
 
-$sql_error = include_template('error.php', [
-    'error' => mysqli_error($con),
-]);
 
-
-if (isset($_GET['content_type_id'])) {
-   $get_ct_id = intval($_GET['content_type_id']);  // ct = content type
+if (!isset($_GET['content_type_id']) || empty($_GET['content_type_id'])) {
+    header("Location: /add.php/?content_type_id=1");
+    exit();
 }
 else {
-    $get_ct_id = 1;
+    $content_types = get_content_types($con);
+    $current_content_type_id = intval($_GET['content_type_id']);
+    if ($current_content_type_id > count($content_types)) {
+        show_error($con,'Типа публикации с таким id не существует');
+    }
 }
 
-$ct_all_sql = "SELECT * FROM content_type ct";
-$ct_all_result = mysqli_query($con, $ct_all_sql);
-$ct_all_rows = mysqli_fetch_all($ct_all_result, MYSQLI_ASSOC);
-
-//Получаем текущий ct по id ct из GET запроса
-$ct_sql = "SELECT content_type FROM content_type WHERE content_type_id = $get_ct_id";
-$ct_result = mysqli_query($con, $ct_sql);
-$ct_rows = mysqli_fetch_all($ct_result, MYSQLI_ASSOC);
 
 //Валидация формы
 $errors = [];
 
 //Получаем обязательные поля для формы
-// rf = required fields
-$rf_sql = "SELECT rf.field_name,rf_rus.field_name_rus FROM required_fields rf 
-JOIN rf_rus ON rf.fd_rus_id = rf_rus.rf_rus_id
-WHERE content_type_id = $get_ct_id";
-$rf_result = mysqli_query($con, $rf_sql);
-$rf = mysqli_fetch_all($rf_result, MYSQLI_ASSOC);
+$rf = get_required_fiels($con,$current_content_type_id);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $post = $_POST;
@@ -56,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     //Проверяем корректность заполнения полей
-    if ($get_ct_id == 3) {
+    if ($current_content_type_id == 3) {
 
         //Проверяем добавлена ли картинка через поле 'Выбрать фото'
         if (empty($_FILES['userpic-file-photo']['name'])) {
@@ -131,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if ($get_ct_id == 4) {
+    if ($current_content_type_id == 4) {
         //Получаем ссылку на видео из метода POST
         $video_link = $_POST['video-link'];
 
@@ -159,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if ($get_ct_id == 5) {
+    if ($current_content_type_id == 5) {
         //Проверяем корректно ли указан URL
         $link = $post['post-link'];
 
@@ -175,40 +163,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //Добавляем данные в БД и публикуем пост
     if(empty($errors)) {
         $post['user_id'] = $_SESSION['user']['user_id'];
-        if (add_data_to_database($con, $get_ct_id, $post)) {
+        if (add_data_to_database($con, $current_content_type_id, $post)) {
             $post_id = mysqli_insert_id($con);
 
             //Добавление хэштегов
-            $hashtags = get_add_hashtags($con, $get_ct_id, $post);
+            $hashtags = get_add_hashtags($con, $current_content_type_id, $post);
 
                 if (add_hashtags($con, $hashtags, $post_id)) {
                     header("Location: /post.php/?post_id=" . $post_id);
                     exit;
                 } else {
-                    $post_add_sql_error = $sql_error;
+                    show_sql_error($con);
                 }
 
         } else {
-            $post_add_sql_error = $sql_error;
+            show_sql_error($con);
         }
     }
 }
 
-if (!empty($post_add_sql_error)) {
-    $post_add = $post_add_sql_error;
-}
-
-else {
-
 $post_add = include_template('add_form_temp.php', [
-    'get_ct_id' => $get_ct_id,
     'errors' => $errors
 ]);
-}
+
 
 $page_content = include_template('add_post_temp.php',[
-    'ct_all_rows' => $ct_all_rows,
-    'get_ct_id' => $get_ct_id,
+    'content_types' => $content_types,
     'post_add' => $post_add
 ]);
 
@@ -221,10 +201,5 @@ $layout_content = include_template('layout.php',[
 
 print($layout_content);
 
-
-print('<pre>');
-print_r($post);
-print('</pre>');
-print('<br>');
 
 

@@ -7,10 +7,10 @@
             <div class="adding-post__tabs-wrapper tabs">
                 <div class="adding-post__tabs filters">
                     <ul class="adding-post__tabs-list filters__list tabs__list">
-                        <?php foreach ($ct_all_rows as $k => $v): ?>
+                        <?php foreach ($content_types as $k => $v): ?>
                         <li class="adding-post__tabs-item filters__item">
                             <a class="adding-post__tabs-link filters__button filters__button--<?=$v['icon_class'];?>  tabs__item tabs__item--active button
-                               <?php if ($get_ct_id == $v['content_type_id']) {echo "filters__button--active";} ?>"
+                               <?php if ($_GET['content_type_id'] == $v['content_type_id']) {echo "filters__button--active";} ?>"
                                href="/add.php/?content_type_id=<?=$v['content_type_id'];?>">
                                 <svg class="filters__icon" width="22" height="18">
                                     <use xlink:href="#icon-filter-<?=$v['icon_class'];?>"></use>

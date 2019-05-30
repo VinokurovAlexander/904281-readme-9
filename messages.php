@@ -17,16 +17,16 @@ if (!empty($_GET['user_id'])) {
     $dialog_user_id = $_GET['user_id'];
     //Проверяем существование пользователя
     if (is_user($con, $dialog_user_id) == false) {
-        show_error('Пользователя с таким id не существует');
+        show_error($con,'Пользователя с таким id не существует');
     }
 
     if($dialog_user_id == $current_user_id) {
-        show_error('Нельзя отправлять сообщения самому себе');
+        show_error($con,'Нельзя отправлять сообщения самому себе');
     }
 
     //Проверяем подписку на пользователя
     if (!is_follow($con,$dialog_user_id)) {
-        show_error('Вы не подписаны на данного пользователя');
+        show_error($con,'Вы не подписаны на данного пользователя');
     }
 
     //Проверяем есть ли диалог с указанным пользователем
@@ -45,7 +45,7 @@ if (!empty($_GET['user_id'])) {
             $messages = get_dialog_messages($con,$current_user_id,$dialog_user_id);
         }
         else {
-            show_sql_error();
+            show_sql_error($con);
         }
     }
     read_msg($con);

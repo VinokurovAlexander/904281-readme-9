@@ -360,9 +360,13 @@ function get_youtube_image_preview (string $youtube_url) {
  *
  */
 
-function show_error(string $error) {
+function show_error($con,string $error) {
     $page_content = include_template('error.php', ['error' => $error]);
-    $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'Ошибка']);
+    $layout_content = include_template('layout.php', [
+        'content' => $page_content,
+        'title' => 'Ошибка',
+        'con' => $con
+    ]);
     print($layout_content);
     exit();
 }
@@ -915,7 +919,7 @@ function my_session_start() {
  */
 
 function get_content_types ($con) {
-    $con_type_sql = "SELECT content_type_id,content_type,icon_class FROM content_type";
+    $con_type_sql = "SELECT * FROM content_type";
     $con_type_res = mysqli_query($con,$con_type_sql);
     $content_types = mysqli_fetch_all($con_type_res, MYSQLI_ASSOC);
     return $content_types;
@@ -1430,8 +1434,94 @@ function read_msg($con) {
         }
 }
 
+/**
+ * Возвращает массив с обязательными для заполнения полями для формы добавления публикации
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $content_type_id Идентификатор типа публикации
+ *
+ * @return array $rf Массив с обязательными для заполнения полями для формы добавления публикации
+ */
 
+function get_required_fiels ($con,int $content_type_id) {
+    $rf_sql = "SELECT rf.field_name,rf_rus.field_name_rus FROM required_fields rf 
+JOIN rf_rus ON rf.fd_rus_id = rf_rus.rf_rus_id
+WHERE content_type_id = $content_type_id";
+    $rf_result = mysqli_query($con, $rf_sql);
+    $rf = mysqli_fetch_all($rf_result, MYSQLI_ASSOC);
+    return $rf;
+}
 
+/**
+ * Добавляет запись в БД при оформлении подписки на пользователя
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $who_sub_id Идентификатор пользователя КТО осуществляет подписку
+ * @param int $to_sub_id Идентификатор пользователя НА КОГО осуществляется подписка
+ *
+ * @return bool Если данные добавлены - true, иначе false
+ */
+
+function add_followes($con,$who_sub_id,$to_sub_id) {
+    $followers_add_sql = "INSERT INTO follow(who_sub_id, to_sub_id) VALUES (?,?)";
+    $stmt = db_get_prepare_stmt($con,$followers_add_sql,[$who_sub_id,$to_sub_id]);
+    $res = mysqli_stmt_execute($stmt);
+    if ($res) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+/**
+ * Добавляет пользователя в БД при регистрации
+ *
+ **
+ * @param $con Соединение с БД
+ * @param array $post Массив с данными, отправленными через форму регистрации
+ *
+ *
+ * @return bool Если данные добавлены - true, иначе false
+ */
+
+function add_user($con,array $post) {
+    $add_user_sql = 'INSERT INTO users(reg_date, email, user_name, password, avatar_path,contacts) 
+                     VALUES (NOW(),?,?,?,?,?)';
+    $stmt = db_get_prepare_stmt($con, $add_user_sql,
+                    [$post['email'], $post['login'], $post['password_hash'],$post['path'],$post['about_me']]);
+    $res = mysqli_stmt_execute($stmt);
+    if ($res) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+/**
+ * Удаляет запись из БД при отписки от пользователя
+ *
+ **
+ * @param int $who_unsub_id Идентификатор пользователя КТО осуществляет отписку
+ * @param int $to_unsub_id Идентификатор пользователя ОТ КОГО осуществляется подписка
+ *
+ *
+ * @return bool Если данные удалены - true, иначе false
+ */
+
+function unfollow ($con,int $who_unsub_id,int $to_unsub_id) {
+    $followers_delete_sql = "DELETE FROM follow WHERE who_sub_id = $who_unsub_id AND to_sub_id = $to_unsub_id";
+    $followers_delete_result = mysqli_query($con, $followers_delete_sql);
+    if ($followers_delete_result) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 
 
 
