@@ -37,11 +37,10 @@ CREATE TABLE posts (
     link CHAR(128),
     view_count INT,
     content_type_id INT,
-    is_repost BOOL DEFAULT FALSE,
-    post_author INT DEFAULT NULL,
+    repost_id INT DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (content_type_id) REFERENCES content_type(content_type_id),
-    FOREIGN KEY (post_author) REFERENCES users(user_id)
+    FOREIGN KEY (repost_id) REFERENCES posts(post_id)
 
 );
 

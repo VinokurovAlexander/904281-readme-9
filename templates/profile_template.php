@@ -57,9 +57,9 @@
                         <?php foreach ($posts as $post): ?>
                             <article class="profile__post post post-<?=$post['icon_class'];?>">
                                 <header class="post__header">
-                                    <?php if ($post['is_repost'] == true) : ?>
+                                    <?php if ($post['repost_id'] != NULL) : ?>
                                         <div class="post__author">
-                                            <a class="post__author-link" href="/profile.php/?user_id=<?=$post['post_author']?>" title="Автор">
+                                            <a class="post__author-link" href="/profile.php/?user_id=<?=$post['author_id']?>" title="Автор">
                                                 <div class="post__avatar-wrapper post__avatar-wrapper--repost">
                                                     <img class="post__author-avatar" src="<?=$post['author_avatar']?>" alt="Аватар пользователя">
                                                 </div>
@@ -124,7 +124,7 @@
                                                         <use xlink:href="#icon-heart"></use>
                                                     </svg>
                                                 <?endif;?>
-                                                <span><?=$post['likes_count'];?></span>
+                                                <span><?=get_post_likes_count($con,$post['post_id']);?></span>
                                                 <span class="visually-hidden">количество лайков</span>
                                             </a>
                                             <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
