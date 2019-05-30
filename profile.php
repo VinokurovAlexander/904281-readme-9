@@ -15,6 +15,9 @@ if (!isset($_GET['user_id']) || empty($_GET['user_id'])) {
 
 else {
     $current_user_id = intval($_GET['user_id']);
+    if (!is_user($con,$current_user_id)) {
+        show_error($con,'Пользователя с таким id не существует');
+    }
 }
 
 if (empty($_GET['content'])) {

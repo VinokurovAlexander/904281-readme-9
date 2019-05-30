@@ -51,9 +51,11 @@ function get_add_hashtags ($con,int $current_ct_id, array $post ) {
 
     if (!empty($post[$hashtags_fieldname])) {
         $hashtags = explode(' ',$post[$hashtags_fieldname]);
-        return $hashtags;
     }
-
+    else {
+        $hashtags = [];
+    }
+    return $hashtags;
 }
 
 /**
@@ -513,7 +515,7 @@ function get_dialog_avatar($con,array $dialog) {
  *
  */
 
-function get_dialog_id($con,$dialog) {
+function get_dialog_user_id($con,$dialog) {
     $user_id = $dialog['sen_id'];
     $current_user_id = $_SESSION['user']['user_id'];
     if ($user_id == $current_user_id) {
@@ -536,13 +538,13 @@ function get_dialog_id($con,$dialog) {
  *
  */
 function get_dialogs($con, int $user_id) {
-    $dialogs_sql = "SELECT pub_date, content, sen_id, rec_id,  dialog_id
+    $dialogs_sql = "SELECT pub_date, content, sen_id, rec_id,  dialog_name
                     FROM messages
                     WHERE mes_id
                           IN(SELECT max(mes_id)
                           FROM messages
                           WHERE sen_id = $user_id OR rec_id = $user_id
-                          GROUP BY dialog_id)
+                          GROUP BY dialog_name)
                     ORDER BY pub_date DESC";
     $dialogs_res = mysqli_query($con,$dialogs_sql);
     $dialogs = mysqli_fetch_all($dialogs_res,MYSQLI_ASSOC);
@@ -592,7 +594,7 @@ ORDER BY m.pub_date";
  *
  */
 
-function is_user($con,$user_id) {
+function is_user($con,int $user_id) {
     $user_id_sql = "SELECT u.user_id FROM users u WHERE u.user_id = $user_id";
     $user_id_res = mysqli_query($con,$user_id_sql);
     $user_id_array = mysqli_fetch_all($user_id_res,MYSQLI_ASSOC);
@@ -616,7 +618,7 @@ function is_user($con,$user_id) {
  */
 
 function is_dialog ($con, int $user_id_1,int $user_id_2) {
-    $is_dialog_sql = "SELECT m.dialog_id FROM messages m
+    $is_dialog_sql = "SELECT m.dialog_name FROM messages m
                          WHERE (m.sen_id = $user_id_1 AND m.rec_id = $user_id_2) 
                          OR (m.sen_id = $user_id_2 AND m.rec_id = $user_id_1)";
     $is_dialog_res = mysqli_query($con,$is_dialog_sql);
@@ -625,7 +627,7 @@ function is_dialog ($con, int $user_id_1,int $user_id_2) {
         return false;
     }
     else {
-        return $is_dialog = $is_dialog['dialog_id'];
+        return $is_dialog = $is_dialog['dialog_name'];
     }
 }
 
@@ -637,14 +639,14 @@ function is_dialog ($con, int $user_id_1,int $user_id_2) {
  * @param int $sender_id Идентификатор пользователя отправителя сообщения
  * @param int $recipient_id Идентификатор пользователя принимающего сообщения
  * @param string $message_text Текст сообщения
- * @param int $dialog_id Уникальный идентификатор диалога
+ * @param string $dialog_name Уникальный идентификатор диалога
  *
  * @return
  *
  */
-function add_message($con,int $sender_id,int $recipient_id,string $message_text,$dialog_id) {
-    $add_message = "INSERT INTO messages(sen_id, rec_id, pub_date, content, dialog_id) VALUES (?,?,NOW(),?,?)";
-    $stmt = db_get_prepare_stmt($con,$add_message,[$sender_id,$recipient_id,$message_text,$dialog_id]);
+function add_message($con,int $sender_id,int $recipient_id,string $message_text,string $dialog_name) {
+    $add_message = "INSERT INTO messages(sen_id, rec_id, pub_date, content, dialog_name) VALUES (?,?,NOW(),?,?)";
+    $stmt = db_get_prepare_stmt($con,$add_message,[$sender_id,$recipient_id,$message_text,$dialog_name]);
     $res = mysqli_stmt_execute($stmt);
     if ($res) {
         return true;
@@ -1389,18 +1391,18 @@ function get_all_unread_mes_cnt($con,int $user_id) {
  *
  **
  * @param $con Соединение с БД
- * @param string $dialog_id Идентификатор диалога
+ * @param string $dialog_name Идентификатор диалога
  *
  *
  * @return int $get_msg Количество непрочитанных сообщений в диалоге
  *
  */
 
-function get_dialog_unread_msg_cnt($con,string $dialog_id) {
+function get_dialog_unread_msg_cnt($con,string $dialog_name) {
     $current_user_id = $_SESSION['user']['user_id'];
     $get_msg_sql = "SELECT COUNT(m.mes_id) AS unread_msg_cnt 
                     FROM messages m 
-                    WHERE m.is_view is FALSE and (m.dialog_id = '$dialog_id' AND m.rec_id = $current_user_id)";
+                    WHERE m.is_view is FALSE and (m.dialog_name = '$dialog_name' AND m.rec_id = $current_user_id)";
     $get_msg_res = mysqli_query($con,$get_msg_sql);
     $get_msg_array = mysqli_fetch_array($get_msg_res,MYSQLI_ASSOC);
     $get_msg = $get_msg_array['unread_msg_cnt'];

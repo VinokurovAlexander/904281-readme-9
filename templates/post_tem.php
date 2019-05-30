@@ -166,8 +166,6 @@
                                 <a class="user__button user__button--subscription button button--main" href="/follow.php/?user_id=<?=$post['user_id']?>">Подписаться</a>
                             <?php endif; ?>
                         <?php endif; ?>
-<!--                        <button class="user__button user__button--subscription button button--main" type="button">Подписаться</button>-->
-<!--                        <a class="user__button user__button--writing button button--green" href="#">Сообщение</a>-->
                     </div>
                 </div>
             </div>

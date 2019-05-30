@@ -36,7 +36,7 @@ if (!empty($_GET['user_id'])) {
             'content' => null,
             'sen_id' => $current_user_id,
             'rec_id' => $dialog_user_id,
-            'dialog_id' => null
+            'dialog_name' => ''
         ];
     }
     else {
@@ -73,14 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //Проверяем создан ли у данных пользователей диалог
         if (is_dialog($con,$sender_id,$recipient_id)) {
             //диалог есть
-            $dialog_id = is_dialog($con,$sender_id,$recipient_id);
+            $dialog_name = is_dialog($con,$sender_id,$recipient_id);
         }
         else {
             //диалога нет, нужно создавать
-            $dialog_id = uniqid();
+            $dialog_name = uniqid();
         }
         //Добавляем данные в таблицу
-        if (!add_message($con,$sender_id,$recipient_id,$post['message-text'],$dialog_id)) {
+        if (!add_message($con,$sender_id,$recipient_id,$post['message-text'],$dialog_name)) {
             show_sql_error($con);
         }
         else {
@@ -110,5 +110,7 @@ $layout_content = include_template('layout.php', [
 ]);
 
 print($layout_content);
+
+
 
 
