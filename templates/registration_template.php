@@ -55,7 +55,7 @@
                     <div class="registration__textarea-wrapper form__textarea-wrapper">
                         <label class="registration__label form__label" for="text-info">Информация о себе</label>
                         <div class="form__input-section">
-                            <textarea class="registration__textarea form__textarea form__input" id="text-info" name="about-me" placeholder="Коротко о себе в свободной форме"><? if(isset($_POST['about-me'])) {print($_POST['about-me']);} ?></textarea>
+                            <textarea class="registration__textarea form__textarea form__input" id="text-info" name="about_me" placeholder="Коротко о себе в свободной форме"><? if(isset($_POST['about-me'])) {print($_POST['about-me']);} ?></textarea>
                         </div>
                     </div>
                 </div>

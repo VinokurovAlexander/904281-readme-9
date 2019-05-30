@@ -1,69 +1,75 @@
 <?php
 require_once('helpers.php');
+require_once('my_functions.php');
+require_once('sql_connect.php');
 
-// Работаем с БД
-$con = mysqli_connect("localhost", "root", "", "readme_db");
-mysqli_set_charset($con, "utf8");
+my_session_start();
 
-if ($con == false) {
-    $error = mysqli_connect_error();
-    $page_content = include_template('error.php', ['error' => $error]);
+
+if (!isset($_GET['post_id']) || empty($_GET['post_id'])) {
+    header('HTTP/1.0 404 not found');
+    show_error($con,'Параметр запроса отсутствует, либо по этому id не нашли ни одной записи');
 }
 
-if (isset($_GET['post_id'])) {
-    //Получаем контент поста из запроса GET
-    $get_post_id = intval($_GET['post_id']);
-    $post = "SELECT p.*,ct.content_type,u.user_name,u.avatar_path FROM posts p 
-    JOIN content_type ct ON  p.content_type_id = ct.content_type_id
-    JOIN users u ON p.user_id = u.user_id
-    WHERE post_id = $get_post_id";
-    $posts_res = mysqli_query($con,$post);
-    $posts_rows = mysqli_fetch_all($posts_res, MYSQLI_ASSOC);
+$post_id = intval($_GET['post_id']);
+$title = 'Просмотр поста';
+$errors = [];
 
-    print('<pre>');
-    print('posts_rows: ');
-    print_r($posts_rows);
-    print('</pre>');
+$view_count = get_view_count($con,$post_id);
+$view_count = $view_count + 1;
+add_view_count($con,$post_id,$view_count);
 
-    if ($posts_rows == null) {
-        header('HTTP/1.0 404 not found');
-        print('Параметр запроса отсутствует, либо по этому id не нашли ни одной записи');
+
+if (get_post($con,$post_id)) {
+ $post = get_post($con,$post_id);
+}
+else {
+ show_sql_error($con);
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (empty($_POST['message-text'])) {
+        $errors = [
+            'message-text' => 'Это поле необходимо заполнить'
+        ];
     }
-
     else {
-    //Считаем кол-во публикаций
-    $get_user_id = $posts_rows[0]['user_id'];
-    $post_count_sql = "SELECT p.post_id FROM posts p
-    JOIN users u ON p.user_id = u.user_id
-    WHERE u.user_id = $get_user_id";
-    $post_count_result = mysqli_query($con,$post_count_sql);
-    $user_post_count = mysqli_num_rows($post_count_result); // считаем количество постов пользователя
+        $message_text = $_POST['message-text'];
+        if (strlen($message_text) < 4) {
+            $errors = [
+                'message-text' => 'Длина комментария не дожна быть меньше 4 символов'
+            ];
+        }
+    }
+    if (empty($errors)) {
+    add_comment($con,$_POST['message-text'],$_SESSION['user']['user_id'],$post_id);
+    }
+}
 
+$comments = get_comments($con,$post_id);
 
-    //Считаем количество подписчиков
-    $followers_count_sql = "SELECT f.to_sub_id FROM follow f
-    JOIN users u ON u.user_id = f.to_sub_id
-    WHERE u.user_id = $get_user_id";
-    $followers_count_result = mysqli_query($con,$followers_count_sql);
-    $user_followers_count =  mysqli_num_rows($followers_count_result);
-
-    $post_content = include_template('post_tem.php', [
-    'posts_rows' => $posts_rows,
-    'user_post_count' => $user_post_count,
-    'user_followers_count' => $user_followers_count
+$page_content = include_template('post_tem.php', [
+    'post' => $post,
+    'con' => $con,
+    'errors' => $errors,
+    'comments' => $comments
 ]);
 
-    print($post_content);
+ $layout_content = include_template('layout.php',[
+     'content' => $page_content ,
+     'title' => $title,
+     'con' => $con
+ ]);
 
-    }
-}
+print($layout_content);
 
-elseif (!isset($_GET['post_id'])) {
-        header('HTTP/1.0 404 not found');
-        print('Параметр запроса отсутствует, либо если по этому id не нашли ни одной записи');
-}
 
-?>
+
+
+
+
+
+
 
 
 

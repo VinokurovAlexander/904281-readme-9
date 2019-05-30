@@ -37,8 +37,10 @@ CREATE TABLE posts (
     link CHAR(128),
     view_count INT,
     content_type_id INT,
+    repost_id INT DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (content_type_id) REFERENCES content_type(content_type_id)
+    FOREIGN KEY (content_type_id) REFERENCES content_type(content_type_id),
+    FOREIGN KEY (repost_id) REFERENCES posts(post_id)
 
 );
 
@@ -62,6 +64,7 @@ CREATE TABLE likes (
     like_id INT AUTO_INCREMENT PRIMARY KEY,
     who_like_id INT,
     post_id INT,
+    dt_add DATETIME,
     FOREIGN KEY (who_like_id) REFERENCES users(user_id),
     FOREIGN KEY (post_id) REFERENCES posts(post_id)
 );
@@ -75,14 +78,17 @@ CREATE TABLE follow (
 );
 
 CREATE TABLE messages (
+    mes_id INT AUTO_INCREMENT PRIMARY KEY,
+    sen_id INT,
+    rec_id INT,
     pub_date DATETIME,
     content TEXT,
-    mes_sender_id INT,
-    mes_res_id INT,
-    CONSTRAINT messages_users PRIMARY KEY (mes_sender_id,mes_res_id),
-    FOREIGN KEY (mes_sender_id) REFERENCES users(user_id),
-    FOREIGN KEY (mes_res_id) REFERENCES users(user_id)
+    dialog_name CHAR(256),
+    is_view BOOL DEFAULT FALSE,
+    FOREIGN KEY (sen_id) REFERENCES users(user_id),
+    FOREIGN KEY (rec_id) REFERENCES users(user_id)
 );
+
 
 CREATE TABLE rf_rus (
     rf_rus_id INT AUTO_INCREMENT PRIMARY KEY,

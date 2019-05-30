@@ -1,4 +1,3 @@
-<div class="container">
-    <h1 class="page__title page__title--popular">Ошибка</h1>
-</div>
-<p><?= $error; ?></p>
+<section class="page__main page__main--feed" style="min-height:400px">
+        <p><?=$error;?></p>
+</section>

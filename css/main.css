@@ -2202,7 +2202,7 @@ img {
 }
 
 .post__indicator-icon--like-active {
-    display: none;
+    /*display: none;*/
     opacity: .6;
     fill: #f02323
 }
@@ -2564,12 +2564,12 @@ img {
     padding: 4px 43px 5px
 }
 
-.post-link img {
+.post-link__icon-wrapper  img {
     max-width: 120px;
     max-height: 120px
 }
 
-.popular__post.post-link img {
+.post-link__icon-wrapper img {
     max-width: 60px;
     max-height: 60px
 }
@@ -3739,7 +3739,7 @@ img {
     margin-bottom: 41px
 }
 
-.popular__post:nth-child(3n+1) {
+.popular__post:nth-child(3n) {
     margin-right: 0;
 }
 
@@ -4779,6 +4779,14 @@ img {
     margin-left: 20px;
     padding: 21px 20px 19px;
     letter-spacing: .85px
+}
+
+.profile__likes-list li {
+    overflow:hidden;
+}
+
+.message-text-error {
+    border-color: red;
 }
 
 /*# sourceMappingURL=main.css.map */
