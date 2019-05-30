@@ -9,6 +9,9 @@
                         <a class="messages__contacts-tab tabs__item <? if($_GET['user_id'] == get_dialog_id($con,$dialog)) {echo 'messages__contacts-tab--active ';}?>" href="/messages.php/?user_id=<?=get_dialog_id($con,$dialog)?>">
                             <div class="messages__avatar-wrapper">
                                 <img class="messages__avatar" src="<?=get_dialog_avatar($con,$dialog)?>" alt="Аватар пользователя">
+                                <?php if (get_dialog_unread_msg_cnt($con,$dialog['dialog_id']) > 0) : ?>
+                                <i class="messages__indicator"><?=get_dialog_unread_msg_cnt($con,$dialog['dialog_id']) ?></i>
+                                <?endif;?>
                             </div>
                             <div class="messages__info">
                                 <span class="messages__contact-name"><?=get_dialog_username($con,$dialog)?></span>

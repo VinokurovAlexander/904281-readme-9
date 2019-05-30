@@ -7,6 +7,7 @@ require_once('my_functions.php');
 
 my_session_start();
 
+$title = 'Моя лента';
 $current_user_id = $_SESSION['user']['user_id'];
 $content_types = get_content_types($con);
 
@@ -33,8 +34,8 @@ $page_content = include_template('feed_template.php', [
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'user_name' => $_SESSION['user']['user_name'],
-    'title' => 'Моя лента'
+    'title' => $title,
+    'con' => $con
 ]);
 
 print($layout_content);

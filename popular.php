@@ -6,6 +6,8 @@ require_once('sql_connect.php');
 my_session_start();
 check_get_popular();
 
+
+
 $title = 'Популярное';
 
 $cur_page = $_GET['page'] ?? 1;
@@ -30,8 +32,11 @@ $page_content = include_template('popular_template.php', [
 $layout_content = include_template('layout.php', [
     'content' => $page_content ,
     'title' => $title,
+    'con' => $con,
 
 ]);
 
 print($layout_content);
+
+
 

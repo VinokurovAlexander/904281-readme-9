@@ -3,11 +3,8 @@ require_once('helpers.php');
 require_once('my_functions.php');
 require_once('sql_connect.php');
 
-session_start();
-if (!isset($_SESSION['user'])) {
-    header("Location: /");
-    exit();
-}
+my_session_start();
+
 
 if (!isset($_GET['post_id']) || empty($_GET['post_id'])) {
     header('HTTP/1.0 404 not found');
@@ -60,7 +57,8 @@ $page_content = include_template('post_tem.php', [
 
  $layout_content = include_template('layout.php',[
      'content' => $page_content ,
-     'title' => $title
+     'title' => $title,
+     'con' => $con
  ]);
 
 print($layout_content);

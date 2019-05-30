@@ -87,7 +87,9 @@
                                             <a class="header__profile-nav-link" href="/messages.php">
                                                 <span class="header__profile-nav-text">
                                                     Сообщения
-                                                        <i class="header__profile-indicator">2</i>
+                                                        <?php if(get_all_unread_mes_cnt($con,$_SESSION['user']['user_id']) > 0) : ?>
+                                                            <i class="header__profile-indicator"><?=get_all_unread_mes_cnt($con,$_SESSION['user']['user_id']);?></i>
+                                                        <?endif; ?>
                                                 </span>
                                             </a>
                                         </li>

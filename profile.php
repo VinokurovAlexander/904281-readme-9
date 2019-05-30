@@ -61,18 +61,11 @@ $page_content = include_template('profile_template.php',[
 $layout_content = include_template('layout.php',[
     'content' => $page_content ,
     'title' => $title,
+    'con' => $con
 ]);
 
 print($layout_content);
 
-
-print('<pre>');
-
-print('$posts:');
-print_r($posts);
-print('<br>');
-
-print('</pre>');
 
 
 

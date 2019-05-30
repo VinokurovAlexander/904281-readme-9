@@ -4,11 +4,8 @@ require_once('helpers.php');
 require_once('sql_connect.php');
 require_once('my_functions.php');
 
-session_start();
-if (!isset($_SESSION['user'])) {
-    header("Location: /");
-    exit();
-}
+my_session_start();
+$title = 'Мои сообщения';
 
 $current_user_id = $_SESSION['user']['user_id'];
 $messages = [];
@@ -51,11 +48,13 @@ if (!empty($_GET['user_id'])) {
             show_sql_error();
         }
     }
+    read_msg($con);
 }
 
 if (empty($dialogs)) {
     $dialogs = get_dialogs($con,$current_user_id);
 }
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -69,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     else {
         //Добавляем данные в таблицу
         $sender_id = $_SESSION['user']['user_id'];
-        $recipient_id = $_GET['user_id'];
+        $recipient_id = intval($_GET['user_id']);
 
         //Проверяем создан ли у данных пользователей диалог
         if (is_dialog($con,$sender_id,$recipient_id)) {
@@ -83,6 +82,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //Добавляем данные в таблицу
         if (!add_message($con,$sender_id,$recipient_id,$post['message-text'],$dialog_id)) {
             show_sql_error($con);
+        }
+        else {
+            $url = '/messages.php/?user_id=' . $recipient_id;
+            header("Location: $url");
+            exit();
         }
     }
 }
@@ -101,7 +105,9 @@ else {
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'title' => 'Личные сообщения']);
+    'title' => $title,
+    'con' => $con
+]);
 
 print($layout_content);
 

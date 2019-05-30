@@ -36,7 +36,7 @@ function checking_image_type(string $file_name, bool $isFromClient = true) : boo
  * Получает массив с хэштегами при публикации поста
  **
  * @param $con соединение с БД
- * @param int $current_ct_id Текущий content type id
+ * @param int $current_ct_id Текущий дентификатор типа публикации
  * @param array $post Массив с передаваемыми данными методом POST
  *
  * @return array Возвращает массив с хэштегами
@@ -61,9 +61,9 @@ function get_add_hashtags ($con,int $current_ct_id, array $post ) {
  **
  * @param $con соединение с БД
  * @param array $hashtags Хэштег, полученный из формы
- * @param int $post_id текущий post id
+ * @param int $post_id Идентификатор текущего поста
  *
- * @return
+ * @return bool Если хэштеги добавлены - true, иначе false
  */
 
 function add_hashtags($con,array $hashtags, int $post_id) {
@@ -117,7 +117,7 @@ function add_hashtags($con,array $hashtags, int $post_id) {
  * Добавляет данные, переданные через форму добавления поста, в БД
  **
  * @param $con соединение с БД
- * @param int $content_type_id Тип публикуемого поста
+ * @param int $content_type_id Идентификатор типа публикуемого поста
  *@param array $post Данные, передаваемые через форму
  *
  * @return true - если данные добавлены, в ином случае false
@@ -220,7 +220,7 @@ function rel_time($pub_date) {
  * Считаем количество публикаций пользователя
  **
  * @param $con соединение с БД
- * @param $user_id id пользователя для которого нужно рассчитать количество публикаций
+ * @param int $user_id Идентификатор пользователя для которого нужно рассчитать количество публикаций
  *
  * @return int Количество публикаций
  */
@@ -238,7 +238,7 @@ function get_user_posts_count($con,int $user_id) {
  * Считаем количество подписчиков пользователя
  **
  * @param $con соединение с БД
- * @param $user_id id пользователя для которого нужно рассчитать количество подписчиков
+ * @param int $user_id Идентификатор пользователя для которого нужно рассчитать количество подписчиков
  *
  * @return int Количество подписчиков
  */
@@ -291,7 +291,7 @@ function cut_text ($text,$num_letters) {
  * Функция, возвращающая массив с хэштегами для поста, указанного в переменной $post_id
  **
  * @param $con Соединение с БД
- * @param int $post_id id поста для которого нужно получить хэштеги
+ * @param int $post_id Идентификатор поста для которого нужно получить хэштеги
  *
  *
  * @return array Массив с хэштегами для поста, указанного в переменной $post_id
@@ -316,7 +316,7 @@ function get_hashtags ($con,int $post_id) {
  * Функция, возвращает массив с информацией о постах и лайках для отображения во вкладке "Лайки" на личной странице пользователя
  **
  * @param $con Соединение с БД
- * @param array $post_id посты пользователя, для которых нужно отобразить информацию по лайкам
+ * @param int $post_id Идентификатор поста для которой нужно отобразить информацию по лайкам
  *
  *
  * @return array массив с информацией о постах и лайках для отображения во вкладке "Лайки" на личной странице пользователя
@@ -388,7 +388,7 @@ function show_sql_error($con) {
  * Функция, которая проверяет является ли залогиненный пользователем подписчиком пользователя, указанного в $to_sub_id
  **
  * @param $con Соединение с БД
- * @param int $to_sub_id Пользователь для которого осуществляется проверка
+ * @param int $to_sub_id Идентификатор пользователя для которого осуществляется проверка
  *
  * @return true если залогиненный пользователь подписан на пользователя, указанного в перемнной $to_sub_id, иначе false
  *
@@ -505,7 +505,7 @@ function get_dialog_avatar($con,array $dialog) {
  * @param $con Соединение с БД
  * @param array $dialog Массив с диалогами пользователя, который получается в результате работы функции get_dialogs()
  *
- * @return int id собеседника в диалоге
+ * @return int Идентификатор собеседника в диалоге
  *
  */
 
@@ -526,7 +526,7 @@ function get_dialog_id($con,$dialog) {
  *
  **
  *  @param $con Соединение с БД
- *  @param int $user_id Пользователь для которого мы хотим получить массив с активными диалогами
+ *  @param int $user_id Идентификатор пользователя для которого мы хотим получить массив с активными диалогами
  *
  * @return array Массив с активными диалогами, иначе false
  *
@@ -555,8 +555,8 @@ function get_dialogs($con, int $user_id) {
  *
  **
  *  @param $con Соединение с БД
- *  @param int $current_user_id Пользователь из сессии
- * @param int $dialog_user_id Собеседник в диалоге
+ *  @param int $current_user_id Идентификатора пользователя из сессии
+ * @param int $dialog_user_id Идентификатор собеседника в диалоге
  *
  * @return array Массив с сообщениями в рамках диалога, иначе false
  *
@@ -582,7 +582,7 @@ ORDER BY m.pub_date";
  *
  **
  *  @param $con Соединение с БД
- *  @param int $user_id_Пользователь существование которого необходимо проверить
+ *  @param int $user_id_Идентификатор пользователя существование которого необходимо проверить
  *
  * @return bool true если пользователь существует, иначе false
  *
@@ -605,7 +605,7 @@ function is_user($con,$user_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $user_id_1,$user_id_2 Пользователи между которыми нужно проверить существование диалога
+ * @param int $user_id_1,$user_id_2 Идентификаторы пользователей между которыми нужно проверить существование диалога
  *
  * @return bool Если диалог существует - true, иначе false.
  *
@@ -630,8 +630,8 @@ function is_dialog ($con, int $user_id_1,int $user_id_2) {
  *
  **
  * @param $con Соединение с БД
- * @param int $sender_id id пользователя отправителя сообщения
- * @param int $recipient_id id пользователя принимающего сообщения
+ * @param int $sender_id Идентификатор пользователя отправителя сообщения
+ * @param int $recipient_id Идентификатор пользователя принимающего сообщения
  * @param string $message_text Текст сообщения
  * @param int $dialog_id Уникальный идентификатор диалога
  *
@@ -644,6 +644,7 @@ function add_message($con,int $sender_id,int $recipient_id,string $message_text,
     $res = mysqli_stmt_execute($stmt);
     if ($res) {
         return true;
+
     }
     else {
         return false;
@@ -655,7 +656,7 @@ function add_message($con,int $sender_id,int $recipient_id,string $message_text,
  *
  **
  * @param $con Соединение с БД
- * @param int $post_id id поста
+ * @param int $post_id Идентификатор поста
  *
  * @return int Количество комментариев
  *
@@ -676,7 +677,7 @@ function get_comments_count($con, int $post_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $post_id id поста
+ * @param int $post_id Идентификатор поста
  *
  * @return int Количество просмотров
  *
@@ -695,7 +696,7 @@ function get_view_count($con, string $post_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $post_id id поста
+ * @param int $post_id Идентификатор поста
  * @param int $view_count кол-во просмотров
  *
  * @return true если данные добавлены, если иначе false
@@ -718,7 +719,7 @@ function add_view_count($con,int $post_id, int $view_count) {
  *
  **
  * @param $con Соединение с БД
- * @param int $post_id id поста
+ * @param int $post_id Идентификатор поста
  *
  *
  * @return array $post Массив с данными поста, если данные не удалось получить из БД - false
@@ -747,8 +748,8 @@ WHERE p.post_id = $post_id";
  **
  * @param $con Соединение с БД
  * @param string $text Текст комментария
- * @param int $user_id Автор комментария
- * @param int $post_id Пост к которому оставляется комментарий
+ * @param int $user_id Идентификатор автора комментария
+ * @param int $post_id Идентификатор поста к которому оставляется комментарий
  *
  * @return bool Если комментарий добавлен true, иначе false
  *
@@ -771,7 +772,7 @@ function add_comment($con,string $text,int $user_id,int $post_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $post_id Пост для которого нужно проверить наличие лайка
+ * @param int $post_id Идентификатор поста для которого нужно проверить наличие лайка
  *
  * @return true если лайк поставлен, в ином случае false
  *
@@ -796,7 +797,7 @@ function is_like($con, int $post_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $post_id id Поста наличие которого нужно проверить
+ * @param int $post_id Идентификатор поста наличие которого нужно проверить
  *
  * @return true если пост существует, иначе false
  *
@@ -819,7 +820,7 @@ function is_post($con, int $post_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $post_id id Пост которому ставится лайк
+ * @param int $post_id Идентификатор поста которому ставится лайк
  *
  * @return bool false если лайк не добавлен
  *
@@ -845,7 +846,7 @@ function add_like($con, int $post_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $post_id id Пост у которого удаляется лайк
+ * @param int $post_id Идентификатор поста у которого удаляется лайк
  *
  * @return false если лайк не удален
  *
@@ -1059,10 +1060,10 @@ function get_pages_count($con,$page_items) {
         $content_type = '';
     }
     else {
-        $content_type = 'WHERE content_type_id=' . $content_type_id;
+        $content_type = 'AND content_type_id=' . $content_type_id;
     }
 
-    $result = mysqli_query($con, "SELECT COUNT(*) as cnt FROM posts $content_type");
+    $result = mysqli_query($con, "SELECT COUNT(*) as cnt FROM posts p WHERE p.repost_id is NULL $content_type");
     $items_count = mysqli_fetch_assoc($result)['cnt'];
     $pages_count = ceil($items_count / $page_items);
     return $pages_count;
@@ -1096,7 +1097,7 @@ function get_page_link($link_type) {
  * Получаем ссылку для открытия комментариев на странице просмотра постов в профиле пользователя
  *
  **
- * @param int $post_id Пост для которого нужно открыть комментарии
+ * @param int $post_id Идентификатор поста для которого нужно открыть комментарии
  *
  * @return string $link Возвращает ссылку для открытия комментариев
  *
@@ -1114,7 +1115,7 @@ function get_show_comments_link($post_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $post_id Пост для которого нужно получить комментарии
+ * @param int $post_id Идентификатор поста для которого нужно получить комментарии
  *
  * @return array Массив с комментариями
  *
@@ -1144,7 +1145,7 @@ function get_comments($con,int $post_id) {
  *
  **
  * param $con Соединение с БД
- * @param int $user_id id пользователя
+ * @param int $user_id Идентификатор пользователя
  *
  * @return array $user Массив с информацией о пользователе из таблицы users
  *
@@ -1162,7 +1163,7 @@ function get_user_info ($con,int $user_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $user_id id пользователя
+ * @param int $user_id Идентификатор пользователя
  *
  * @return array Массив с постами пользователя
  *
@@ -1190,7 +1191,7 @@ function get_profile_posts ($con,int $user_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $user_id id пользователя
+ * @param int $user_id Идентификатор пользователя
  *
  * @return array Массив с необходимой информацией для отображения списка лайков на странице профиля пользователя
  *
@@ -1219,7 +1220,7 @@ function get_profile_likes($con,int $user_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $user_id id пользователя
+ * @param int $user_id Идентификатор пользователя
  *
  * @return array Массив с необходимой информацией для отображения списка подписчиков на странице профиля пользователя
  *
@@ -1239,7 +1240,7 @@ function get_profile_followers ($con,int $user_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $user_id id пользователя
+ * @param int $user_id Идентификатор пользователя
  *
  * @return array Возвращает массив с постами для отображения на странице "Моя лента"
  *
@@ -1271,7 +1272,7 @@ function get_posts_for_feed($con, int $user_id) {
  *
  **
  * @param $con Соединение с БД
- * @param int $post_id id поста
+ * @param int $post_id Идентификатор поста
  *
  * @return int $likes_count Возвращает количество лайков поста
  *
@@ -1311,7 +1312,7 @@ function get_content_types_count($con) {
  *
  **
  * @param $con Соединение с БД
- * @param int $post_id id поста
+ * @param int $post_id Идентификатор поста
  *
  *
  * @return int Возвращает количество репостов
@@ -1354,6 +1355,79 @@ function add_repost ($con,array $repost_post) {
     else {
         return true;
     }
+}
+
+/**
+ * Возвращает количество всех непрочитанных сообщений
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $user_id Идентификатор пользователя
+ *
+ *
+ * @return int $get_mes_cnt Количество всех непрочитанных сообщений
+ *
+ */
+
+function get_all_unread_mes_cnt($con,int $user_id) {
+    $get_mes_cnt_sql = "SELECT COUNT(m.mes_id) AS unread_msg_cnt 
+                        FROM messages m 
+                        WHERE m.rec_id = $user_id AND m.is_view IS FALSE";
+    $get_mes_cnt_res = mysqli_query($con,$get_mes_cnt_sql);
+    $get_mes_cnt_array = mysqli_fetch_array($get_mes_cnt_res,MYSQLI_ASSOC);
+    $get_mes_cnt = $get_mes_cnt_array['unread_msg_cnt'];
+    return $get_mes_cnt;
+}
+
+
+/**
+ * Возвращает количество непрочитанных сообщений в диалоге
+ *
+ **
+ * @param $con Соединение с БД
+ * @param string $dialog_id Идентификатор диалога
+ *
+ *
+ * @return int $get_msg Количество непрочитанных сообщений в диалоге
+ *
+ */
+
+function get_dialog_unread_msg_cnt($con,string $dialog_id) {
+    $current_user_id = $_SESSION['user']['user_id'];
+    $get_msg_sql = "SELECT COUNT(m.mes_id) AS unread_msg_cnt 
+                    FROM messages m 
+                    WHERE m.is_view is FALSE and (m.dialog_id = '$dialog_id' AND m.rec_id = $current_user_id)";
+    $get_msg_res = mysqli_query($con,$get_msg_sql);
+    $get_msg_array = mysqli_fetch_array($get_msg_res,MYSQLI_ASSOC);
+    $get_msg = $get_msg_array['unread_msg_cnt'];
+    return $get_msg;
+}
+
+/**
+ * При открытии диалога отмечает непрочитанные сообщения прочитанными
+ *
+ **
+ * @param $con Соединение с БД
+ *
+ * @return bool
+ */
+
+
+function read_msg($con) {
+        $dialog_user_id = $_GET['user_id'];
+        $current_user_id = $_SESSION['user']['user_id'];
+
+        //Отмечаем прочитанные сообщения
+        $read_msg_sql = "UPDATE messages m SET m.is_view = TRUE 
+                         WHERE m.is_view IS FALSE 
+                         AND (m.sen_id = $dialog_user_id AND m.rec_id = $current_user_id)";
+        $res_msg = mysqli_query($con,$read_msg_sql);
+        if ($res_msg) {
+            return true;
+        }
+        else {
+            return false;
+        }
 }
 
 
