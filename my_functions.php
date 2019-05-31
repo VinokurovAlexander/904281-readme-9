@@ -1554,17 +1554,17 @@ function search($con) {
 
     if (substr($search, 0, 1) == '#') {
         //Поиск по хэштегам
-        $hashtags= explode('#',$search);
-        foreach ($hashtags as $hashtag) {
-            $search_sql = "SELECT h.hashtag_id,p.*,u.user_name,u.avatar_path,ct.icon_class FROM hashtags h
-                           JOIN posts_hashtags ph ON ph.hashtag_id = h.hashtag_id
-                           JOIN posts p ON p.post_id = ph.post_id
-                           JOIN users u ON u.user_id = p.user_id
-                           JOIN content_type ct ON ct.content_type_id = p.content_type_id
-                           WHERE h.name = '$hashtag'
-                           ORDER BY p.pub_date DESC";
-            $result = mysqli_query($con,$search_sql);
-        }
+        $hashtags = explode('#',$search);
+        $hashtag = mysqli_real_escape_string($con,$hashtags[1]);
+        $search_sql = "SELECT h.hashtag_id,p.*,u.user_name,u.avatar_path,ct.icon_class FROM hashtags h
+                       JOIN posts_hashtags ph ON ph.hashtag_id = h.hashtag_id
+                       JOIN posts p ON p.post_id = ph.post_id
+                       JOIN users u ON u.user_id = p.user_id
+                       JOIN content_type ct ON ct.content_type_id = p.content_type_id
+                       WHERE h.name = '$hashtag'
+                       ORDER BY p.pub_date DESC";
+        $result = mysqli_query($con,$search_sql);
+
     }
     else {
         $search_sql = "SELECT p.*,u.user_name,u.avatar_path,ct.icon_class 
@@ -1579,6 +1579,25 @@ function search($con) {
 
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
     return $posts;
+}
+
+/**
+ * Возвращает строку, которая была указана при поисковом запросе.
+ *
+ **
+ *
+ *
+ * @return string Возвращает строку, которая была указана при поисковом запросе.
+ * Если было указано больше одного хэштега, возвращает первый хэштег и поиск производиться только по нему.
+ */
+
+function get_search() {
+    $search = $_GET['search_text'];
+    if (substr($search, 0, 1) == '#') {
+        $search_explode = explode(' ',$search);
+        $search =  $search_explode[0];
+    }
+    return $search;
 }
 
 
