@@ -95,6 +95,11 @@
                                     </a>
                                 </div>
                             </footer>
+                            <ul class="post__tags">
+                                <?php foreach (get_hashtags($con,$post['post_id']) as $hashtag): ?>
+                                    <li><a href="/search.php/?search_text=%23<?=$hashtag?>">#<?=htmlspecialchars($hashtag);?></a></li>
+                                <?php endforeach; ?>
+                            </ul>
                         </article>
                     <? endforeach;?>
                 </div>

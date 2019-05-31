@@ -4,6 +4,8 @@ require_once('sql_connect.php');
 require_once('helpers.php');
 require_once('my_functions.php');
 
+print(mysqli_error($con));
+
 my_session_start();
 
 $repost_post_id = $_GET['post_id'];
