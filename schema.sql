@@ -40,7 +40,8 @@ CREATE TABLE posts (
     repost_id INT DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (content_type_id) REFERENCES content_type(content_type_id),
-    FOREIGN KEY (repost_id) REFERENCES posts(post_id)
+    FOREIGN KEY (repost_id) REFERENCES posts(post_id),
+    FULLTEXT INDEX post_ft_search(title, text)
 
 );
 
