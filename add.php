@@ -2,6 +2,7 @@
 require_once ('helpers.php');
 require_once ('sql_connect.php');
 require_once ('my_functions.php');
+require_once ('mail_connect.php');
 
 my_session_start();
 $title = 'Добавление поста';
@@ -24,7 +25,7 @@ else {
 $errors = [];
 
 //Получаем обязательные поля для формы
-$rf = get_required_fiels($con,$current_content_type_id);
+$rf = get_required_fields($con,$current_content_type_id);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $post = $_POST;
@@ -163,18 +164,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //Добавляем данные в БД и публикуем пост
     if(empty($errors)) {
         $post['user_id'] = $_SESSION['user']['user_id'];
-        if (add_data_to_database($con, $current_content_type_id, $post)) {
+        if (add_post($con, $current_content_type_id, $post)) {
             $post_id = mysqli_insert_id($con);
 
             //Добавление хэштегов
             $hashtags = get_add_hashtags($con, $current_content_type_id, $post);
 
-                if (add_hashtags($con, $hashtags, $post_id)) {
-                    header("Location: /post.php/?post_id=" . $post_id);
-                    exit;
-                } else {
-                    show_sql_error($con);
-                }
+             //Отправляем уведомления
+            $current_user_id = intval($_SESSION['user']['user_id']);
+            $followers = get_profile_followers($con,$current_user_id);
+
+            $message = new Swift_Message();
+
+            foreach ($followers as $user) {
+
+                $message->setSubject("Новая публикация от пользователя " . $_SESSION['user']['user_name']);
+                $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
+                $message->setBcc($user['email']);
+
+                $msg_content = "Здравствуйте," . $user['user_name'].
+                    ". Пользователь " . $_SESSION['user']['user_name'] . " только что опубликовал новую запись " . get_post_title($con,$post_id) .
+                ". Посмотрите её на странице пользователя: https://readme/profile.php/?user_id=" . $_SESSION['user']['user_id'] ;
+
+                $message->setBody($msg_content, 'text/html');
+                $result = $mailer->send($message);
+
+            }
+
+            if ($result) {
+                header("Location: /post.php/?post_id=" . $post_id);
+                exit;
+            }
+            else {
+                print("Не удалось отправить рассылку: " . $logger->dump());
+            }
 
         } else {
             show_sql_error($con);

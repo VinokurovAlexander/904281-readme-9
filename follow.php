@@ -3,6 +3,7 @@
 require_once('helpers.php');
 require_once('my_functions.php');
 require_once('sql_connect.php');
+require_once('mail_connect.php');
 
 my_session_start();
 
@@ -24,6 +25,22 @@ if (isset($_GET['user_id']) ) {
 
         //Добавляем данные в таблицу
         if(add_followes($con,$who_sub_id,$to_sub_id)) {
+
+            //Отправляем уведомление на почту
+            $user_to_sub = get_user_info($con,$to_sub_id);
+            $user_who_sub = get_user_info($con,$who_sub_id);
+
+            $message = new Swift_Message();
+            $message->setSubject("У вас новый подписчик");
+            $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
+            $message->setBcc($user_to_sub['email']);
+
+            $msg_content = 'Здравствуйте,' .$user_to_sub['user_name'] . '. На вас подписался новый пользователь ' .
+            $user_who_sub['user_name'] . '. Вот ссылка на его профиль: https://readme/profile.php/?user_id=' . $user_who_sub['user_id'] ;
+
+            $message->setBody($msg_content, 'text/html');
+            $result = $mailer->send($message);
+
             $referer_url = $_SERVER['HTTP_REFERER'];
             header("Location: $referer_url");
             exit;
