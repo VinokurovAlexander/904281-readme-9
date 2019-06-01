@@ -1,4 +1,3 @@
-
 <main class="page__main page__main--profile">
     <h1 class="visually-hidden">Профиль</h1>
     <div class="profile profile--default">
@@ -146,7 +145,7 @@
                                     </div>
                                     <ul class="post__tags">
                                         <?php foreach (get_hashtags($con,$post['post_id']) as $hashtag): ?>
-                                            <li><a href="#">#<?=htmlspecialchars($hashtag);?></a></li>
+                                            <li><a href="/search.php/?search_text=%23<?=$hashtag?>">#<?=htmlspecialchars($hashtag);?></a></li>
                                         <?php endforeach; ?>
                                     </ul>
                                 </footer>

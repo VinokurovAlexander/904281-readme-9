@@ -1355,11 +1355,26 @@ function add_repost ($con,array $repost_post) {
         $repost_post['link'],$repost_post['quote_author'],0, $repost_post['content_type_id'],$repost_post['post_id']
     ]);
     $res = mysqli_stmt_execute($stmt);
-    if (!$res) {
-        return false;
-    }
-    else {
-        return true;
+    if ($res) {
+        //получаем хэштеги
+        $post_id = mysqli_insert_id($con);
+        $repost_post_id = $repost_post['post_id'];
+        $get_hashtags_id = "SELECT ph.hashtag_id FROM posts_hashtags ph WHERE ph.post_id = $repost_post_id";
+        $get_hashtags_res = mysqli_query($con, $get_hashtags_id);
+        $hashtags = mysqli_fetch_all($get_hashtags_res, MYSQLI_ASSOC);
+
+        //добавляем в базу
+        foreach ($hashtags as $hashtag) {
+            $add_hashtag_sql = "INSERT INTO posts_hashtags(post_id, hashtag_id) VALUES ($post_id,?)";
+            $stmt = db_get_prepare_stmt($con, $add_hashtag_sql, [$hashtag['hashtag_id']]);
+            $res = mysqli_stmt_execute($stmt);
+        }
+        if ($res) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
 
@@ -1525,6 +1540,65 @@ function unfollow ($con,int $who_unsub_id,int $to_unsub_id) {
     }
 }
 
+/**
+ * Выполняет поиск по сайту
+ *
+ **
+ * @param $con Соединение с БД
+ *
+ * @return array $posts Возвращает массив с постами согласно поисковому запросу
+ */
+
+function search($con) {
+    $search = $_GET['search_text'];
+
+    if (substr($search, 0, 1) == '#') {
+        //Поиск по хэштегам
+        $hashtags = explode('#',$search);
+        $hashtag = mysqli_real_escape_string($con,$hashtags[1]);
+        $search_sql = "SELECT h.hashtag_id,p.*,u.user_name,u.avatar_path,ct.icon_class FROM hashtags h
+                       JOIN posts_hashtags ph ON ph.hashtag_id = h.hashtag_id
+                       JOIN posts p ON p.post_id = ph.post_id
+                       JOIN users u ON u.user_id = p.user_id
+                       JOIN content_type ct ON ct.content_type_id = p.content_type_id
+                       WHERE h.name = '$hashtag'
+                       ORDER BY p.pub_date DESC";
+        $result = mysqli_query($con,$search_sql);
+
+    }
+    else {
+        $search_sql = "SELECT p.*,u.user_name,u.avatar_path,ct.icon_class 
+                   FROM posts p
+                   JOIN users u ON u.user_id = p.user_id
+                   JOIN content_type ct ON ct.content_type_id = p.content_type_id
+                   WHERE MATCH(title, text) AGAINST(?)";
+        $stmt = db_get_prepare_stmt($con, $search_sql, [$search]);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+    }
+
+    $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    return $posts;
+}
+
+/**
+ * Возвращает строку, которая была указана при поисковом запросе.
+ *
+ **
+ *
+ *
+ * @return string Возвращает строку, которая была указана при поисковом запросе.
+ * Если было указано больше одного хэштега, возвращает первый хэштег и поиск производиться только по нему.
+ */
+
+function get_search() {
+    $search = $_GET['search_text'];
+    if (substr($search, 0, 1) == '#') {
+        $search_explode = explode(' ',$search);
+        $search =  $search_explode[0];
+    }
+    return $search;
+}
 
 
 
