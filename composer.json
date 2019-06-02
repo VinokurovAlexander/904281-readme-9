@@ -1,0 +1,14 @@
+{
+    "name": "alexander/readme",
+    "description": "Social network",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Vinokurov Alexander",
+            "email": "vinokurov.ag@mail.ru"
+        }
+    ],
+    "require": {
+        "swiftmailer/swiftmailer": "^6.0"
+    }
+}

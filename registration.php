@@ -40,9 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         else {
             //Сравниваем c почтовыми ящиками из БД
-            $get_email = get_email($con,$email);
-
-            if(!empty($get_email)) {
+            if(is_email($con,$email)) {
                 $errors['email'] = [
                     'field-rus' => 'Электронная почта',
                     'error-title' => 'Почтовый ящик уже существует',

@@ -120,12 +120,12 @@ function add_hashtags($con,array $hashtags, int $post_id) {
  **
  * @param $con соединение с БД
  * @param int $content_type_id Идентификатор типа публикуемого поста
- *@param array $post Данные, передаваемые через форму
+ * @param array $post Данные, передаваемые через форму
  *
  * @return true - если данные добавлены, в ином случае false
  */
 
-function add_data_to_database ($con, int $content_type_id, array $post) {
+function add_post ($con, int $content_type_id, array $post) {
     if ($content_type_id == 1) {
         $post_text_add_sql = 'INSERT INTO posts(pub_date, title, text, user_id, content_type_id) VALUES (NOW(),?,?,?,?)';
         $stmt = db_get_prepare_stmt($con, $post_text_add_sql, [$post['text-heading'], $post['post-text'],$post['user_id'],$content_type_id]);
@@ -168,16 +168,22 @@ function add_data_to_database ($con, int $content_type_id, array $post) {
  * @param string $email Почта, которую нужно проверить
  *
  *
- * @return array Массив с данными из БД
+ * @return bool Если указанный почтовый ящик существует в БД - true, иначе false
  */
 
-function get_email($con, string $email) {
+function is_email($con, string $email) {
     $email = mysqli_real_escape_string($con,$email);
-    $get_email_sql = "SELECT email FROM users u WHERE u.email = '$email'";
-    $get_email_result = mysqli_query($con,$get_email_sql);
-    $get_email = mysqli_fetch_all($get_email_result, MYSQLI_ASSOC);
+    $is_email_sql = "SELECT email FROM users u WHERE u.email = '$email'";
+    $is_email_result = mysqli_query($con,$is_email_sql);
+    $is_email = mysqli_fetch_all($is_email_result, MYSQLI_ASSOC);
 
-    return $get_email;
+    if (empty($is_email)) {
+        return false;
+    }
+    else {
+        return true;
+    }
+
 }
 
 
@@ -1233,7 +1239,7 @@ function get_profile_likes($con,int $user_id) {
  */
 
 function get_profile_followers ($con,int $user_id) {
-    $get_followers_sql = "SELECT u.user_id,u.user_name,u.reg_date,u.avatar_path FROM users u
+    $get_followers_sql = "SELECT u.user_id,u.user_name,u.reg_date,u.avatar_path,u.email FROM users u
                           JOIN follow f ON f.who_sub_id = u.user_id
                           WHERE f.to_sub_id = $user_id";
     $get_followers_result = mysqli_query($con,$get_followers_sql);
@@ -1461,7 +1467,7 @@ function read_msg($con) {
  * @return array $rf Массив с обязательными для заполнения полями для формы добавления публикации
  */
 
-function get_required_fiels ($con,int $content_type_id) {
+function get_required_fields ($con,int $content_type_id) {
     $rf_sql = "SELECT rf.field_name,rf_rus.field_name_rus FROM required_fields rf 
 JOIN rf_rus ON rf.fd_rus_id = rf_rus.rf_rus_id
 WHERE content_type_id = $content_type_id";
@@ -1586,7 +1592,6 @@ function search($con) {
  *
  **
  *
- *
  * @return string Возвращает строку, которая была указана при поисковом запросе.
  * Если было указано больше одного хэштега, возвращает первый хэштег и поиск производиться только по нему.
  */
@@ -1600,6 +1605,43 @@ function get_search() {
     return $search;
 }
 
+/**
+ * Возвращает почтовый ящик пользователя
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $user_id Идентификатор пользователя
+ *
+ * @return string $email Почтовый ящик пользователя
+ *
+ */
+
+function get_email($con,int $user_id) {
+    $get_email_sql = "SELECT u.email FROM users u WHERE u.user_id = $user_id";
+    $get_email_res = mysqli_query($con,$get_email_sql);
+    $get_email_array = mysqli_fetch_array($get_email_res,MYSQLI_ASSOC);
+    $email =  $get_email_array['email'];
+    return $email;
+}
+
+/**
+ * Возвращает заголовок поста
+ *
+ **
+ * @param $con Соединение с БД
+ * @param int $user_id Идентификатор пользователя
+ *
+ * @return string $title Заголовок поста
+ *
+ */
+
+function get_post_title ($con, int $post_id) {
+    $get_title_sql = "SELECT p.title FROM posts p WHERE p.post_id = $post_id";
+    $get_title_res = mysqli_query($con, $get_title_sql);
+    $get_title_array = mysqli_fetch_array($get_title_res, MYSQLI_ASSOC);
+    $title = $get_title_array['title'];
+    return $title;
+}
 
 
 
