@@ -10,11 +10,11 @@ $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $post = $_POST;
-    $required_fields = ['email','password'];
+    $required_fields = ['email', 'password'];
 
     //Проверяем заполнение обязательных полей
     foreach ($required_fields as $field) {
-        if(empty($post[$field])) {
+        if (empty($post[$field])) {
             $errors[$field] = 'Это поле нужно заполнить';
         }
     }
@@ -27,33 +27,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!count($errors) and $user) {
         if (password_verify($post['password'], $user['password'])) {
             $_SESSION['user'] = $user;
-        }
-        else {
+        } else {
             $errors['password'] = 'Неверный пароль';
         }
-    }
-    elseif (!count($errors) and !$user) {
+    } elseif (!count($errors) and !$user) {
         $errors['email'] = 'Такой пользователь не найден';
     }
 
     if (!count($errors)) {
         header("Location: /feed.php");
         exit;
-    }
-    else {
+    } else {
         $page_content = include_template('main_template.php', [
             'errors' => $errors
         ]);
     }
-}
-
-else {
+} else {
     if (isset($_SESSION['user'])) {
-        $page_content = include_template('popular_template.php',[]);
+        $page_content = include_template('popular_template.php', []);
         header("Location: /feed.php");
         exit;
-    }
-    else {
+    } else {
         $page_content = include_template('main_template.php', [
             'errors' => $errors
         ]);

@@ -1,15 +1,15 @@
 <?php
-require_once ('helpers.php');
-require_once ('sql_connect.php');
-require_once ('my_functions.php');
+require_once('helpers.php');
+require_once('sql_connect.php');
+require_once('my_functions.php');
 
 $title = 'Регистрация';
 
 $required_fields = [
     'Электронная почта' => 'email',
     'Логин' => 'login',
-    'Пароль' =>'password',
-    'Повтор пароля' =>'password-repeat'
+    'Пароль' => 'password',
+    'Повтор пароля' => 'password-repeat'
 ];
 $errors = [];
 
@@ -29,18 +29,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     //Валидация полей
     $email = $post['email'];
-    if($email) {
+    if ($email) {
         //Проверяем существование почтового ящика
-        if (!filter_var($email,FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = [
                 'field-rus' => 'Электронная почта',
                 'error-title' => 'Недействительный mail',
                 'error-desc' => 'Вы указали недействительный почтовый ящик'
             ];
-        }
-        else {
+        } else {
             //Сравниваем c почтовыми ящиками из БД
-            if(is_email($con,$email)) {
+            if (is_email($con, $email)) {
                 $errors['email'] = [
                     'field-rus' => 'Электронная почта',
                     'error-title' => 'Почтовый ящик уже существует',
@@ -55,19 +54,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($password && $password_repeat) {
         if ($password !== $password_repeat) {
-                $errors['password-repeat'] = [
-                    'field-rus' => 'Повтор пароля',
-                    'error-title' => 'Пароль не совпадает',
-                    'error-desc' => 'Пароль в данном поле не совпадает с предыдущим'
-                ];
-        }
-        else {
-            $password_hash = password_hash($password,PASSWORD_DEFAULT);
+            $errors['password-repeat'] = [
+                'field-rus' => 'Повтор пароля',
+                'error-title' => 'Пароль не совпадает',
+                'error-desc' => 'Пароль в данном поле не совпадает с предыдущим'
+            ];
+        } else {
+            $password_hash = password_hash($password, PASSWORD_DEFAULT);
             $post['password_hash'] = $password_hash;
         }
     }
 
-    $path='';
+    $path = '';
     $avatar = $_FILES['userpic-file']['name'];
     if ($avatar) {
         $tmp_name = $_FILES['userpic-file']['tmp_name'];
@@ -76,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (checking_image_type($tmp_name)) {
 
             //Загружаем картинку в публичную директорию
-            $path = 'uploads/avatars/'. uniqid();
+            $path = 'uploads/avatars/' . uniqid();
             move_uploaded_file($tmp_name, $path);
             $path = '../' . $path;
 
@@ -87,8 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ];
 
         }
-    }
-    //Если пользователь не загрузил аватар используем заглушку
+    } //Если пользователь не загрузил аватар используем заглушку
     else {
         $path = '../img/avatar.jpg';
     }
@@ -97,11 +94,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     //Добавляем данные в БД
     if (empty($errors)) {
-        if (add_user($con,$post)) {
+        if (add_user($con, $post)) {
             header("Location: /");
             exit;
-        }
-        else {
+        } else {
             $page_content = include_template('error.php', ['error' => mysqli_error($con)]);
             print($page_content);
             exit;
@@ -109,13 +105,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-    $page_content = include_template('registration_template.php', [
-        'errors' => $errors
-    ]);
+$page_content = include_template('registration_template.php', [
+    'errors' => $errors
+]);
 
 
 $layout_content = include_template('layout.php', [
-    'content' => $page_content ,
+    'content' => $page_content,
     'title' => $title,
     'con' => $con
 ]);

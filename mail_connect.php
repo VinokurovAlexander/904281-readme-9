@@ -1,6 +1,6 @@
 <?php
 
-require_once ('vendor/autoload.php');
+require_once('vendor/autoload.php');
 
 $transport = new Swift_SmtpTransport('phpdemo.ru', 25);
 $transport->setUsername("keks@phpdemo.ru");

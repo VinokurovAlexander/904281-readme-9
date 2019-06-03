@@ -8,7 +8,7 @@ my_session_start();
 $title = "Поиск";
 
 if (!isset($_GET['search_text']) || empty($_GET['search_text'])) {
-    show_error($con,'Параметры запроса неверные или отсутствуют');
+    show_error($con, 'Параметры запроса неверные или отсутствуют');
 }
 
 $posts = search($con);
@@ -22,7 +22,7 @@ if (empty($posts)) {
     ]);
 }
 
-$layout_content = include_template('layout.php',[
+$layout_content = include_template('layout.php', [
     'title' => $title,
     'content' => $page_content,
     'con' => $con
