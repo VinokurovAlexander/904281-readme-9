@@ -129,11 +129,11 @@
             <h2 class="visually-hidden">Авторизация</h2>
             <form class="authorization__form form" action="/index.php" method="post">
                 <div class="authorization__input-wrapper form__input-wrapper">
-                    <div class="form__input-section <? if ($errors['email']) {
+                    <div class="form__input-section <?php if (isset($errors['email'])) {
                         echo "form__input-section--error";
                     } ?>">
                         <input class="authorization__input authorization__input--login form__input" type="email"
-                               name="email" placeholder="email" value="<? if (isset($_POST['email'])) {
+                               name="email" placeholder="email" value="<?php if (isset($_POST['email'])) {
                             print($_POST['email']);
                         } ?>">
                         <svg class="form__input-icon" width="19" height="18">
@@ -141,10 +141,10 @@
                         </svg>
                         <label class="visually-hidden">Email</label>
                     </div>
-                    <span class="form__error-label form__error-label--login"><?= $errors['email'] ?></span>
+                    <span class="form__error-label form__error-label--login"><?php if (isset($errors['email'])) { echo $errors['email']; } ?></span>
                 </div>
                 <div class="authorization__input-wrapper form__input-wrapper">
-                    <div class="form__input-section <? if ($errors['password']) {
+                    <div class="form__input-section <?php if (isset($errors['password'])) {
                         echo "form__input-section--error";
                     } ?>">
                         <input class="authorization__input authorization__input--password form__input" type="password"
@@ -154,7 +154,7 @@
                         </svg>
                         <label class="visually-hidden">Пароль</label>
                     </div>
-                    <span class="form__error-label"><?= $errors['password'] ?></span>
+                    <span class="form__error-label"><?php if (isset($errors['password'])) { echo $errors['password']; } ?></span>
                 </div>
                 <button class="authorization__submit button button--main" type="submit">Войти</button>
             </form>

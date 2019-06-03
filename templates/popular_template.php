@@ -9,7 +9,7 @@
                 <ul class="popular__sorting-list sorting__list">
                     <li class="sorting__item sorting__item--popular">
                         <a class="sorting__link <?= get_sorting_link_class('popular') ?>"
-                           href="/popular.php/?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=popular_<?= get_sorting_type('popular') ?>">
+                           href="/popular.php/?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=popular_<?= get_sorting_type('popular') ?>&page=1">
                             <span>Популярность</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -18,7 +18,7 @@
                     </li>
                     <li class="sorting__item">
                         <a class="sorting__link <?= get_sorting_link_class('likes') ?>"
-                           href="/popular.php/?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=likes_<?= get_sorting_type('likes') ?>">
+                           href="/popular.php/?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=likes_<?= get_sorting_type('likes') ?>&page=1">
                             <span>Лайки</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -27,7 +27,7 @@
                     </li>
                     <li class="sorting__item">
                         <a class="sorting__link <?= get_sorting_link_class('date') ?>"
-                           href="/popular.php/?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=date_<?= get_sorting_type('date') ?>">
+                           href="/popular.php/?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=date_<?= get_sorting_type('date') ?>&page=1">
                             <span>Дата</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -40,7 +40,7 @@
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                        <a class="filters__button filters__button--ellipse filters__button--all <? if ($_GET['content_type_id'] == 'all') {
+                        <a class="filters__button filters__button--ellipse filters__button--all <?php if ($_GET['content_type_id'] == 'all') {
                             echo 'filters__button--active';
                         } ?> " href="/popular.php/?content_type_id=all&sorting=popular_desc&page=1">
                             <span>Все</span>
@@ -156,14 +156,14 @@
             <?php endforeach; ?>
         </div>
         <div class="popular__page-links">
-            <? if ($pages_count > 1) : ?>
-                <? if ($_GET['page'] !== '1') : ?>
+            <?php if ($pages_count > 1) : ?>
+                <?php if ($_GET['page'] !== '1') : ?>
                     <a class="popular__page-link popular__page-link--prev button button--gray"
                        href="<?= get_page_link('prev') ?>">
                         Предыдущая страница
                     </a>
                 <? endif; ?>
-                <? if ($_GET['page'] != $pages_count) : ?>
+                <?php if ($_GET['page'] != $pages_count) : ?>
                     <a class="popular__page-link popular__page-link--next button button--gray"
                        href="<?= get_page_link('next') ?>">
                         Следующая страница

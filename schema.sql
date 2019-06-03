@@ -84,7 +84,7 @@ CREATE TABLE messages (
     rec_id INT,
     pub_date DATETIME,
     content TEXT,
-    dialog_name CHAR(256),
+    dialog_name CHAR(255),
     is_view BOOL DEFAULT FALSE,
     FOREIGN KEY (sen_id) REFERENCES users(user_id),
     FOREIGN KEY (rec_id) REFERENCES users(user_id)

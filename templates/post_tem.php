@@ -7,7 +7,7 @@
                 <div class="post-details__main-block post post--details">
                     <?php if ($post['content_type_id'] == '3') : ?>
                         <div class="post-details__image-wrapper post-photo__image-wrapper">
-                            <img src="/<?= $post['img'] ?>" alt="Фото от пользователя" width="760" height="507">
+                            <img src="<?= $post['img'] ?>" alt="Фото от пользователя" width="760" height="507">
                         </div>
                     <?php elseif ($post['content_type_id'] == '2') : ?>
                         <div class="post-details__image-wrapper post-quote">
@@ -92,10 +92,10 @@
                                 <img class="comments__picture" src="<?= $_SESSION['user']['avatar_path'] ?>"
                                      alt="Аватар пользователя">
                             </div>
-                            <textarea class="comments__textarea form__textarea <? if (isset($errors['message-text'])) {
+                            <textarea class="comments__textarea form__textarea <?php if (isset($errors['message-text'])) {
                                 echo 'message-text-error';
                             } ?>"
-                                      placeholder="<? if (isset($errors['message-text'])) {
+                                      placeholder="<?php if (isset($errors['message-text'])) {
                                           echo $errors['message-text'];
                                       } else {
                                           echo 'Введите ваше сообщение';

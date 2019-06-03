@@ -933,7 +933,8 @@ function get_content_types($con)
  **
  * @param string $sorting_link_name сортировки
  *
- * @return string $result Строка с названием класса.
+ * @return string $result Строка с названием класса если в GET запросе указан тип сортировки такой же как и в $sorting_link_name.
+ * В ином случае null.
  *
  */
 
@@ -943,6 +944,9 @@ function get_sorting_link_class($sorting_link_name)
         $result = 'sorting__link--active';
     } elseif (($_GET['sorting']) == $sorting_link_name . '_asc') {
         $result = 'sorting__link--active sorting__link--reverse';
+    }
+    elseif ($_GET['sorting'] !== $sorting_link_name )  {
+        $result = null;
     }
     return $result;
 }

@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             //Загружаем картинку в публичную директорию
             $path = 'uploads/avatars/' . uniqid();
             move_uploaded_file($tmp_name, $path);
-            $path = '../' . $path;
+            $path = '/' . $path;
 
         } else {
             $errors['userpic-file'] = [
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } //Если пользователь не загрузил аватар используем заглушку
     else {
-        $path = '../img/avatar.jpg';
+        $path = '/img/avatar.jpg';
     }
 
     $post['path'] = $path;

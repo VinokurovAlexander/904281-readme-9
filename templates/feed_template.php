@@ -117,7 +117,7 @@
             </div>
             <ul class="feed__filters filters">
                 <li class="feed__filters-item filters__item">
-                    <a class="filters__button <? if ($_GET['content_type_id'] == 'all') {
+                    <a class="filters__button <?php if ($_GET['content_type_id'] == 'all') {
                         echo 'filters__button--active';
                     } ?>" href="/feed.php/?content_type_id=all">
                         <span>Все</span>

@@ -236,7 +236,7 @@
                                                 class="comments__textarea form__textarea <? if (isset($errors['message-text'])) {
                                                     echo 'message-text-error';
                                                 } ?>"
-                                                placeholder="<? if (isset($errors['message-text'])) {
+                                                placeholder="<?php if (isset($errors['message-text'])) {
                                                     echo $errors['message-text'];
                                                 } else {
                                                     echo 'Введите ваше сообщение';
@@ -255,7 +255,7 @@
                             </article>
                         <?php endforeach; ?>
                     </section>
-                    <section class="profile__likes tabs__content <? if ($_GET['content'] == 'likes') {
+                    <section class="profile__likes tabs__content <?php if ($_GET['content'] == 'likes') {
                         echo 'tabs__content--active';
                     } ?>">
                         <h2 class="visually-hidden">Лайки</h2>
@@ -327,7 +327,7 @@
                             <? endforeach; ?>
                         </ul>
                     </section>
-                    <section class="profile__subscriptions tabs__content <? if ($_GET['content'] == 'followers') {
+                    <section class="profile__subscriptions tabs__content <?php if ($_GET['content'] == 'followers') {
                         echo 'tabs__content--active';
                     } ?>">
                         <h2 class="visually-hidden">Подписки</h2>

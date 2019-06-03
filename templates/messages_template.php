@@ -6,7 +6,7 @@
             <ul class="messages__contacts-list tabs__list">
                 <?php foreach ($dialogs as $dialog) : ?>
                     <li class="messages__contacts-item">
-                        <a class="messages__contacts-tab tabs__item <? if ($_GET['user_id'] == get_dialog_user_id($con, $dialog)) {
+                        <a class="messages__contacts-tab tabs__item <?php if (isset($_GET['user_id']) && $_GET['user_id'] == get_dialog_user_id($con, $dialog)) {
                             echo 'messages__contacts-tab--active ';
                         } ?>" href="/messages.php/?user_id=<?= get_dialog_user_id($con, $dialog) ?>">
                             <div class="messages__avatar-wrapper">
@@ -40,7 +40,7 @@
             <div class="messages__chat-wrapper">
                 <ul class="messages__list tabs__content tabs__content--active">
                     <?php foreach ($messages as $message) : ?>
-                        <li class="messages__item <? if ($message['sen_id'] == $_SESSION['user']['user_id']) {
+                        <li class="messages__item <?php if ($message['sen_id'] == $_SESSION['user']['user_id']) {
                             echo 'messages__item--my';
                         } ?>">
                             <div class="messages__info-wrapper">
@@ -74,10 +74,10 @@
                         <img class="comments__picture" src="<?= $_SESSION['user']['avatar_path']; ?>"
                              alt="Аватар пользователя">
                     </div>
-                    <textarea class="comments__textarea form__textarea <? if (isset($errors['message-text'])) {
+                    <textarea class="comments__textarea form__textarea <?php if (isset($errors['message-text'])) {
                         echo 'message-text-error';
                     } ?>"
-                              placeholder="<? if (isset($errors['message-text'])) {
+                              placeholder="<?php if (isset($errors['message-text'])) {
                                   echo $errors['message-text'];
                               } else {
                                   echo 'Введите ваше сообщение';

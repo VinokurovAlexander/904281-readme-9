@@ -8,4 +8,7 @@
 Thumbs.db
 vendor
 uploads/*
+uploads/avatars/*
 !uploads/.gitkeep
+!uploads/avatars/.gitkeep
+!uploads/avatars/

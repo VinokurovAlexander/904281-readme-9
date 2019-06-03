@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $photo_link_from_internet = $_POST['photo-link'];
         $photo_from_user = $_FILES['userpic-file-photo']['name'];
         $path = 'uploads/' . uniqid(); //Для перемещения изображения в указанную директорию
-        $post['img_path'] = '../' . $path; //Путь для добавления его в БД
+        $post['img_path'] = '/' . $path; //Путь для добавления его в БД
 
 
         //Изображение загружено через поле "Выбор файла" или через оба поля "Выбор файла" и "Ссылка из интернета"

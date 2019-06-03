@@ -11,7 +11,7 @@
         <div class="search__results-wrapper">
             <div class="container">
                 <div class="search__content">
-                    <? foreach ($posts as $post) : ?>
+                    <?php foreach ($posts as $post) : ?>
                         <article class="feed__post post post-<?= $post['icon_class'] ?>">
                             <header class="post__header post__author">
                                 <a class="post__author-link" href="/profile.php/?user_id=<?= $post['user_id'] ?>"
