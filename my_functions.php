@@ -1780,8 +1780,38 @@ function check_image_link (string $image_link) {
     return null;
 }
 
+/**
+ * Отправляет почтовое уведомление при подписке на пользователя
+ **
+ * @param $mailer Главный объект библиотеки SwiftMailer
+ * @param array $user_to_sub Массив с иформацией о пользователе, на которого осуществляется подписка. Массив получен с
+ * помощью функции get_user_info()
+ *
+ * @param array $user_who_sub Массив с иформацией о пользователе, который осуществляет подписку. Массив получен с
+ * помощью функции get_user_info()
+ *
+ * @return bool True если уведомление отправлено на почту, в ином случае false
+ *
+ */
 
 
+function send_notification_new_follower ($mailer,array $user_to_sub, array $user_who_sub ) {
+    $message = new Swift_Message();
+    $message->setSubject("У вас новый подписчик");
+    $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
+    $message->setBcc($user_to_sub['email']);
+
+    $msg_content = 'Здравствуйте,' . $user_to_sub['user_name'] . '. На вас подписался новый пользователь ' .
+        $user_who_sub['user_name'] . '. Вот ссылка на его профиль: https://readme/profile.php/?user_id=' . $user_who_sub['user_id'];
+
+    $message->setBody($msg_content, 'text/html');
+    $result = $mailer->send($message);
+
+    if (!$result) {
+        return false;
+    }
+    return true;
+}
 
 
 

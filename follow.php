@@ -29,27 +29,23 @@ if (isset($_GET['user_id'])) {
             $user_to_sub = get_user_info($con, $to_sub_id);
             $user_who_sub = get_user_info($con, $who_sub_id);
 
-            $message = new Swift_Message();
-            $message->setSubject("У вас новый подписчик");
-            $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
-            $message->setBcc($user_to_sub['email']);
-
-            $msg_content = 'Здравствуйте,' . $user_to_sub['user_name'] . '. На вас подписался новый пользователь ' .
-                $user_who_sub['user_name'] . '. Вот ссылка на его профиль: https://readme/profile.php/?user_id=' . $user_who_sub['user_id'];
-
-            $message->setBody($msg_content, 'text/html');
-            $result = $mailer->send($message);
+            if (!send_notification_new_follower($mailer,$user_to_sub,$user_who_sub)) {
+                $error = "Не удалось отправить рассылку: " . $logger->dump();
+                show_error($con, $error);
+            }
 
             $referer_url = $_SERVER['HTTP_REFERER'];
             header("Location: $referer_url");
             exit;
-        } else {
-            show_sql_error($con);
         }
+
+        show_sql_error($con);
+
     }
-} else {
-    show_error($con, 'В параметрах GET запроса отсутствует id пользователя');
 }
+
+show_error($con, 'В параметрах GET запроса отсутствует id пользователя');
+
 
 
 
