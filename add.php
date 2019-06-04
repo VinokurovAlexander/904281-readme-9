@@ -71,8 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (check_image_type($tmp_name) != null) {
                 $errors['userpic-file-photo'] = check_image_type($tmp_name);
-            }
-            else {
+            } else {
                 move_uploaded_file($tmp_name, $path);
             }
 
@@ -82,8 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (check_image_link($photo_link_from_internet) != null) {
                 $errors['photo-link'] = check_image_link($photo_link_from_internet);
-            }
-            else {
+            } else {
                 $get_image = file_get_contents($photo_link_from_internet);
                 file_put_contents($path, $get_image);
             }
@@ -93,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($current_content_type_id == 4) {
         if (!empty($_POST['video-link'])) {
             $video_link = $_POST['video-link'];
-            if (check_video_link_error($video_link) != null ) {
+            if (check_video_link_error($video_link) != null) {
                 $errors['video-link'] = check_video_link_error($video_link);
             }
             $youtube_video_id = extract_youtube_id($video_link);
@@ -129,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $current_user_id = intval($_SESSION['user']['user_id']);
         $followers = get_profile_followers($con, $current_user_id);
 
-        if (!send_notification_new_post($con,$mailer,$followers,$post_id)) {
+        if (!send_notification_new_post($con, $mailer, $followers, $post_id)) {
             $error = "Не удалось отправить рассылку: " . $logger->dump();
             show_error($con, $error);
         }

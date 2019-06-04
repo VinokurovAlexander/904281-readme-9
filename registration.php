@@ -30,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //Валидация полей
     $email = $post['email'];
     if ($email) {
-        if (validation_email($con,$email) != null) {
-            $errors['email'] = validation_email($con,$email);
+        if (validation_email($con, $email) != null) {
+            $errors['email'] = validation_email($con, $email);
         }
     }
 
@@ -59,8 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //Проверка типа загружаемой картинки
         if (check_image_type($tmp_name) != null) {
             $errors['userpic-file'] = check_image_type($tmp_name);
-        }
-        else {
+        } else {
             //Загружаем картинку в публичную директорию
             $path = 'uploads/avatars/' . uniqid();
             move_uploaded_file($tmp_name, $path);

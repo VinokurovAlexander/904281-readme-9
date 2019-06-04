@@ -30,7 +30,7 @@ if (isset($_GET['user_id'])) {
         $user_to_sub = get_user_info($con, $to_sub_id);
         $user_who_sub = get_user_info($con, $who_sub_id);
 
-        if (!send_notification_new_follower($mailer,$user_to_sub,$user_who_sub)) {
+        if (!send_notification_new_follower($mailer, $user_to_sub, $user_who_sub)) {
             $error = "Не удалось отправить рассылку: " . $logger->dump();
             show_error($con, $error);
         }

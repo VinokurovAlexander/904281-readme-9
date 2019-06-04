@@ -69,7 +69,7 @@
                         <?php foreach ($posts as $post): ?>
                             <article class="profile__post post post-<?= $post['icon_class']; ?>">
                                 <header class="post__header">
-                                    <?php if ($post['repost_id'] != NULL) : ?>
+                                    <?php if ($post['repost_id'] != null) : ?>
                                         <div class="post__author">
                                             <a class="post__author-link"
                                                href="/profile.php/?user_id=<?= $post['author_id'] ?>" title="Автор">
@@ -211,11 +211,13 @@
                                                 </li>
                                             <? endforeach; ?>
                                         </ul>
-                                        <?php if (!isset($_GET['show_all']) && (get_comments_count($con, $post['post_id']) > 3)) : ?>
+                                        <?php if (!isset($_GET['show_all']) && (get_comments_count($con,
+                                                    $post['post_id']) > 3)) : ?>
                                             <a class="comments__more-link"
                                                href="<?= get_show_comments_link($post['post_id']) ?>&show_all">
                                                 <span>Показать все комментарии</span>
-                                                <sup class="comments__amount"><?= get_comments_count($con, $post['post_id']) ?></sup>
+                                                <sup class="comments__amount"><?= get_comments_count($con,
+                                                        $post['post_id']) ?></sup>
                                             </a>
                                         <? endif; ?>
                                         <?php if ((isset($_GET['comments'])) && isset($_GET['comments'])) : ?>
@@ -355,11 +357,13 @@
                                     </div>
                                     <div class="post-mini__rating user__rating">
                                         <p class="post-mini__rating-item user__rating-item user__rating-item--publications">
-                                            <span class="post-mini__rating-amount user__rating-amount"><?= get_user_posts_count($con, $follower['user_id']) ?></span>
+                                            <span class="post-mini__rating-amount user__rating-amount"><?= get_user_posts_count($con,
+                                                    $follower['user_id']) ?></span>
                                             <span class="post-mini__rating-text user__rating-text">публикаций</span>
                                         </p>
                                         <p class="post-mini__rating-item user__rating-item user__rating-item--subscribers">
-                                            <span class="post-mini__rating-amount user__rating-amount"><?= get_user_followers($con, $follower['user_id']) ?></span>
+                                            <span class="post-mini__rating-amount user__rating-amount"><?= get_user_followers($con,
+                                                    $follower['user_id']) ?></span>
                                             <span class="post-mini__rating-text user__rating-text">подписчиков</span>
                                         </p>
                                     </div>
