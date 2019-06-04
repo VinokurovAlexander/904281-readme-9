@@ -12,23 +12,24 @@ if (isset($_GET['user_id'])) {
 
     if (!is_user($con, $to_unsub_id)) {
         show_error($con, 'Пользователя с таким id не существует');
-    } else {
-        //Получаем id пользователя который будет отписываться
-        $who_unsub_id = $_SESSION['user']['user_id'];
-
-        //Исключаем случай отписки от пользователя на которого вы не подписаны
-        if (!is_follow($con, $to_unsub_id)) {
-            show_error($con, 'Вы не подписаны на данного пользователя');
-        }
-
-        if (unfollow($con, $who_unsub_id, $to_unsub_id)) {
-            $referer_url = $_SERVER['HTTP_REFERER'];
-            header("Location: $referer_url");
-            exit;
-        } else {
-            show_sql_error($con);
-        }
     }
-} else {
-    show_error($con, 'В параметрах GET запроса отсутствует id пользователя');
+
+    //Получаем id пользователя который будет отписываться
+    $who_unsub_id = $_SESSION['user']['user_id'];
+
+    //Исключаем случай отписки от пользователя на которого вы не подписаны
+    if (!is_follow($con, $to_unsub_id)) {
+        show_error($con, 'Вы не подписаны на данного пользователя');
+    }
+
+    if (unfollow($con, $who_unsub_id, $to_unsub_id)) {
+        $referer_url = $_SERVER['HTTP_REFERER'];
+        header("Location: $referer_url");
+        exit();
+    }
+
+    show_sql_error($con);
+
 }
+
+show_error($con, 'В параметрах GET запроса отсутствует id пользователя');

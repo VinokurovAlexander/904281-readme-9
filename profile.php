@@ -11,11 +11,11 @@ $title = 'Профиль пользователя';
 if (!isset($_GET['user_id']) || empty($_GET['user_id'])) {
     header('HTTP/1.0 404 not found');
     show_error($con, 'Параметр запроса отсутствует, либо по этому id не нашли ни одной записи');
-} else {
-    $current_user_id = intval($_GET['user_id']);
-    if (!is_user($con, $current_user_id)) {
-        show_error($con, 'Пользователя с таким id не существует');
-    }
+}
+
+$current_user_id = intval($_GET['user_id']);
+if (!is_user($con, $current_user_id)) {
+    show_error($con, 'Пользователя с таким id не существует');
 }
 
 if (empty($_GET['content'])) {

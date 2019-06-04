@@ -26,7 +26,7 @@
                                 <h2><a href="/post.php/?post_id=<?= $post['post_id'] ?>"><?= $post['title'] ?></a></h2>
                                 <?php if ($post['content_type_id'] == '3') : ?>
                                     <div class="post-details__image-wrapper post-photo__image-wrapper">
-                                        <img src="/<?= $post['img'] ?>" alt="Фото от пользователя" width="760"
+                                        <img src="<?= $post['img'] ?>" alt="Фото от пользователя" width="760"
                                              height="507">
                                     </div>
                                 <?php elseif ($post['content_type_id'] == '2') : ?>

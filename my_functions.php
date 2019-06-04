@@ -1813,9 +1813,35 @@ function send_notification_new_follower ($mailer,array $user_to_sub, array $user
     return true;
 }
 
+/**
+ * Совершает валидацию поля email при регистрации
+ **
+ * @param mixewd $con Ресурс соединения с БД
+ * @param string $email Почтовый ящик
+ *
+ * @return array Массив с описанием ошибки, если валидация не пройдена, в ином случае null
+ *
+ */
 
 
-
+function validation_email ($con,$email)
+{
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return $errors = [
+            'field_name_rus' => 'Электронная почта',
+            'error_title' => 'Недействительный mail',
+            'error_desc' => 'Вы указали недействительный почтовый ящик'
+        ];
+    }
+    elseif (is_email($con, $email)) {
+            return $errors = [
+                'field_name_rus' => 'Электронная почта',
+                'error_title' => 'Почтовый ящик уже существует',
+                'error_desc' => 'Вы указали уже существующий почтовый ящик'
+            ];
+    }
+    return null;
+}
 
 
 
