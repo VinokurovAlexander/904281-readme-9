@@ -85,6 +85,13 @@
                         </div>
                         <span class="post__view"><?= get_view_count($con, $post['post_id']) ?> просмотров</span>
                     </div>
+                    <ul class="post__tags">
+                        <?php foreach (get_hashtags($con, $post['post_id']) as $hashtag): ?>
+                            <li>
+                                <a href="/search.php/?search_text=%23<?= $hashtag ?>">#<?= htmlspecialchars($hashtag); ?></a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
                     <div class="comments">
                         <form class="comments__form form" action="/post.php/?post_id=<?= $post['post_id'] ?>"
                               method="post">
@@ -92,14 +99,15 @@
                                 <img class="comments__picture" src="<?= $_SESSION['user']['avatar_path'] ?>"
                                      alt="Аватар пользователя">
                             </div>
-                            <textarea class="comments__textarea form__textarea <?php if (isset($errors['message-text'])) {
-                                echo 'message-text-error';
-                            } ?>"
-                                      placeholder="<?php if (isset($errors['message-text'])) {
-                                          echo $errors['message-text'];
-                                      } else {
-                                          echo 'Введите ваше сообщение';
-                                      } ?>" name="message-text"></textarea>
+                            <textarea
+                                    class="comments__textarea form__textarea <?php if (isset($errors['message-text'])) {
+                                        echo 'message-text-error';
+                                    } ?>"
+                                    placeholder="<?php if (isset($errors['message-text'])) {
+                                        echo $errors['message-text'];
+                                    } else {
+                                        echo 'Введите ваше сообщение';
+                                    } ?>" name="message-text"></textarea>
                             <label class="visually-hidden">Ваш комментарий</label>
                             <button class="comments__submit button button--green" type="submit">Отправить</button>
                         </form>

@@ -944,8 +944,7 @@ function get_sorting_link_class($sorting_link_name)
         $result = 'sorting__link--active';
     } elseif (($_GET['sorting']) == $sorting_link_name . '_asc') {
         $result = 'sorting__link--active sorting__link--reverse';
-    }
-    elseif ($_GET['sorting'] !== $sorting_link_name )  {
+    } elseif ($_GET['sorting'] !== $sorting_link_name) {
         $result = null;
     }
     return $result;

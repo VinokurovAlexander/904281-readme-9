@@ -160,16 +160,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //Добавляем данные в БД и публикуем пост
     if (empty($errors)) {
         $post['user_id'] = $_SESSION['user']['user_id'];
-        if (add_post($con, $current_content_type_id, $post)) {
-            $post_id = mysqli_insert_id($con);
+        add_post($con, $current_content_type_id, $post);
 
-            //Добавление хэштегов
-            $hashtags = get_add_hashtags($con, $current_content_type_id, $post);
+        $post_id = mysqli_insert_id($con);
 
-            //Отправляем уведомления
-            $current_user_id = intval($_SESSION['user']['user_id']);
-            $followers = get_profile_followers($con, $current_user_id);
+        //Добавление хэштегов
+        $hashtags = get_add_hashtags($con, $current_content_type_id, $post);
+        add_hashtags($con, $hashtags, $post_id);
 
+        //Отправляем уведомления
+        $current_user_id = intval($_SESSION['user']['user_id']);
+        $followers = get_profile_followers($con, $current_user_id);
+
+        if (!empty($followers)) {
             $message = new Swift_Message();
 
             foreach ($followers as $user) {
@@ -185,18 +188,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $message->setBody($msg_content, 'text/html');
                 $result = $mailer->send($message);
 
+                if (!$result) {
+                    $error = "Не удалось отправить рассылку: " . $logger->dump();
+                    show_error($con, $error);
+                }
             }
-
-            if ($result) {
-                header("Location: /post.php/?post_id=" . $post_id);
-                exit;
-            } else {
-                print("Не удалось отправить рассылку: " . $logger->dump());
-            }
-
-        } else {
-            show_sql_error($con);
         }
+
+        header("Location: /post.php/?post_id=" . $post_id);
+        exit;
+
     }
 }
 

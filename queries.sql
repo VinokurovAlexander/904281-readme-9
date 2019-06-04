@@ -8,8 +8,8 @@ VALUES ('Текст','text'), ('Цитата','quote'), ('Картинка','pho
 -- Добавляем пару пользователей
 
 INSERT INTO users (reg_date, email, user_name, password, avatar_path, contacts)
-VALUES ('2018-03-12 15:43:01', 'larisa@mail.ru', 'Лариса', 'qwerty', 'userpic-larisa-small.jpg', 'Телефон: 333-444-555'),
-       ('2018-07-22 01:10:55', 'vladik@mail.ru', 'Владик', 'password', 'userpic.jpg', 'Телефон: 111-222-666');
+VALUES ('2018-03-12 15:43:01', 'larisa@mail.ru', 'Лариса', '123', '/img/userpic-larisa.jpg', 'Телефон: 333-444-555'),
+       ('2018-07-22 01:10:55', 'vladik@mail.ru', 'Владик', '123', '/img/userpic-medium.jpg', 'Телефон: 111-222-666');
 
 -- Существующие посты
 
@@ -24,11 +24,11 @@ VALUES ('2019-01-01 01:02:13',
        ('2019-02-18 03:23:02',
         'Наконец, обработал фотки!',
         '',
-        '2' , 'rock-medium.jpg', '', '', '101', '3'),
+        '2' , '/img/rock.jpg', '', '', '101', '3'),
        ('2019-03-03 12:22:11',
         'Моя мечта',
-        'Не могу дождаться начала финального сезона своего любимого сериала!',
-        '1' , 'coast-medium.jpg', '', '', '5', '3'),
+        '',
+        '1' , 'img/coast.jpg', '', '', '5', '3'),
        ('2019-03-23 00:34:15',
         'Лучшие курсы',
         '',
@@ -70,14 +70,25 @@ VALUES (1,2);
 -- Добавляем обязательные поля на русском
 
 INSERT INTO rf_rus (field_name_rus) VALUES ('Заголовок'),('Текст поста'),('Текст цитаты'), ('Автор'),
-                                           ('Ссылка из интернета'), ('Ссылка youtube'), ('Ссылка');
+                                           ('Ссылка из интернета'), ('Ссылка youtube'), ('Ссылка'), ('Выбрать фото'),
+                                           ('Теги');
 
 -- ДОбавляем обязательные поля для форм публикации поста
 
 INSERT INTO required_fields (field_name, content_type_id,fd_rus_id )
 VALUES ('text-heading', '1','1'), ('post-text','1','2'), ('quote-heading','2','1'), ('quote-text','2','3'), ('quote-author','2','4'),
        ('photo-heading','3','1'),( 'photo-link','3','5'),('video-heading','4','1'),( 'video-link','4','6'),('link-heading','5','1'),
-       ('post-link','5','7');
+       ('post-link','5','7'),('post-tags','1','9'),('quote-tags','2','9'),('photo-tags','3','9'),('video-tags','4','9'),('link-tags','5','9');
+
+-- Добавляем хэштеги
+
+INSERT INTO hashtags (name)
+VALUES ('quote'),('text'),('photo'),('link');
+
+-- Добавляем хэштеги к постам
+
+INSERT INTO posts_hashtags(post_id, hashtag_id)
+VALUES ('1','1'),('2','2'),('3','3'),('4','3'),('5','4');
 
 
 

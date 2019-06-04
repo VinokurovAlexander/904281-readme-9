@@ -87,7 +87,7 @@
                             </p>
                         <?php elseif ($post['icon_class'] == 'photo'): ?>
                             <div class="post-photo__image-wrapper">
-                                <img src="/<?= $post['img']; ?>" alt="Фото от пользователя" width="360" height="240">
+                                <img src="<?= $post['img']; ?>" alt="Фото от пользователя" width="360" height="240">
                             </div>
                         <?php elseif ($post['icon_class'] == 'link'): ?>
                             <div class="post-link__wrapper">

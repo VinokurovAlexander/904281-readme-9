@@ -141,7 +141,9 @@
                         </svg>
                         <label class="visually-hidden">Email</label>
                     </div>
-                    <span class="form__error-label form__error-label--login"><?php if (isset($errors['email'])) { echo $errors['email']; } ?></span>
+                    <span class="form__error-label form__error-label--login"><?php if (isset($errors['email'])) {
+                            echo $errors['email'];
+                        } ?></span>
                 </div>
                 <div class="authorization__input-wrapper form__input-wrapper">
                     <div class="form__input-section <?php if (isset($errors['password'])) {
@@ -154,7 +156,9 @@
                         </svg>
                         <label class="visually-hidden">Пароль</label>
                     </div>
-                    <span class="form__error-label"><?php if (isset($errors['password'])) { echo $errors['password']; } ?></span>
+                    <span class="form__error-label"><?php if (isset($errors['password'])) {
+                            echo $errors['password'];
+                        } ?></span>
                 </div>
                 <button class="authorization__submit button button--main" type="submit">Войти</button>
             </form>
