@@ -1,34 +1,6 @@
 <?php
 
 /**
- * Проверяет переданное изображение на соответсвие расширениям gif, jpeg, img
- **
- * @param string $file_name Имя файла, полученное через $_FILES['tmp_name'] или file_get_contents.
- * @param bool $isFromClient Определяет откуда было получено изображение. Если true из $_FILES['tmp_name'], fales - file_get_contents.
- *
- * @return bool true при совпадении с расширениями gif, jpeg, img, иначе false
- */
-
-
-function checking_image_type(string $file_name, bool $isFromClient = true): bool
-{
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-
-    if ($isFromClient) {
-        $file_type = finfo_file($finfo, $file_name);
-    } else {
-        $file_type = finfo_buffer($finfo, $file_name);
-    }
-
-    if ($file_type !== 'image/gif' and $file_type !== 'image/jpeg' and $file_type !== 'image/png') {
-        return false;
-    }
-
-    return true;
-
-}
-
-/**
  * Получает массив с хэштегами при публикации поста
  **
  * @param mixed $con Ресурс соединения с БД
@@ -1237,8 +1209,9 @@ function get_profile_likes($con, int $user_id)
  *
  */
 
-function get_profile_followers($con, int $user_id)
+function get_profile_followers($con,int $user_id)
 {
+
     $get_followers_sql = "SELECT u.user_id,u.user_name,u.reg_date,u.avatar_path,u.email FROM users u
                           JOIN follow f ON f.who_sub_id = u.user_id
                           WHERE f.to_sub_id = $user_id";
@@ -1641,7 +1614,7 @@ function get_email($con, int $user_id)
  * Возвращает заголовок поста
  *
  **
- * @param $con mixed $con Ресурс соединения с БД
+ * @param mixed $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста
  *
  * @return string $title Заголовок поста
@@ -1658,7 +1631,154 @@ function get_post_title($con, int $post_id)
 }
 
 
+/**
+ * Функция отправляет почтовое уведомление подписчикам пользователя, опубликовавшего новый пост
+ *
+ **
+ * @param mixed $con Ресурс соединения с БД
+ * @param $mailer Главный объект библиотеки SwiftMailer
+ * @param array $followers Массив с подписчиками пользователя
+ * @param int $post_id Идентификатор поста, о публикации которого необходимо сделать уведомление
+ *
+ * @return bool Если почтовое уведомление отправлено - true, в случае отсутствия у пользователя подписчиков уведомление
+ * не отправляется и функция возвращает false.
+ *
+ */
 
+function send_notification_new_post ($con, $mailer,array $followers, int $post_id)
+{
+    if (!empty($followers)) {
+        $message = new Swift_Message();
+
+        foreach ($followers as $user) {
+
+            $message->setSubject("Новая публикация от пользователя " . $_SESSION['user']['user_name']);
+            $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
+            $message->setBcc($user['email']);
+
+            $msg_content = "Здравствуйте," . $user['user_name'] .
+                ". Пользователь " . $_SESSION['user']['user_name'] . " только что опубликовал новую запись " . get_post_title($con, $post_id) .
+                ". Посмотрите её на странице пользователя: https://readme/profile.php/?user_id=" . $_SESSION['user']['user_id'];
+
+            $message->setBody($msg_content, 'text/html');
+            $result = $mailer->send($message);
+
+            if ($result) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Проводит валидацию поля "Ссылка на видео" при публикации поста
+ *
+ **
+ * @param string $video_link Ссылка на видео
+ *
+ *
+ * @return array Если поле не проходит валидацию, в ином случае null
+ *
+ */
+
+function check_video_link_error (string $video_link) {
+    if (!filter_var($video_link, FILTER_VALIDATE_URL)) {
+        return $errors = [
+            'field_name_rus' => 'Ссылка youtube',
+            'error_title' => 'Неверно указана ссылка на видео',
+            'error_desc' => 'Просьба указать ссылку на видео в виде: "https://www.youtube.com/"'
+        ];
+    } elseif (!check_youtube_url($video_link)) {
+        return $errors = [
+            'field_name_rus' => 'Ссылка youtube',
+            'error_title' => 'Неверно указана ссылка на видео',
+            'error_desc' => 'Просьба указать ссылку на существующее видео на youtube'
+        ];
+    }
+    return null;
+}
+
+/**
+ * Проводит проверку формата изображения, загруженного через поле "Выбрать фото" при публикации поста
+ **
+ * @param string $file_name Имя файла, полученное через $_FILES['tmp_name']
+ *
+ *
+ * @return array Если тип файла не подходит, то массив с описанием ошибки, в ином случае null.
+ *
+ */
+
+
+function check_image_type (string $file_name)
+{
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $file_type = finfo_file($finfo, $file_name);
+
+    if ($file_type !== 'image/gif' and $file_type !== 'image/jpeg' and $file_type !== 'image/png') {
+        return $error =  [
+            'field_name_rus' => 'Выбрать фото',
+            'error_title' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
+        ];
+    }
+
+    return null;
+}
+
+/**
+ * Проверяет тип изображения, загружаемого по ссылке при публикации поста
+ **
+ * @param string $file_name Имя файла, полученное через file_get_contents.
+ *
+ *
+ * @return bool Если тип файла подходит, в ином случае false
+ *
+ */
+
+function check_image_type_link (string $file_name)
+{
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $file_type = finfo_buffer($finfo, $file_name);
+    if ($file_type !== 'image/gif' and $file_type !== 'image/jpeg' and $file_type !== 'image/png') {
+        return false;
+    }
+    return true;
+}
+
+
+/**
+ * Функция проводит валидацию поля "Ссылка на изображение"
+ **
+ * @param string $image_link Ссылка на изображение
+ *
+ * @return array Если валидация не прошла, то возвращается массив с описание ошибки, в ином случае false
+ *
+ */
+
+function check_image_link (string $image_link) {
+    if (!filter_var($image_link, FILTER_VALIDATE_URL)) {
+        return $errors = [
+            'field_name_rus' => 'Ссылка из интернета',
+            'error_title' => 'Неверно указана ссылка на изображение',
+            'error_desc' => 'Просьба указать ссылку на изображение в виде: "https://site.com"'
+        ];
+    }
+    elseif (!file_get_contents($image_link)) {
+        return $errors = [
+            'field_name_rus' => 'Ссылка из интернета',
+            'error_title' => 'Не удалось загрузить изображение',
+            'error_desc' => 'При загрузке изображения возникла ошибка'
+        ];
+    }
+    elseif (!check_image_type_link(file_get_contents($image_link))) {
+        return $errors = [
+            'field_name_rus' => 'Ссылка из интернета',
+            'error_title' => 'Недопустимый формат изображения',
+            'error_desc' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
+        ];
+    }
+    return null;
+}
 
 
 

@@ -65,82 +65,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         //Изображение загружено через поле "Выбор файла" или через оба поля "Выбор файла" и "Ссылка из интернета"
         if ($photo_from_user || ($photo_link_from_internet && $photo_from_user)) {
+
             unset($errors['photo-link']);
             $tmp_name = $_FILES['userpic-file-photo']['tmp_name'];
 
-            //Проверка типа загружаемой картинки
-            if (checking_image_type($tmp_name)) {
-
-                //Загружаем картинку в публичную директорию
-                move_uploaded_file($tmp_name, $path);
-
-            } else {
-
-                $errors['userpic-file-photo'] = [
-                    'field_name_rus' => 'Выбрать фото',
-                    'error_title' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
-                ];
-
+            if (check_image_type($tmp_name) != null) {
+                $errors['userpic-file-photo'] = check_image_type($tmp_name);
             }
+            else {
+                move_uploaded_file($tmp_name, $path);
+            }
+
         } //Изображение загружено только через поле "Ссылка из интернета"
         elseif ($photo_link_from_internet) {
             unset($errors['userpic-file-photo']);
 
-            //Проверяем корректно ли указана ссылка на изображение
-            if (!filter_var($photo_link_from_internet, FILTER_VALIDATE_URL)) {
-                $errors['photo-link'] = [
-                    'field_name_rus' => 'Ссылка из интернета',
-                    'error_title' => 'Неверно указана ссылка на изображение',
-                    'error_desc' => 'Просьба указать ссылку на изображение в виде: "https://site.com"'
-                ];
-            } else {
-                //Загружаем изображение в переменную
+            if (check_image_link($photo_link_from_internet) != null) {
+                $errors['photo-link'] = check_image_link($photo_link_from_internet);
+            }
+            else {
                 $get_image = file_get_contents($photo_link_from_internet);
-                if ($get_image) {
-                    if (checking_image_type($get_image, false)) {
-                        file_put_contents($path, $get_image);
-                    } else {
-                        $errors['photo-link'] = [
-                            'field_name_rus' => 'Ссылка из интернета',
-                            'error_title' => 'Недопустимый формат изображения',
-                            'error_desc' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
-                        ];
-                    }
-                } else {
-                    $errors['photo-link'] = [
-                        'field_name_rus' => 'Ссылка из интернета',
-                        'error_title' => 'Не удалось загрузить изображение',
-                        'error_desc' => 'При загрузке изображения возникла ошибка'
-                    ];
-                }
+                file_put_contents($path, $get_image);
             }
         }
     }
 
     if ($current_content_type_id == 4) {
-        //Получаем ссылку на видео из метода POST
-        $video_link = $_POST['video-link'];
-
-        //Проверяем кооректно ли задан URL
-        if (!filter_var($video_link, FILTER_VALIDATE_URL)) {
-            $errors['video-link'] = [
-                'field_name_rus' => 'Ссылка youtube',
-                'error_title' => 'Неверно указана ссылка на видео',
-                'error_desc' => 'Просьба указать ссылку на видео в виде: "https://www.youtube.com/"'
-            ];
-        } else {
-            //Проверяем существует ли такое видео на youtube
-            if (check_youtube_url($video_link)) {
-                //Формируем итоговый URL для видео
-                $youtube_video_id = extract_youtube_id($video_link);
-                $post['video-link'] = "https://www.youtube.com/embed/" . $youtube_video_id;
-            } else {
-                $errors['video-link'] = [
-                    'field_name_rus' => 'Ссылка youtube',
-                    'error_title' => 'Неверно указана ссылка на видео',
-                    'error_desc' => 'Просьба указать ссылку на существующее видео на youtube'
-                ];
+        if (!empty($_POST['video-link'])) {
+            $video_link = $_POST['video-link'];
+            if (check_video_link_error($video_link) != null ) {
+                $errors['video-link'] = check_video_link_error($video_link);
             }
+            $youtube_video_id = extract_youtube_id($video_link);
+            $post['video-link'] = "https://www.youtube.com/embed/" . $youtube_video_id;
         }
     }
 
@@ -157,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    //Добавляем данные в БД и публикуем пост
+    //Публикуем пост и при необходимости отправляем уведомление
     if (empty($errors)) {
         $post['user_id'] = $_SESSION['user']['user_id'];
         add_post($con, $current_content_type_id, $post);
@@ -172,27 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $current_user_id = intval($_SESSION['user']['user_id']);
         $followers = get_profile_followers($con, $current_user_id);
 
-        if (!empty($followers)) {
-            $message = new Swift_Message();
-
-            foreach ($followers as $user) {
-
-                $message->setSubject("Новая публикация от пользователя " . $_SESSION['user']['user_name']);
-                $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
-                $message->setBcc($user['email']);
-
-                $msg_content = "Здравствуйте," . $user['user_name'] .
-                    ". Пользователь " . $_SESSION['user']['user_name'] . " только что опубликовал новую запись " . get_post_title($con, $post_id) .
-                    ". Посмотрите её на странице пользователя: https://readme/profile.php/?user_id=" . $_SESSION['user']['user_id'];
-
-                $message->setBody($msg_content, 'text/html');
-                $result = $mailer->send($message);
-
-                if (!$result) {
-                    $error = "Не удалось отправить рассылку: " . $logger->dump();
-                    show_error($con, $error);
-                }
-            }
+        if (!send_notification_new_post($con,$mailer,$followers,$post_id)) {
+            $error = "Не удалось отправить рассылку: " . $logger->dump();
+            show_error($con, $error);
         }
 
         header("Location: /post.php/?post_id=" . $post_id);
@@ -219,6 +158,7 @@ $layout_content = include_template('layout.php', [
 
 
 print($layout_content);
+
 
 
 

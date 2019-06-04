@@ -28,7 +28,7 @@ $errors = [];
 $user = get_user_info($con, $current_user_id);
 $posts = get_profile_posts($con, $current_user_id);
 $likes = get_profile_likes($con, $current_user_id);
-$followers = get_profile_followers($con, $current_user_id);
+$followers = get_profile_followers($con,$current_user_id);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($_POST['message-text'])) {
