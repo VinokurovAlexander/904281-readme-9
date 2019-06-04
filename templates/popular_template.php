@@ -9,7 +9,7 @@
                 <ul class="popular__sorting-list sorting__list">
                     <li class="sorting__item sorting__item--popular">
                         <a class="sorting__link <?= get_sorting_link_class('popular') ?>"
-                           href="/popular.php/?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=popular_<?= get_sorting_type('popular') ?>&page=1">
+                           href="/popular.php?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=popular_<?= get_sorting_type('popular') ?>&page=1">
                             <span>Популярность</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -18,7 +18,7 @@
                     </li>
                     <li class="sorting__item">
                         <a class="sorting__link <?= get_sorting_link_class('likes') ?>"
-                           href="/popular.php/?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=likes_<?= get_sorting_type('likes') ?>&page=1">
+                           href="/popular.php?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=likes_<?= get_sorting_type('likes') ?>&page=1">
                             <span>Лайки</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -27,7 +27,7 @@
                     </li>
                     <li class="sorting__item">
                         <a class="sorting__link <?= get_sorting_link_class('date') ?>"
-                           href="/popular.php/?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=date_<?= get_sorting_type('date') ?>&page=1">
+                           href="/popular.php?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=date_<?= get_sorting_type('date') ?>&page=1">
                             <span>Дата</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -42,7 +42,7 @@
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
                         <a class="filters__button filters__button--ellipse filters__button--all <?php if ($_GET['content_type_id'] == 'all') {
                             echo 'filters__button--active';
-                        } ?> " href="/popular.php/?content_type_id=all&sorting=popular_desc&page=1">
+                        } ?> " href="/popular.php?content_type_id=all&sorting=popular_desc&page=1">
                             <span>Все</span>
                         </a>
                     </li>
@@ -52,7 +52,7 @@
                         <?php if (($_GET['content_type_id'] == $content_type['content_type_id'])) {
                                 echo "filters__button--active";
                             } ?>"
-                               href="/popular.php/?content_type_id=<?= $content_type['content_type_id']; ?>&sorting=popular_desc&page=1">
+                               href="/popular.php?content_type_id=<?= $content_type['content_type_id']; ?>&sorting=popular_desc&page=1">
                                 <span class="visually-hidden"><?= $content_type['content_type']; ?></span>
                                 <svg class="filters__icon" width="22" height="18">
                                     <use xlink:href="#icon-filter-<?= $content_type['icon_class']; ?>"></use>
@@ -68,7 +68,7 @@
                 <article class="popular__post post post-<?= $post['icon_class']; ?>">
                     <header class="post__header">
                         <h2>
-                            <a href="/post.php/?post_id=<?= $post['post_id']; ?>">
+                            <a href="/post.php?post_id=<?= $post['post_id']; ?>">
                                 <?= htmlspecialchars($post['title']); ?>
                             </a>
                         </h2>
@@ -109,7 +109,7 @@
                     </div>
                     <footer class="post__footer">
                         <div class="post__author">
-                            <a class="post__author-link" href="/profile.php/?user_id=<?= $post['user_id']; ?>"
+                            <a class="post__author-link" href="/profile.php?user_id=<?= $post['user_id']; ?>"
                                title="Автор">
                                 <div class="post__avatar-wrapper">
                                     <img class="post__author-avatar" src="<?= $post['avatar_path']; ?>"
@@ -127,7 +127,7 @@
                         <div class="post__indicators">
                             <div class="post__buttons">
                                 <a class="post__indicator post__indicator--likes button"
-                                   href="/like.php/?post_id=<?= $post['post_id'] ?>" title="Лайк">
+                                   href="/like.php?post_id=<?= $post['post_id'] ?>" title="Лайк">
                                     <?php if (is_like($con, $post['post_id'])) : ?>
                                         <svg class="post__indicator-icon post__indicator-icon--like-active" width="20"
                                              height="17">
@@ -142,7 +142,7 @@
                                     <span class="visually-hidden">количество лайков</span>
                                 </a>
                                 <a class="post__indicator post__indicator--comments button"
-                                   href="/post.php/?post_id=<?= $post['post_id'] ?>" title="Комментарии">
+                                   href="/post.php?post_id=<?= $post['post_id'] ?>" title="Комментарии">
                                     <svg class="post__indicator-icon" width="19" height="17">
                                         <use xlink:href="#icon-comment"></use>
                                     </svg>

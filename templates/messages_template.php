@@ -9,7 +9,7 @@
                         <a class="messages__contacts-tab tabs__item <?php if (isset($_GET['user_id']) && $_GET['user_id'] == get_dialog_user_id($con,
                                 $dialog)) {
                             echo 'messages__contacts-tab--active ';
-                        } ?>" href="/messages.php/?user_id=<?= get_dialog_user_id($con, $dialog) ?>">
+                        } ?>" href="/messages.php?user_id=<?= get_dialog_user_id($con, $dialog) ?>">
                             <div class="messages__avatar-wrapper">
                                 <img class="messages__avatar" src="<?= get_dialog_avatar($con, $dialog) ?>"
                                      alt="Аватар пользователя">
@@ -19,7 +19,7 @@
                                 <? endif; ?>
                             </div>
                             <div class="messages__info">
-                                <span class="messages__contact-name"><?= get_dialog_username($con, $dialog) ?></span>
+                                <span class="messages__contact-name"><?= htmlspecialchars(get_dialog_username($con, $dialog)) ?></span>
                                 <div class="messages__preview">
                                     <p class="messages__preview-text">
                                         <?php if ($dialog['sen_id'] == $_SESSION['user']['user_id']) {
@@ -48,13 +48,13 @@
                             <div class="messages__info-wrapper">
                                 <div class="messages__item-avatar">
                                     <a class="messages__author-link"
-                                       href="/profile.php/?user_id=<?= $message['sen_id'] ?>">
+                                       href="/profile.php?user_id=<?= $message['sen_id'] ?>">
                                         <img class="messages__avatar" src="<?= $message['avatar_path'] ?>"
                                              alt="Аватар пользователя">
                                     </a>
                                 </div>
                                 <div class="messages__item-info">
-                                    <a class="messages__author" href="/profile.php/?user_id=<?= $message['sen_id'] ?>">
+                                    <a class="messages__author" href="/profile.php?user_id=<?= $message['sen_id'] ?>">
                                         <?= htmlspecialchars($message['user_name']) ?>
                                     </a>
                                     <time class="messages__time" datetime="<?= $message['pub_date'] ?>">
@@ -71,7 +71,7 @@
             </div>
             <?php if (isset($_GET['user_id']) && !empty($_GET['user_id'])) : ?>
             <div class="comments">
-                <form class="comments__form form" action="/messages.php/?user_id=<?= $_GET['user_id'] ?>" method="post">
+                <form class="comments__form form" action="/messages.php?user_id=<?= $_GET['user_id'] ?>" method="post">
                     <div class="comments__my-avatar">
                         <img class="comments__picture" src="<?= $_SESSION['user']['avatar_path']; ?>"
                              alt="Аватар пользователя">

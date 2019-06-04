@@ -23,7 +23,7 @@ if (is_post($con, $repost_post_id)) {
         show_sql_error($con);
     }
 
-    $url = '/profile.php/?user_id=' . $_SESSION['user']['user_id'];
+    $url = '/profile.php?user_id=' . $_SESSION['user']['user_id'];
     header("Location: $url");
     exit();
 

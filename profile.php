@@ -19,7 +19,7 @@ if (!is_user($con, $current_user_id)) {
 }
 
 if (empty($_GET['content'])) {
-    $url = '/profile.php/?user_id=' . $current_user_id . '&content=posts';
+    $url = '/profile.php?user_id=' . $current_user_id . '&content=posts';
     header("Location: $url");
     exit();
 }

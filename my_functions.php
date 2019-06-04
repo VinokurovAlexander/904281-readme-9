@@ -3,7 +3,7 @@
 /**
  * Получает массив с хэштегами при публикации поста
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $current_ct_id Текущий дентификатор типа публикации
  * @param array $post Массив с передаваемыми данными методом POST
  *
@@ -29,7 +29,7 @@ function get_add_hashtags($con, int $current_ct_id, array $post)
 /**
  * Проверяет и добавляет хэштеги в БД
  **
- * @param mixed $con Реусрс соединения с БД
+ * @param mysqli $con Реусрс соединения с БД
  * @param array $hashtags Хэштег, полученный из формы
  * @param int $post_id Идентификатор текущего поста
  *
@@ -59,8 +59,7 @@ function add_hashtags($con, array $hashtags, int $post_id)
             if ($res) {
                 $get_hashtag_id = mysqli_insert_id($con);
             } else {
-                $error = mysqli_error($con);
-                print('Ошибка MySQL: ' . $error . '<br>');
+                return false;
             }
         }
 
@@ -85,7 +84,7 @@ function add_hashtags($con, array $hashtags, int $post_id)
 /**
  * Добавляет данные, переданные через форму добавления поста, в БД
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $content_type_id Идентификатор типа публикуемого поста
  * @param array $post Данные, передаваемые через форму
  *
@@ -116,6 +115,9 @@ function add_post($con, int $content_type_id, array $post)
         $stmt = db_get_prepare_stmt($con, $post_link_add_sql,
             [$post['link-heading'], $post['post-link'], $post['user_id'], $content_type_id]);
     }
+    else {
+        return false;
+    }
 
     $res = mysqli_stmt_execute($stmt);
 
@@ -130,7 +132,7 @@ function add_post($con, int $content_type_id, array $post)
 /**
  * Проверяет наличие указанного email в БД
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param string $email Почта, которую нужно проверить
  *
  *
@@ -183,6 +185,10 @@ function rel_time($pub_date)
         $diff = floor($diff / 2592000);
         $decl = get_noun_plural_form($diff, 'месяц', 'месяца', 'месяцев');
     }
+    else {
+        return false;
+    }
+
 
     return ("$diff $decl");
 }
@@ -190,7 +196,7 @@ function rel_time($pub_date)
 /**
  * Считаем количество публикаций пользователя
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя для которого нужно рассчитать количество публикаций
  *
  * @return int Количество публикаций
@@ -209,7 +215,7 @@ function get_user_posts_count($con, int $user_id)
 /**
  * Считаем количество подписчиков пользователя
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя для которого нужно рассчитать количество подписчиков
  *
  * @return int Количество подписчиков
@@ -254,7 +260,7 @@ function cut_text(string $text, int $num_letters, int $post_id)
     if ($sum > $num_letters) {
         array_pop($new_text);
         $final_text = implode(" ",
-                $new_text) . "..." . "<br>" . "<a class=\"post-text__more-link\" href=\"/post.php/?post_id=" . $post_id . "\">Читать далее</a>";
+                $new_text) . "..." . "<br>" . "<a class=\"post-text__more-link\" href=\"/post.php?post_id=" . $post_id . "\">Читать далее</a>";
     } else {
         $final_text = implode(" ", $new_text);
     }
@@ -290,7 +296,7 @@ function get_hashtags($con, int $post_id)
 /**
  * Функция, возвращает массив с информацией о постах и лайках для отображения во вкладке "Лайки" на личной странице пользователя
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста для которой нужно отобразить информацию по лайкам
  *
  *
@@ -331,6 +337,7 @@ function get_youtube_image_preview(string $youtube_url)
 /**
  * Функция, отображает шаблон с ошибкой и заканчивает выполнения всего остального сценария
  **
+ * @param mysqli $con Ресурс соединения с БД
  * @param string $error Текст ошибки
  *
  * @return string Отображает шаблон с ошибкой и заканчивает выполнения всего остального сценария
@@ -370,7 +377,7 @@ function show_sql_error($con)
 /**
  * Функция, которая проверяет является ли залогиненный пользователем подписчиком пользователя, указанного в $to_sub_id
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $to_sub_id Идентификатор пользователя для которого осуществляется проверка
  *
  * @return true если залогиненный пользователь подписан на пользователя, указанного в перемнной $to_sub_id, иначе false
@@ -441,7 +448,7 @@ function get_message_time($message_date)
 /**
  * Получаем имя пользователя в диалоге
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param array $dialog Массив с диалогами пользователя, который получается в результате работы функции get_dialogs()
  *
  * @return string Имя пользователя
@@ -464,7 +471,7 @@ function get_dialog_username($con, array $dialog)
 /**
  * Получаем аватар пользователя в диалоге
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param array $dialog Массив с диалогами пользователя, который получается в результате работы функции get_dialogs()
  *
  * @return string Путь к аватару
@@ -487,7 +494,7 @@ function get_dialog_avatar($con, array $dialog)
 /**
  * Возвращает id собеседника в диалоге
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param array $dialog Массив с диалогами пользователя, который получается в результате работы функции get_dialogs()
  *
  * @return int Идентификатор собеседника в диалоге
@@ -511,7 +518,7 @@ function get_dialog_user_id($con, $dialog)
  * Получает список диалогов для пользователя
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя для которого мы хотим получить массив с активными диалогами
  *
  * @return array Массив с активными диалогами
@@ -538,7 +545,7 @@ function get_dialogs($con, int $user_id)
  * Загружает все сообщения для диалога
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $current_user_id Идентификатора пользователя из сессии
  * @param int $dialog_user_id Идентификатор собеседника в диалоге
  *
@@ -564,7 +571,7 @@ ORDER BY m.pub_date";
  * //Проверяем существование пользователя в БД
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя существование которого необходимо проверить
  *
  * @return bool true если пользователь существует, иначе false
@@ -588,8 +595,9 @@ function is_user($con, int $user_id)
  * Проверяет существование диалога у указанных пользователей
  *
  **
- * @param mixed $con Ресурс соединения с БД
- * @param int $user_id_1 , $user_id_2 Идентификаторы пользователей между которыми нужно проверить существование диалога
+ * @param mysqli $con Ресурс соединения с БД
+ * @param int $user_id_1 Идентификатор пользователя одного из участников диалога
+ * @param int $user_id_2 Идентификатор пользователя одного из участников диалога
  *
  * @return string Возвращает идентификатор диалога, если он существует, иначе - null
  *
@@ -613,7 +621,7 @@ function is_dialog($con, int $user_id_1, int $user_id_2)
  * Добавление данных в таблицу messages
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $sender_id Идентификатор пользователя отправителя сообщения
  * @param int $recipient_id Идентификатор пользователя принимающего сообщения
  * @param string $message_text Текст сообщения
@@ -639,7 +647,7 @@ function add_message($con, int $sender_id, int $recipient_id, string $message_te
  * Возвращает количество комментариев для поста
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста
  *
  * @return int Количество комментариев
@@ -661,7 +669,7 @@ function get_comments_count($con, int $post_id)
  * Возвращает количество просмотров поста
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста
  *
  * @return int Количество просмотров
@@ -681,7 +689,7 @@ function get_view_count($con, int $post_id)
  * Обновляет данные о количестве просмотров поста
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста
  * @param int $view_count кол-во просмотров
  *
@@ -705,7 +713,7 @@ function add_view_count($con, int $post_id, int $view_count)
  * Получает данные для отображения поста на странице просмотра поста
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста
  *
  *
@@ -730,7 +738,7 @@ WHERE p.post_id = $post_id";
  * Добавляем комментарий в БД
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param string $text Текст комментария
  * @param int $user_id Идентификатор автора комментария
  * @param int $post_id Идентификатор поста к которому оставляется комментарий
@@ -756,7 +764,7 @@ function add_comment($con, string $text, int $user_id, int $post_id)
  * Функция проверяет наличие лайка на публикации от залогиненного пользователя
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста для которого нужно проверить наличие лайка
  *
  * @return bool True если лайк поставлен, в ином случае false
@@ -782,7 +790,7 @@ function is_like($con, int $post_id)
  * Функция проверяет наличие поста с указанным id
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста наличие которого нужно проверить
  *
  * @return bool True если пост существует, иначе false
@@ -806,7 +814,7 @@ function is_post($con, int $post_id)
  * Функция добавляет лайк в таблицу БД
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста которому ставится лайк
  *
  * @return string Добавляются данные в БД и возвращает на страницу с которой был произведен запрос
@@ -829,7 +837,7 @@ function add_like($con, int $post_id)
  * Функция удаляет лайк из таблицы
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста у которого удаляется лайк
  *
  * @return string Удаляет данные из бд и возвращает на страницу с которой был произведен запрос
@@ -889,7 +897,7 @@ function my_session_start()
  * Возвращает типы контента постов
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  *
  * @return array $content_type Массив с информацией о всех типах контента
  *
@@ -923,6 +931,10 @@ function get_sorting_link_class($sorting_link_name)
     } elseif ($_GET['sorting'] !== $sorting_link_name) {
         $result = null;
     }
+    else {
+        return false;
+    }
+
     return $result;
 }
 
@@ -950,6 +962,9 @@ function get_sorting_type($sorting_link_name)
     } elseif ($current_sorting == $sorting_link_name && $current_sorting_type == 'asc') {
         $sorting_type = 'desc';
     }
+    else {
+        return false;
+    }
     return $sorting_type;
 }
 
@@ -957,7 +972,9 @@ function get_sorting_type($sorting_link_name)
  * Функция вовращает посты для отображения на странице "Популярное"
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
+ * @param int $pages_items Количество отображаемых элементов на странице
+ * @param int $offset Смещение выборки
  *
  * @return array Массив с постами
  *
@@ -1014,15 +1031,14 @@ function get_posts($con, int $pages_items, int $offset)
 function check_get_popular()
 {
     if (empty($_GET) || empty($_GET['content_type_id'])) {
-        header("Location: /popular.php/?content_type_id=all&sorting=popular_desc&page=1");
+        header("Location: /popular.php?content_type_id=all&sorting=popular_desc&page=1");
         exit();
-    } else {
-        $content_type_id = $_GET['content_type_id'];
-        if (empty($_GET['sorting']) || empty($_GET['page'])) {
-            $url = '/popular.php/?content_type_id=' . $content_type_id . '&sorting=popular_desc&page=1';
-            header("Location: $url");
-            exit();
-        }
+    }
+    $content_type_id = $_GET['content_type_id'];
+    if (empty($_GET['sorting']) || empty($_GET['page'])) {
+        $url = '/popular.php?content_type_id=' . $content_type_id . '&sorting=popular_desc&page=1';
+        header("Location: $url");
+        exit();
     }
 }
 
@@ -1030,7 +1046,7 @@ function check_get_popular()
  * Получает количество страниц для отображения постов
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $page_items Количество постов на странице
  *
  * @return int $pages_count Количество страниц
@@ -1072,7 +1088,7 @@ function get_page_link($link_type)
     } elseif ($link_type == 'next') {
         $page = $page + 1;
     }
-    $link = '/popular.php/?content_type_id=' . $content_type_id . '&sorting=' . $sorting . '&page=' . $page;
+    $link = '/popular.php?content_type_id=' . $content_type_id . '&sorting=' . $sorting . '&page=' . $page;
     return $link;
 }
 
@@ -1089,7 +1105,7 @@ function get_page_link($link_type)
 function get_show_comments_link($post_id)
 {
     $user_id = $_GET['user_id'];
-    $link = '/profile.php/?user_id=' . $user_id . '&content=posts&comments_post_id=' . $post_id;
+    $link = '/profile.php?user_id=' . $user_id . '&content=posts&comments_post_id=' . $post_id;
     return $link;
 }
 
@@ -1098,7 +1114,7 @@ function get_show_comments_link($post_id)
  * Получаем комменатрии для поста
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста для которого нужно получить комментарии
  *
  * @return array Массив с комментариями
@@ -1128,7 +1144,7 @@ function get_comments($con, int $post_id)
  * Получаем всю информацию о пользователе из таблицы users
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя
  *
  * @return array $user Массив с информацией о пользователе из таблицы users
@@ -1147,7 +1163,7 @@ function get_user_info($con, int $user_id)
  * Получаем посты для отображения на странице профиля пользователя
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя
  *
  * @return array Массив с постами пользователя
@@ -1176,7 +1192,7 @@ function get_profile_posts($con, int $user_id)
  * Массив с необходимой информацией для отображения списка лайков на странице профиля пользователя
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя
  *
  * @return array Массив с необходимой информацией для отображения списка лайков на странице профиля пользователя
@@ -1206,7 +1222,7 @@ function get_profile_likes($con, int $user_id)
  * Массив с необходимой информацией для отображения списка подписчиков на странице профиля пользователя
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя
  *
  * @return array Массив с необходимой информацией для отображения списка подписчиков на странице профиля пользователя
@@ -1228,7 +1244,7 @@ function get_profile_followers($con, int $user_id)
  * Возвращает массив с постами для отображения на странице "Моя лента"
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя
  *
  * @return array Возвращает массив с постами для отображения на странице "Моя лента"
@@ -1260,7 +1276,7 @@ function get_posts_for_feed($con, int $user_id)
  * Возвращает количество лайков поста
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста
  *
  * @return int $likes_count Возвращает количество лайков поста
@@ -1281,7 +1297,7 @@ function get_post_likes_count($con, int $post_id)
  * Возвращает количество типов контента
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  *
  *
  * @return int Возвращает количество типов контента
@@ -1301,7 +1317,7 @@ function get_content_types_count($con)
  * Возвращает количество репостов
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста
  *
  *
@@ -1322,7 +1338,7 @@ function get_repost_count($con, int $post_id)
  * Добавляет репост в БД
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param array $repost_post Публикация, для которой нужно сделать репост. Массив полученный с помощью функции get_post().
  *
  *
@@ -1367,16 +1383,15 @@ function add_repost($con, array $repost_post)
             return true;
         }
 
-        return false;
-
     }
+    return false;
 }
 
 /**
  * Возвращает количество всех непрочитанных сообщений
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя
  *
  *
@@ -1400,7 +1415,7 @@ function get_all_unread_mes_cnt($con, int $user_id)
  * Возвращает количество непрочитанных сообщений в диалоге
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param string $dialog_name Идентификатор диалога
  *
  *
@@ -1424,7 +1439,7 @@ function get_dialog_unread_msg_cnt($con, string $dialog_name)
  * При открытии диалога отмечает непрочитанные сообщения прочитанными
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  *
  * @return bool Если данные о сообщение были успешно обновлены в БД - true, иначе false
  */
@@ -1452,7 +1467,7 @@ function read_msg($con)
  * Возвращает массив с обязательными для заполнения полями для формы добавления публикации
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $content_type_id Идентификатор типа публикации
  *
  * @return array $rf Массив с обязательными для заполнения полями для формы добавления публикации
@@ -1472,7 +1487,7 @@ WHERE content_type_id = $content_type_id";
  * Добавляет запись в БД при оформлении подписки на пользователя
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $who_sub_id Идентификатор пользователя КТО осуществляет подписку
  * @param int $to_sub_id Идентификатор пользователя НА КОГО осуществляется подписка
  *
@@ -1496,7 +1511,7 @@ function add_followes($con, $who_sub_id, $to_sub_id)
  * Добавляет пользователя в БД при регистрации
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param array $post Массив с данными, отправленными через форму регистрации
  *
  *
@@ -1522,7 +1537,7 @@ function add_user($con, array $post)
  * Удаляет запись из БД при отписки от пользователя
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $who_unsub_id Идентификатор пользователя КТО осуществляет отписку
  * @param int $to_unsub_id Идентификатор пользователя ОТ КОГО осуществляется подписка
  *
@@ -1546,7 +1561,7 @@ function unfollow($con, int $who_unsub_id, int $to_unsub_id)
  * Выполняет поиск по сайту
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  *
  * @return array $posts Возвращает массив с постами согласно поисковому запросу
  */
@@ -1606,7 +1621,7 @@ function get_search()
  * Возвращает почтовый ящик пользователя
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя
  *
  * @return string $email Почтовый ящик пользователя
@@ -1626,7 +1641,7 @@ function get_email($con, int $user_id)
  * Возвращает заголовок поста
  *
  **
- * @param mixed $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста
  *
  * @return string $title Заголовок поста
@@ -1643,46 +1658,7 @@ function get_post_title($con, int $post_id)
 }
 
 
-/**
- * Функция отправляет почтовое уведомление подписчикам пользователя, опубликовавшего новый пост
- *
- **
- * @param mixed $con Ресурс соединения с БД
- * @param $mailer Главный объект библиотеки SwiftMailer
- * @param array $followers Массив с подписчиками пользователя
- * @param int $post_id Идентификатор поста, о публикации которого необходимо сделать уведомление
- *
- * @return bool Если почтовое уведомление отправлено - true, в случае отсутствия у пользователя подписчиков уведомление
- * не отправляется и функция возвращает false.
- *
- */
 
-function send_notification_new_post($con, $mailer, array $followers, int $post_id)
-{
-    if (!empty($followers)) {
-        $message = new Swift_Message();
-
-        foreach ($followers as $user) {
-
-            $message->setSubject("Новая публикация от пользователя " . $_SESSION['user']['user_name']);
-            $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
-            $message->setBcc($user['email']);
-
-            $msg_content = "Здравствуйте," . $user['user_name'] .
-                ". Пользователь " . $_SESSION['user']['user_name'] . " только что опубликовал новую запись " . get_post_title($con,
-                    $post_id) .
-                ". Посмотрите её на странице пользователя: https://readme/profile.php/?user_id=" . $_SESSION['user']['user_id'];
-
-            $message->setBody($msg_content, 'text/html');
-            $result = $mailer->send($message);
-
-            if ($result) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 /**
  * Проводит валидацию поля "Ссылка на видео" при публикации поста
@@ -1729,7 +1705,7 @@ function check_image_type(string $file_name)
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $file_type = finfo_file($finfo, $file_name);
 
-    if ($file_type !== 'image/gif' and $file_type !== 'image/jpeg' and $file_type !== 'image/png') {
+    if ($file_type !== 'image/gif' && $file_type !== 'image/jpeg' && $file_type !== 'image/png') {
         return $error = [
             'field_name_rus' => 'Выбрать фото',
             'error_title' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
@@ -1816,7 +1792,7 @@ function send_notification_new_follower($mailer, array $user_to_sub, array $user
     $message->setBcc($user_to_sub['email']);
 
     $msg_content = 'Здравствуйте,' . $user_to_sub['user_name'] . '. На вас подписался новый пользователь ' .
-        $user_who_sub['user_name'] . '. Вот ссылка на его профиль: https://readme/profile.php/?user_id=' . $user_who_sub['user_id'];
+        $user_who_sub['user_name'] . '. Вот ссылка на его профиль: https://readme/profile.php?user_id=' . $user_who_sub['user_id'];
 
     $message->setBody($msg_content, 'text/html');
     $result = $mailer->send($message);
@@ -1828,9 +1804,52 @@ function send_notification_new_follower($mailer, array $user_to_sub, array $user
 }
 
 /**
+ * Функция отправляет почтовое уведомление подписчикам пользователя, опубликовавшего новый пост
+ *
+ **
+ * @param mysqli $con Ресурс соединения с БД
+ * @param $mailer Главный объект библиотеки SwiftMailer
+ * @param array $followers Массив с подписчиками пользователя
+ * @param int $post_id Идентификатор поста, о публикации которого необходимо сделать уведомление
+ *
+ * @return bool Если почтовое уведомление отправлено - true, в случае отсутствия у пользователя подписчиков уведомление
+ * не отправляется и функция возвращает false.
+ *
+ */
+
+function send_notification_new_post($con, $mailer, array $followers, int $post_id)
+{
+    if (!empty($followers)) {
+        $message = new Swift_Message();
+
+        foreach ($followers as $user) {
+
+            $message->setSubject("Новая публикация от пользователя " . $_SESSION['user']['user_name']);
+            $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
+            $message->setBcc($user['email']);
+
+            $msg_content = "Здравствуйте," . $user['user_name'] .
+                ". Пользователь " . $_SESSION['user']['user_name'] . " только что опубликовал новую запись " . get_post_title($con,
+                    $post_id) .
+                ". Посмотрите её на странице пользователя: https://readme/profile.php?user_id=" . $_SESSION['user']['user_id'];
+
+            $message->setBody($msg_content, 'text/html');
+            $result = $mailer->send($message);
+
+            if ($result) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+
+/**
  * Совершает валидацию поля email при регистрации
  **
- * @param mixewd $con Ресурс соединения с БД
+ * @param mysqli $con Ресурс соединения с БД
  * @param string $email Почтовый ящик
  *
  * @return array Массив с описанием ошибки, если валидация не пройдена, в ином случае null

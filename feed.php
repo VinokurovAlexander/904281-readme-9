@@ -12,7 +12,7 @@ $current_user_id = $_SESSION['user']['user_id'];
 $content_types = get_content_types($con);
 
 if (!isset($_GET['content_type_id']) || empty($_GET['content_type_id'])) {
-    header("Location: /feed.php/?content_type_id=all");
+    header("Location: /feed.php?content_type_id=all");
     exit();
 } elseif ($_GET['content_type_id'] !== 'all') {
     $current_content_type_id = $_GET['content_type_id'];

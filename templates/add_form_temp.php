@@ -2,7 +2,7 @@
 
     <section class="adding-post__text tabs__content tabs__content--active">
         <h2 class="visually-hidden">Форма добавления текста</h2>
-        <form class="adding-post__form form" action="/add.php/?content_type_id=<?= intval($_GET['content_type_id']); ?>"
+        <form class="adding-post__form form" action="/add.php?content_type_id=<?= intval($_GET['content_type_id']); ?>"
               method="post">
             <div class="form__text-inputs-wrapper">
 
@@ -20,10 +20,12 @@
                                    } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['text-heading']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['text-heading']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['text-heading'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['text-heading']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['text-heading']['error_desc']; ?></p>
+                                </div>
+                            <? endif; ?>
                         </div>
                     </div>
                     <div class="adding-post__textarea-wrapper form__textarea-wrapper ">
@@ -39,10 +41,12 @@
                                 } ?></textarea>
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['post-text']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['post-text']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['post-text'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['post-text']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['post-text']['error_desc']; ?></p>
+                                </div>
+                            <? endif; ?>
                         </div>
                     </div>
                     <div class="adding-post__input-wrapper form__input-wrapper">
@@ -57,10 +61,12 @@
                             } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['post-tags']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['post-tags']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['post-tags'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['post-tags']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['post-tags']['error_desc']; ?></p>
+                                </div>
+                            <? endif; ?>
                         </div>
                     </div>
                 </div>
@@ -87,7 +93,7 @@
 
     <section class="adding-post__quote tabs__content tabs__content--active">
         <h2 class="visually-hidden">Форма добавления цитаты</h2>
-        <form class="adding-post__form form" action="/add.php/?content_type_id=<?= intval($_GET['content_type_id']); ?>"
+        <form class="adding-post__form form" action="/add.php?content_type_id=<?= intval($_GET['content_type_id']); ?>"
               method="post">
             <div class="form__text-inputs-wrapper">
                 <div class="form__text-inputs">
@@ -104,10 +110,12 @@
                                    } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['quote-heading']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['quote-heading']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['quote-heading'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['quote-heading']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['quote-heading']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="adding-post__input-wrapper form__textarea-wrapper">
@@ -124,10 +132,12 @@
                                 } ?></textarea>
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['quote-text']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['quote-text']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['quote-text'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['quote-text']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['quote-text']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="adding-post__textarea-wrapper form__input-wrapper">
@@ -142,10 +152,12 @@
                             } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['quote-author']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['quote-author']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['quote-author'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['quote-author']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['quote-author']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="adding-post__input-wrapper form__input-wrapper">
@@ -160,10 +172,12 @@
                             } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['quote-tags']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['quote-tags']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['quote-tags'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['quote-tags']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['quote-tags']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -189,7 +203,7 @@
 
     <section class="adding-post__photo tabs__content tabs__content--active tabs__content--active">
         <h2 class="visually-hidden">Форма добавления фото</h2>
-        <form class="adding-post__form form" action="/add.php/?content_type_id=<?= intval($_GET['content_type_id']); ?>"
+        <form class="adding-post__form form" action="/add.php?content_type_id=<?= intval($_GET['content_type_id']); ?>"
               method="post" enctype="multipart/form-data">
             <div class="form__text-inputs-wrapper">
                 <div class="form__text-inputs">
@@ -206,10 +220,12 @@
                                    } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['photo-heading']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['photo-heading']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['photo-heading'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['photo-heading']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['photo-heading']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="adding-post__input-wrapper form__input-wrapper">
@@ -224,10 +240,12 @@
                             } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['photo-link']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['photo-link']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['photo-link'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['photo-link']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['photo-link']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="adding-post__input-wrapper form__input-wrapper">
@@ -242,10 +260,12 @@
                             } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['photo-tags']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['photo-tags']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['photo-tags'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['photo-tags']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['photo-tags']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -292,7 +312,7 @@
 
     <section class="adding-post__video tabs__content tabs__content--active">
         <h2 class="visually-hidden">Форма добавления видео</h2>
-        <form class="adding-post__form form" action="/add.php/?content_type_id=<?= intval($_GET['content_type_id']); ?>"
+        <form class="adding-post__form form" action="/add.php?content_type_id=<?= intval($_GET['content_type_id']); ?>"
               method="post" enctype="multipart/form-data">
             <div class="form__text-inputs-wrapper">
                 <div class="form__text-inputs">
@@ -309,10 +329,12 @@
                                    } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['video-heading']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['video-heading']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['video-heading'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['video-heading']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['video-heading']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="adding-post__input-wrapper form__input-wrapper">
@@ -327,10 +349,12 @@
                             } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['video-link']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['video-link']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['video-link'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['video-link']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['video-link']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="adding-post__input-wrapper form__input-wrapper">
@@ -345,10 +369,12 @@
                             } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['video-tags']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['video-tags']['error_title']; ?></p>
-                            </div>
+                            <?php if (isset($errors['video-tags'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['video-tags']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['video-tags']['error_title']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -375,7 +401,7 @@
 
     <section class="adding-post__link tabs__content tabs__content--active">
         <h2 class="visually-hidden">Форма добавления ссылки</h2>
-        <form class="adding-post__form form" action="/add.php/?content_type_id=<?= intval($_GET['content_type_id']); ?>"
+        <form class="adding-post__form form" action="/add.php?content_type_id=<?= intval($_GET['content_type_id']); ?>"
               method="post">
             <div class="form__text-inputs-wrapper">
                 <div class="form__text-inputs">
@@ -392,10 +418,12 @@
                                    } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['link-heading']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['link-heading']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['link-heading'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['link-heading']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['link-heading']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="adding-post__textarea-wrapper form__input-wrapper">
@@ -410,10 +438,12 @@
                             } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['post-link']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['post-link']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['post-link'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['post-link']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['post-link']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="adding-post__input-wrapper form__input-wrapper">
@@ -428,10 +458,12 @@
                             } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['link-tags']['error_title']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['link-tags']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['link-tags'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['link-tags']['error_title']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['link-tags']['error_desc']; ?></p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

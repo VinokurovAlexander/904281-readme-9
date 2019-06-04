@@ -13,7 +13,7 @@
                                <?php if ($_GET['content_type_id'] == $v['content_type_id']) {
                                     echo "filters__button--active";
                                 } ?>"
-                                   href="/add.php/?content_type_id=<?= $v['content_type_id']; ?>">
+                                   href="/add.php?content_type_id=<?= $v['content_type_id']; ?>">
                                     <svg class="filters__icon" width="22" height="18">
                                         <use xlink:href="#icon-filter-<?= $v['icon_class']; ?>"></use>
                                     </svg>

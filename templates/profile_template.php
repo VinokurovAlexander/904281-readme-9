@@ -29,12 +29,12 @@
                     <?php if ($user['user_id'] !== $_SESSION['user']['user_id']) : ?>
                         <?php if (is_follow($con, $user['user_id'])) : ?>
                             <a class="profile__user-button user__button user__button--subscription button button--main"
-                               href="/unfollow.php/?user_id=<?= $user['user_id'] ?>">Отписаться</a>
+                               href="/unfollow.php?user_id=<?= $user['user_id'] ?>">Отписаться</a>
                             <a class="profile__user-button user__button user__button--writing button button--green"
-                               href="/messages.php/?user_id=<?= $user['user_id'] ?>">Сообщение</a>
+                               href="/messages.php?user_id=<?= $user['user_id'] ?>">Сообщение</a>
                         <?php else : ?>
                             <a class="profile__user-button user__button user__button--subscription button button--main"
-                               href="/follow.php/?user_id=<?= $user['user_id'] ?>">Подписаться</a>
+                               href="/follow.php?user_id=<?= $user['user_id'] ?>">Подписаться</a>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
@@ -48,17 +48,17 @@
                         <li class="profile__tabs-item filters__item">
                             <a class="profile__tabs-link filters__button tabs__item tabs__item--active button <? if ($_GET['content'] == 'posts') {
                                 echo 'filters__button--active';
-                            } ?>" href="/profile.php/?user_id=<?= $_GET['user_id'] ?>&content=posts">Посты</a>
+                            } ?>" href="/profile.php?user_id=<?= $_GET['user_id'] ?>&content=posts">Посты</a>
                         </li>
                         <li class="profile__tabs-item filters__item">
                             <a class="profile__tabs-link filters__button tabs__item button <? if ($_GET['content'] == 'likes') {
                                 echo 'filters__button--active';
-                            } ?>" href="/profile.php/?user_id=<?= $_GET['user_id'] ?>&content=likes">Лайки</a>
+                            } ?>" href="/profile.php?user_id=<?= $_GET['user_id'] ?>&content=likes">Лайки</a>
                         </li>
                         <li class="profile__tabs-item filters__item">
                             <a class="profile__tabs-link filters__button tabs__item button <? if ($_GET['content'] == 'followers') {
                                 echo 'filters__button--active';
-                            } ?>" href="/profile.php/?user_id=<?= $_GET['user_id'] ?>&content=followers">Подписки</a>
+                            } ?>" href="/profile.php?user_id=<?= $_GET['user_id'] ?>&content=followers">Подписки</a>
                         </li>
                     </ul>
                 </div>
@@ -72,7 +72,7 @@
                                     <?php if ($post['repost_id'] != null) : ?>
                                         <div class="post__author">
                                             <a class="post__author-link"
-                                               href="/profile.php/?user_id=<?= $post['author_id'] ?>" title="Автор">
+                                               href="/profile.php?user_id=<?= $post['author_id'] ?>" title="Автор">
                                                 <div class="post__avatar-wrapper post__avatar-wrapper--repost">
                                                     <img class="post__author-avatar" src="<?= $post['author_avatar'] ?>"
                                                          alt="Аватар пользователя">
@@ -88,7 +88,7 @@
                                         </div>
                                     <? else : ?>
                                         <h2>
-                                            <a href="/post.php/?post_id=<?= $post['post_id']; ?>">
+                                            <a href="/post.php?post_id=<?= $post['post_id']; ?>">
                                                 <?= htmlspecialchars($post['title']); ?>
                                             </a>
                                         </h2>
@@ -135,7 +135,7 @@
                                     <div class="post__indicators">
                                         <div class="post__buttons">
                                             <a class="post__indicator post__indicator--likes button"
-                                               href="/like.php/?post_id=<?= $post['post_id'] ?>" title="Лайк">
+                                               href="/like.php?post_id=<?= $post['post_id'] ?>" title="Лайк">
                                                 <?php if (is_like($con, $post['post_id'])) : ?>
                                                     <svg class="post__indicator-icon post__indicator-icon--like-active"
                                                          width="20" height="17">
@@ -158,7 +158,7 @@
                                                 <span class="visually-hidden">количество комментариев</span>
                                             </a>
                                             <a class="post__indicator post__indicator--repost button"
-                                               href="/repost.php/?post_id=<?= $post['post_id'] ?>" title="Репост">
+                                               href="/repost.php?post_id=<?= $post['post_id'] ?>" title="Репост">
                                                 <svg class="post__indicator-icon" width="19" height="17">
                                                     <use xlink:href="#icon-repost"></use>
                                                 </svg>
@@ -174,7 +174,7 @@
                                     <ul class="post__tags">
                                         <?php foreach (get_hashtags($con, $post['post_id']) as $hashtag): ?>
                                             <li>
-                                                <a href="/search.php/?search_text=%23<?= $hashtag ?>">#<?= htmlspecialchars($hashtag); ?></a>
+                                                <a href="/search.php?search_text=%23<?= $hashtag ?>">#<?= htmlspecialchars($hashtag); ?></a>
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>
@@ -187,7 +187,7 @@
                                                 <li class="comments__item user">
                                                     <div class="comments__avatar">
                                                         <a class="user__avatar-link"
-                                                           href="/profile.php/?user_id=<?= $comment['user_id'] ?>">
+                                                           href="/profile.php?user_id=<?= $comment['user_id'] ?>">
                                                             <img class="comments__picture"
                                                                  src="<?= $comment['avatar_path'] ?>"
                                                                  alt="Аватар пользователя">
@@ -196,7 +196,7 @@
                                                     <div class="comments__info">
                                                         <div class="comments__name-wrapper">
                                                             <a class="comments__user-name"
-                                                               href="/profile.php/?user_id=<?= $comment['user_id'] ?>">
+                                                               href="/profile.php?user_id=<?= $comment['user_id'] ?>">
                                                                 <span><?= htmlspecialchars($comment['user_name']) ?></span>
                                                             </a>
                                                             <time class="comments__time"
@@ -228,7 +228,7 @@
                                         <?php endif; ?>
                                     </div>
                                     <form class="comments__form form"
-                                          action="/profile.php/?user_id=<?= $post['user_id'] ?>&content=posts&comments_post_id=<?= $post['post_id'] ?>"
+                                          action="/profile.php?user_id=<?= $post['user_id'] ?>&content=posts&comments_post_id=<?= $post['post_id'] ?>"
                                           method="post">
                                         <div class="comments__my-avatar">
                                             <img class="comments__picture" src="<?= $_SESSION['user']['avatar_path'] ?>"
@@ -267,7 +267,7 @@
                                     <div class="post-mini__user-info user__info">
                                         <div class="post-mini__avatar user__avatar">
                                             <a class="user__avatar-link"
-                                               href="/profile.php/?user_id=<?= $like['who_like_id'] ?>">
+                                               href="/profile.php?user_id=<?= $like['who_like_id'] ?>">
                                                 <img class="post-mini__picture user__picture"
                                                      src="<?= $like['who_like_avatar_path'] ?>"
                                                      alt="Аватар пользователя">
@@ -275,8 +275,8 @@
                                         </div>
                                         <div class="post-mini__name-wrapper user__name-wrapper">
                                             <a class="post-mini__name user__name"
-                                               href="/profile.php/?user_id=<?= $like['who_like_id'] ?>">
-                                                <span><?= $like['who_like_name'] ?></span>
+                                               href="/profile.php?user_id=<?= $like['who_like_id'] ?>">
+                                                <span><?= htmlspecialchars($like['who_like_name']) ?></span>
                                             </a>
                                             <div class="post-mini__action">
                                                 <span class="post-mini__activity user__additional">Лайкнул вашу публикацию</span>
@@ -288,7 +288,7 @@
                                     </div>
 
                                     <div class="post-mini__preview">
-                                        <a class="post-mini__link" href="/post.php/?post_id=<?= $like['post_id'] ?>"
+                                        <a class="post-mini__link" href="/post.php?post_id=<?= $like['post_id'] ?>"
                                            title="Перейти на публикацию">
                                             <?php if ($like['content_type_id'] == 3) : ?>
                                                 <img class="post-mini__image" src="<?= $like['img'] ?>" width="109"
@@ -339,14 +339,14 @@
                                     <div class="post-mini__user-info user__info">
                                         <div class="post-mini__avatar user__avatar">
                                             <a class="user__avatar-link"
-                                               href="/profile.php/?user_id=<?= $follower['user_id'] ?>">
+                                               href="/profile.php?user_id=<?= $follower['user_id'] ?>">
                                                 <img class="post-mini__picture user__picture"
                                                      src="<?= $follower['avatar_path'] ?>" alt="Аватар пользователя">
                                             </a>
                                         </div>
                                         <div class="post-mini__name-wrapper user__name-wrapper">
                                             <a class="post-mini__name user__name"
-                                               href="/profile.php/?user_id=<?= $follower['user_id'] ?>">
+                                               href="/profile.php?user_id=<?= $follower['user_id'] ?>">
                                                 <span><?= htmlspecialchars($follower['user_name']) ?></span>
                                             </a>
                                             <time class="post-mini__time user__additional"
@@ -371,10 +371,10 @@
                                         <?php if ($follower['user_id'] !== $_SESSION['user']['user_id']) : ?>
                                             <?php if (is_follow($con, $follower['user_id'])) : ?>
                                                 <a class="post-mini__user-button user__button user__button--subscription button button--main"
-                                                   href="/unfollow.php/?user_id=<?= $follower['user_id'] ?>">Отписаться</a>
+                                                   href="/unfollow.php?user_id=<?= $follower['user_id'] ?>">Отписаться</a>
                                             <?php else : ?>
                                                 <a class="post-mini__user-button user__button user__button--subscription button button--main"
-                                                   href="/follow.php/?user_id=<?= $follower['user_id'] ?>">Подписаться</a>
+                                                   href="/follow.php?user_id=<?= $follower['user_id'] ?>">Подписаться</a>
                                             <? endif; ?>
                                         <? endif; ?>
                                     </div>

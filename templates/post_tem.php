@@ -1,6 +1,6 @@
 <main class="page__main page__main--publication">
     <div class="container">
-        <h1 class="page__title page__title--publication"><?= $post['title']; ?></h1>
+        <h1 class="page__title page__title--publication"><?= htmlspecialchars($post['title']); ?></h1>
         <section class="post-details">
             <h2 class="visually-hidden">Публикация</h2>
             <div class="post-details__wrapper post-photo">
@@ -52,7 +52,7 @@
                     <div class="post__indicators">
                         <div class="post__buttons">
                             <a class="post__indicator post__indicator--likes button"
-                               href="/like.php/?post_id=<?= $post['post_id'] ?>" title="Лайк">
+                               href="/like.php?post_id=<?= $post['post_id'] ?>" title="Лайк">
                                 <?php if (is_like($con, $post['post_id'])) : ?>
                                     <svg class="post__indicator-icon post__indicator-icon--like-active" width="20"
                                          height="17">
@@ -67,7 +67,7 @@
                                 <span class="visually-hidden">количество лайков</span>
                             </a>
                             <a class="post__indicator post__indicator--comments button"
-                               href="/post.php/?post_id=<?= $post['post_id'] ?>" title="Комментарии">
+                               href="/post.php?post_id=<?= $post['post_id'] ?>" title="Комментарии">
                                 <svg class="post__indicator-icon" width="19" height="17">
                                     <use xlink:href="#icon-comment"></use>
                                 </svg>
@@ -75,7 +75,7 @@
                                 <span class="visually-hidden">количество комментариев</span>
                             </a>
                             <a class="post__indicator post__indicator--repost button"
-                               href="/repost.php/?post_id=<?= $post['post_id'] ?>" title="Репост">
+                               href="/repost.php?post_id=<?= $post['post_id'] ?>" title="Репост">
                                 <svg class="post__indicator-icon" width="19" height="17">
                                     <use xlink:href="#icon-repost"></use>
                                 </svg>
@@ -88,12 +88,12 @@
                     <ul class="post__tags">
                         <?php foreach (get_hashtags($con, $post['post_id']) as $hashtag): ?>
                             <li>
-                                <a href="/search.php/?search_text=%23<?= $hashtag ?>">#<?= htmlspecialchars($hashtag); ?></a>
+                                <a href="/search.php?search_text=%23<?= $hashtag ?>">#<?= htmlspecialchars($hashtag); ?></a>
                             </li>
                         <?php endforeach; ?>
                     </ul>
                     <div class="comments">
-                        <form class="comments__form form" action="/post.php/?post_id=<?= $post['post_id'] ?>"
+                        <form class="comments__form form" action="/post.php?post_id=<?= $post['post_id'] ?>"
                               method="post">
                             <div class="comments__my-avatar">
                                 <img class="comments__picture" src="<?= $_SESSION['user']['avatar_path'] ?>"
@@ -117,7 +117,7 @@
                                     <li class="comments__item user">
                                         <div class="comments__avatar">
                                             <a class="user__avatar-link"
-                                               href="/profile.php/?user_id=<?= $comment['user_id'] ?>">
+                                               href="/profile.php?user_id=<?= $comment['user_id'] ?>">
                                                 <img class="comments__picture" src="<?= $comment['avatar_path'] ?>"
                                                      alt="Аватар пользователя">
                                             </a>
@@ -125,7 +125,7 @@
                                         <div class="comments__info">
                                             <div class="comments__name-wrapper">
                                                 <a class="comments__user-name"
-                                                   href="/profile.php/?user_id=<?= $comment['user_id'] ?>">
+                                                   href="/profile.php?user_id=<?= $comment['user_id'] ?>">
                                                     <span><?= htmlspecialchars($comment['user_name']) ?></span>
                                                 </a>
                                                 <time class="comments__time" datetime="<?= $comment['pub_date'] ?>">
@@ -142,14 +142,14 @@
                             <?php if ((get_comments_count($con,
                                         $post['post_id']) > 3) && (!isset($_GET['comments']) || $_GET['comments'] !== 'full')) : ?>
                                 <a class="comments__more-link"
-                                   href="/post.php/?post_id=<?= $post['post_id'] ?>&comments=full">
+                                   href="/post.php?post_id=<?= $post['post_id'] ?>&comments=full">
                                     <span>Показать все комментарии</span>
                                     <sup class="comments__amount"><?= get_comments_count($con,
                                             $post['post_id']) ?></sup>
                                 </a>
                             <? endif; ?>
                             <?php if ((isset($_GET['comments'])) && $_GET['comments'] == 'full') : ?>
-                                <a class="comments__more-link" href="/post.php/?post_id=<?= $post['post_id'] ?>">
+                                <a class="comments__more-link" href="/post.php?post_id=<?= $post['post_id'] ?>">
                                     <span>Оставить 3 последних комментария</span>
                                 </a>
                             <? endif; ?>
@@ -160,14 +160,14 @@
                     <div class="post-details__user-info user__info">
                         <div class="post-details__avatar user__avatar">
                             <a class="post-details__avatar-link user__avatar-link"
-                               href="/profile.php/?user_id=<?= $post['user_id'] ?>">
+                               href="/profile.php?user_id=<?= $post['user_id'] ?>">
                                 <img class="post-details__picture user__picture" src="<?= $post['avatar_path'] ?>"
                                      alt="Аватар пользователя">
                             </a>
                         </div>
                         <div class="post-details__name-wrapper user__name-wrapper">
                             <a class="post-details__name user__name"
-                               href="/profile.php/?user_id=<?= $post['user_id'] ?>">
+                               href="/profile.php?user_id=<?= $post['user_id'] ?>">
                                 <span><?= htmlspecialchars($post['user_name']) ?></span>
                             </a>
                             <time class="post-details__time user__time"
@@ -193,12 +193,12 @@
                         <?php if ($post['user_id'] !== $_SESSION['user']['user_id']) : ?>
                             <?php if (is_follow($con, $post['user_id'])) : ?>
                                 <a class="user__button user__button--subscription button button--main"
-                                   href="/unfollow.php/?user_id=<?= $post['user_id'] ?>">Отписаться</a>
+                                   href="/unfollow.php?user_id=<?= $post['user_id'] ?>">Отписаться</a>
                                 <a class="user__button user__button--writing button button--green"
-                                   href="/messages.php/?user_id=<?= $post['user_id'] ?>">Сообщение</a>
+                                   href="/messages.php?user_id=<?= $post['user_id'] ?>">Сообщение</a>
                             <?php else : ?>
                                 <a class="user__button user__button--subscription button button--main"
-                                   href="/follow.php/?user_id=<?= $post['user_id'] ?>">Подписаться</a>
+                                   href="/follow.php?user_id=<?= $post['user_id'] ?>">Подписаться</a>
                             <?php endif; ?>
                         <?php endif; ?>
                     </div>

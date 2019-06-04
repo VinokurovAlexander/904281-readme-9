@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!add_message($con, $sender_id, $recipient_id, $post['message-text'], $dialog_name)) {
             show_sql_error($con);
         } else {
-            $url = '/messages.php/?user_id=' . $recipient_id;
+            $url = '/messages.php?user_id=' . $recipient_id;
             header("Location: $url");
             exit();
         }

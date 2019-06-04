@@ -20,10 +20,12 @@
                                    } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['email']['field_name_rus']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['email']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['email'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['email']['field_name_rus']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['email']['error_desc']; ?></p>
+                                </div>
+                            <? endif; ?>
                         </div>
                     </div>
                     <div class="registration__input-wrapper form__input-wrapper">
@@ -38,10 +40,12 @@
                             } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['login']['field_name_rus']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['login']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['login'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['login']['field_name_rus']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['login']['error_desc']; ?></p>
+                                </div>
+                            <? endif; ?>
                         </div>
                     </div>
                     <div class="registration__input-wrapper form__input-wrapper">
@@ -57,10 +61,12 @@
                                    } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['password']['field_name_rus']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['password']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['password'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['password']['field_name_rus']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['password']['error_desc']; ?></p>
+                                </div>
+                            <? endif; ?>
                         </div>
                     </div>
                     <div class="registration__input-wrapper form__input-wrapper">
@@ -76,10 +82,12 @@
                                    } ?>">
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['password-repeat']['field_name_rus']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['password-repeat']['error_desc']; ?></p>
-                            </div>
+                            <?php if (isset($errors['password-repeat'])) : ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title"><?= $errors['password-repeat']['field_name_rus']; ?></h3>
+                                    <p class="form__error-desc"><?= $errors['password-repeat']['error_desc']; ?></p>
+                                </div>
+                            <? endif; ?>
                         </div>
                     </div>
                     <div class="registration__textarea-wrapper form__textarea-wrapper">
@@ -87,8 +95,8 @@
                         <div class="form__input-section">
                             <textarea class="registration__textarea form__textarea form__input" id="text-info"
                                       name="about_me"
-                                      placeholder="Коротко о себе в свободной форме"><?php if (isset($_POST['about-me'])) {
-                                    print($_POST['about-me']);
+                                      placeholder="Коротко о себе в свободной форме"><?php if (isset($_POST['about_me'])) {
+                                    print($_POST['about_me']);
                                 } ?></textarea>
                         </div>
                     </div>

@@ -14,7 +14,7 @@
                     <?php foreach ($posts as $post) : ?>
                         <article class="feed__post post post-<?= $post['icon_class'] ?>">
                             <header class="post__header post__author">
-                                <a class="post__author-link" href="/profile.php/?user_id=<?= $post['user_id'] ?>"
+                                <a class="post__author-link" href="/profile.php?user_id=<?= $post['user_id'] ?>"
                                    title="Автор">
                                     <div class="post__avatar-wrapper">
                                         <img class="post__author-avatar" src="<?= $post['avatar_path'] ?>"
@@ -27,7 +27,7 @@
                                 </a>
                             </header>
                             <div class="post__main">
-                                <h2><a href="/post.php/?post_id=<?= $post['post_id'] ?>"><?= $post['title'] ?></a></h2>
+                                <h2><a href="/post.php?post_id=<?= $post['post_id'] ?>"><?= $post['title'] ?></a></h2>
                                 <?php if ($post['content_type_id'] == '3') : ?>
                                     <div class="post-details__image-wrapper post-photo__image-wrapper">
                                         <img src="<?= $post['img'] ?>" alt="Фото от пользователя" width="760"
@@ -76,7 +76,7 @@
                             <footer class="post__footer post__indicators">
                                 <div class="post__buttons">
                                     <a class="post__indicator post__indicator--likes button"
-                                       href="/like.php/?post_id=<?= $post['post_id'] ?>" title="Лайк">
+                                       href="/like.php?post_id=<?= $post['post_id'] ?>" title="Лайк">
                                         <?php if (is_like($con, $post['post_id'])) : ?>
                                             <svg class="post__indicator-icon post__indicator-icon--like-active"
                                                  width="20" height="17">
@@ -91,7 +91,7 @@
                                         <span class="visually-hidden">количество лайков</span>
                                     </a>
                                     <a class="post__indicator post__indicator--comments button"
-                                       href="/post.php/?post_id=<?= $post['post_id'] ?>" title="Комментарии">
+                                       href="/post.php?post_id=<?= $post['post_id'] ?>" title="Комментарии">
                                         <svg class="post__indicator-icon" width="19" height="17">
                                             <use xlink:href="#icon-comment"></use>
                                         </svg>
@@ -99,7 +99,7 @@
                                         <span class="visually-hidden">количество комментариев</span>
                                     </a>
                                     <a class="post__indicator post__indicator--repost button"
-                                       href="/repost.php/?post_id=<?= $post['post_id'] ?>" title="Репост">
+                                       href="/repost.php?post_id=<?= $post['post_id'] ?>" title="Репост">
                                         <svg class="post__indicator-icon" width="19" height="17">
                                             <use xlink:href="#icon-repost"></use>
                                         </svg>
@@ -111,7 +111,7 @@
                             <ul class="post__tags">
                                 <?php foreach (get_hashtags($con, $post['post_id']) as $hashtag): ?>
                                     <li>
-                                        <a href="/search.php/?search_text=%23<?= $hashtag ?>">#<?= htmlspecialchars($hashtag); ?></a>
+                                        <a href="/search.php?search_text=%23<?= $hashtag ?>">#<?= htmlspecialchars($hashtag); ?></a>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>

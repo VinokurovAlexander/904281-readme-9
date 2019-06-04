@@ -90,7 +90,7 @@
             </p>
         </div>
         <?php if (isset($_SESSION['user'])) : ?>
-            <form class="header__search-form form" action="/search.php/"
+            <form class="header__search-form form" action="/search.php"
                   method="get">
                 <div class="header__search">
                     <label class="visually-hidden">Поиск</label>
@@ -114,7 +114,7 @@
                                     '/popular.php') !== false) {
                                 echo "header__page-link--active";
                             } ?>" title="Популярный контент"
-                               href="/popular.php/?content_type_id=all&sorting=popular_desc&page=1">
+                               href="/popular.php?content_type_id=all&sorting=popular_desc&page=1">
                                 <span class="visually-hidden">Популярный контент</span>
                             </a>
                         </li>
@@ -158,7 +158,7 @@
                                     <ul class="header__profile-nav">
                                         <li class="header__profile-nav-item">
                                             <a class="header__profile-nav-link"
-                                               href="/profile.php/?user_id=<?= $_SESSION['user']['user_id'] ?>&content=posts">
+                                               href="/profile.php?user_id=<?= $_SESSION['user']['user_id'] ?>&content=posts">
                                                 <span class="header__profile-nav-text">
                                                     Мой профиль
                                                 </span>
@@ -196,7 +196,7 @@
                         </li>
                         <li>
                             <a class="header__post-button button button--transparent"
-                               href="/add.php/?content_type_id=1">Пост</a>
+                               href="/add.php?content_type_id=1">Пост</a>
                         </li>
                     <?php endif; ?>
                     <?php if (!isset($_SESSION['user'])) : ?>

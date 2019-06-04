@@ -9,7 +9,7 @@ $title = 'Добавление поста';
 
 
 if (!isset($_GET['content_type_id']) || empty($_GET['content_type_id'])) {
-    header("Location: /add.php/?content_type_id=1");
+    header("Location: /add.php?content_type_id=1");
     exit();
 } else {
     $content_types = get_content_types($con);
@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             show_error($con, $error);
         }
 
-        header("Location: /post.php/?post_id=" . $post_id);
+        header("Location: /post.php?post_id=" . $post_id);
         exit;
 
     }
