@@ -52,10 +52,14 @@ function db_get_prepare_stmt($link, $sql, $data = [])
 
             if (is_int($value)) {
                 $type = 'i';
-            } else if (is_string($value)) {
-                $type = 's';
-            } else if (is_double($value)) {
-                $type = 'd';
+            } else {
+                if (is_string($value)) {
+                    $type = 's';
+                } else {
+                    if (is_double($value)) {
+                        $type = 'd';
+                    }
+                }
             }
 
             if ($type) {
@@ -205,8 +209,10 @@ function extract_youtube_id($youtube_url)
         if ($parts['path'] == '/watch') {
             parse_str($parts['query'], $vars);
             $id = $vars['v'] ?? null;
-        } else if ($parts['host'] == 'youtu.be') {
-            $id = substr($parts['path'], 1);
+        } else {
+            if ($parts['host'] == 'youtu.be') {
+                $id = substr($parts['path'], 1);
+            }
         }
     }
 

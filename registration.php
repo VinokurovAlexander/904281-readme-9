@@ -20,9 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($required_fields as $field_rus => $field) {
         if (empty($post[$field])) {
             $errors[$field] = [
-                'field-rus' => $field_rus,
-                'error-title' => 'Заполните это поле',
-                'error-desc' => 'Данное поле должно быть обязательно заполнено'
+                'field_name_rus' => $field_rus,
+                'error_title' => 'Заполните это поле',
+                'error_desc' => 'Данное поле должно быть обязательно заполнено'
             ];
         }
     }
@@ -30,22 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //Валидация полей
     $email = $post['email'];
     if ($email) {
-        //Проверяем существование почтового ящика
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = [
-                'field-rus' => 'Электронная почта',
-                'error-title' => 'Недействительный mail',
-                'error-desc' => 'Вы указали недействительный почтовый ящик'
-            ];
-        } else {
-            //Сравниваем c почтовыми ящиками из БД
-            if (is_email($con, $email)) {
-                $errors['email'] = [
-                    'field-rus' => 'Электронная почта',
-                    'error-title' => 'Почтовый ящик уже существует',
-                    'error-desc' => 'Вы указали уже существующий почтовый ящик'
-                ];
-            }
+        if (validation_email($con, $email) != null) {
+            $errors['email'] = validation_email($con, $email);
         }
     }
 
@@ -55,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($password && $password_repeat) {
         if ($password !== $password_repeat) {
             $errors['password-repeat'] = [
-                'field-rus' => 'Повтор пароля',
-                'error-title' => 'Пароль не совпадает',
-                'error-desc' => 'Пароль в данном поле не совпадает с предыдущим'
+                'field_name_rus' => 'Повтор пароля',
+                'error_title' => 'Пароль не совпадает',
+                'error_desc' => 'Пароль в данном поле не совпадает с предыдущим'
             ];
         } else {
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
@@ -66,25 +52,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $path = '';
-    $avatar = $_FILES['userpic-file']['name'];
-    if ($avatar) {
+    if (!empty($_FILES['userpic-file']['name'])) {
+        $avatar = $_FILES['userpic-file']['name'];
         $tmp_name = $_FILES['userpic-file']['tmp_name'];
 
         //Проверка типа загружаемой картинки
-        if (checking_image_type($tmp_name)) {
-
+        if (check_image_type($tmp_name) != null) {
+            $errors['userpic-file'] = check_image_type($tmp_name);
+        } else {
             //Загружаем картинку в публичную директорию
             $path = 'uploads/avatars/' . uniqid();
             move_uploaded_file($tmp_name, $path);
             $path = '/' . $path;
-
-        } else {
-            $errors['userpic-file'] = [
-                'field-rus' => 'Выбрать фото',
-                'error-title' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
-            ];
-
         }
+
     } //Если пользователь не загрузил аватар используем заглушку
     else {
         $path = '/img/avatar.jpg';
@@ -97,11 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (add_user($con, $post)) {
             header("Location: /");
             exit;
-        } else {
-            $page_content = include_template('error.php', ['error' => mysqli_error($con)]);
-            print($page_content);
-            exit;
         }
+        show_sql_error($con);
     }
 }
 

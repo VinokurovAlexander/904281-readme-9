@@ -23,9 +23,9 @@ if (isset($_GET['post_id'])) {
             //Добавляем данные в таблицу
             add_like($con, $post_id);
         }
-    } else {
-        show_error($con, 'Не существует поста с таким id');
     }
-} else {
-    show_error($con, 'Нет post_id в GET запросе');
+    show_error($con, 'Не существует поста с таким id');
 }
+
+show_error($con, 'Нет post_id в GET запросе');
+

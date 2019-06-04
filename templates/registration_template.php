@@ -21,8 +21,8 @@
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
                             <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['email']['field-rus']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['email']['error-desc']; ?></p>
+                                <h3 class="form__error-title"><?= $errors['email']['field_name_rus']; ?></h3>
+                                <p class="form__error-desc"><?= $errors['email']['error_desc']; ?></p>
                             </div>
                         </div>
                     </div>
@@ -39,8 +39,8 @@
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
                             <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['login']['field-rus']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['login']['error-desc']; ?></p>
+                                <h3 class="form__error-title"><?= $errors['login']['field_name_rus']; ?></h3>
+                                <p class="form__error-desc"><?= $errors['login']['error_desc']; ?></p>
                             </div>
                         </div>
                     </div>
@@ -58,8 +58,8 @@
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
                             <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['password']['field-rus']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['password']['error-desc']; ?></p>
+                                <h3 class="form__error-title"><?= $errors['password']['field_name_rus']; ?></h3>
+                                <p class="form__error-desc"><?= $errors['password']['error_desc']; ?></p>
                             </div>
                         </div>
                     </div>
@@ -77,8 +77,8 @@
                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span>
                             </button>
                             <div class="form__error-text">
-                                <h3 class="form__error-title"><?= $errors['password-repeat']['field-rus']; ?></h3>
-                                <p class="form__error-desc"><?= $errors['password-repeat']['error-desc']; ?></p>
+                                <h3 class="form__error-title"><?= $errors['password-repeat']['field_name_rus']; ?></h3>
+                                <p class="form__error-desc"><?= $errors['password-repeat']['error_desc']; ?></p>
                             </div>
                         </div>
                     </div>
@@ -98,7 +98,7 @@
                         <b class="form__invalid-slogan">Пожалуйста, исправьте следующие ошибки:</b>
                         <ul class="form__invalid-list">
                             <?php foreach ($errors as $v) : ?>
-                                <li class="form__invalid-item"><?= $v['field-rus'] . '.' . ' ' . $v['error-title']; ?></li>
+                                <li class="form__invalid-item"><?= $v['field_name_rus'] . '.' . ' ' . $v['error_title']; ?></li>
                             <?php endforeach; ?>
 
                         </ul>

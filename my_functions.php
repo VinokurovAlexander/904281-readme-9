@@ -1,34 +1,6 @@
 <?php
 
 /**
- * Проверяет переданное изображение на соответсвие расширениям gif, jpeg, img
- **
- * @param string $file_name Имя файла, полученное через $_FILES['tmp_name'] или file_get_contents.
- * @param bool $isFromClient Определяет откуда было получено изображение. Если true из $_FILES['tmp_name'], fales - file_get_contents.
- *
- * @return bool true при совпадении с расширениями gif, jpeg, img, иначе false
- */
-
-
-function checking_image_type(string $file_name, bool $isFromClient = true): bool
-{
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-
-    if ($isFromClient) {
-        $file_type = finfo_file($finfo, $file_name);
-    } else {
-        $file_type = finfo_buffer($finfo, $file_name);
-    }
-
-    if ($file_type !== 'image/gif' and $file_type !== 'image/jpeg' and $file_type !== 'image/png') {
-        return false;
-    }
-
-    return true;
-
-}
-
-/**
  * Получает массив с хэштегами при публикации поста
  **
  * @param mixed $con Ресурс соединения с БД
@@ -124,20 +96,25 @@ function add_post($con, int $content_type_id, array $post)
 {
     if ($content_type_id == 1) {
         $post_text_add_sql = 'INSERT INTO posts(pub_date, title, text, user_id, content_type_id) VALUES (NOW(),?,?,?,?)';
-        $stmt = db_get_prepare_stmt($con, $post_text_add_sql, [$post['text-heading'], $post['post-text'], $post['user_id'], $content_type_id]);
+        $stmt = db_get_prepare_stmt($con, $post_text_add_sql,
+            [$post['text-heading'], $post['post-text'], $post['user_id'], $content_type_id]);
     } elseif ($content_type_id == 2) {
         $post_quote_add_sql = 'INSERT INTO posts(pub_date,title,text,quote_author,user_id,content_type_id) VALUES (NOW(),?,?,?,?,?)';
-        $stmt = db_get_prepare_stmt($con, $post_quote_add_sql, [$post['quote-heading'], $post['quote-text'], $post['quote-author'], $post['user_id'], $content_type_id]);
+        $stmt = db_get_prepare_stmt($con, $post_quote_add_sql,
+            [$post['quote-heading'], $post['quote-text'], $post['quote-author'], $post['user_id'], $content_type_id]);
     } elseif ($content_type_id == 3) {
         $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id) VALUES (NOW(),?,?,?,?)';
-        $stmt = db_get_prepare_stmt($con, $post_add_sql, [$post['photo-heading'], $post['user_id'], $post['img_path'], $content_type_id]);
+        $stmt = db_get_prepare_stmt($con, $post_add_sql,
+            [$post['photo-heading'], $post['user_id'], $post['img_path'], $content_type_id]);
     } elseif ($content_type_id == 4) {
         $post_video_add_sql = 'INSERT INTO posts (pub_date, title, user_id, video, content_type_id) VALUES (NOW(),?,?,?,?)';
-        $stmt = db_get_prepare_stmt($con, $post_video_add_sql, [$post['video-heading'], $post['user_id'], $post['video-link'], $content_type_id]);
+        $stmt = db_get_prepare_stmt($con, $post_video_add_sql,
+            [$post['video-heading'], $post['user_id'], $post['video-link'], $content_type_id]);
     } //
     elseif ($content_type_id == 5) {
         $post_link_add_sql = 'INSERT INTO posts(pub_date,title,link,user_id,content_type_id) VALUES (NOW(),?,?,?,?)';
-        $stmt = db_get_prepare_stmt($con, $post_link_add_sql, [$post['link-heading'], $post['post-link'], $post['user_id'], $content_type_id]);
+        $stmt = db_get_prepare_stmt($con, $post_link_add_sql,
+            [$post['link-heading'], $post['post-link'], $post['user_id'], $content_type_id]);
     }
 
     $res = mysqli_stmt_execute($stmt);
@@ -276,7 +253,8 @@ function cut_text(string $text, int $num_letters, int $post_id)
     }
     if ($sum > $num_letters) {
         array_pop($new_text);
-        $final_text = implode(" ", $new_text) . "..." . "<br>" . "<a class=\"post-text__more-link\" href=\"/post.php/?post_id=" . $post_id . "\">Читать далее</a>";
+        $final_text = implode(" ",
+                $new_text) . "..." . "<br>" . "<a class=\"post-text__more-link\" href=\"/post.php/?post_id=" . $post_id . "\">Читать далее</a>";
     } else {
         $final_text = implode(" ", $new_text);
     }
@@ -569,8 +547,6 @@ function get_dialogs($con, int $user_id)
  */
 
 function get_dialog_messages($con, int $current_user_id, int $dialog_user_id)
-
-
 {
     $messages_sql = "SELECT m.pub_date,m.content,m.sen_id,m.rec_id, u.user_name,u.avatar_path FROM messages m
 JOIN users u ON m.sen_id = u.user_id
@@ -1239,6 +1215,7 @@ function get_profile_likes($con, int $user_id)
 
 function get_profile_followers($con, int $user_id)
 {
+
     $get_followers_sql = "SELECT u.user_id,u.user_name,u.reg_date,u.avatar_path,u.email FROM users u
                           JOIN follow f ON f.who_sub_id = u.user_id
                           WHERE f.to_sub_id = $user_id";
@@ -1360,8 +1337,16 @@ function add_repost($con, array $repost_post)
                                          link,quote_author,view_count,content_type_id,repost_id)
                        VALUES (NOW(),?,?,?,?,?,?,?,?,?,?)";
     $stmt = db_get_prepare_stmt($con, $repost_add_sql, [
-        $repost_post['title'], $repost_post['text'], $new_user_id, $repost_post['img'], $repost_post['video'],
-        $repost_post['link'], $repost_post['quote_author'], 0, $repost_post['content_type_id'], $repost_post['post_id']
+        $repost_post['title'],
+        $repost_post['text'],
+        $new_user_id,
+        $repost_post['img'],
+        $repost_post['video'],
+        $repost_post['link'],
+        $repost_post['quote_author'],
+        0,
+        $repost_post['content_type_id'],
+        $repost_post['post_id']
     ]);
     $res = mysqli_stmt_execute($stmt);
     if ($res) {
@@ -1641,7 +1626,7 @@ function get_email($con, int $user_id)
  * Возвращает заголовок поста
  *
  **
- * @param $con mixed $con Ресурс соединения с БД
+ * @param mixed $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста
  *
  * @return string $title Заголовок поста
@@ -1658,14 +1643,218 @@ function get_post_title($con, int $post_id)
 }
 
 
+/**
+ * Функция отправляет почтовое уведомление подписчикам пользователя, опубликовавшего новый пост
+ *
+ **
+ * @param mixed $con Ресурс соединения с БД
+ * @param $mailer Главный объект библиотеки SwiftMailer
+ * @param array $followers Массив с подписчиками пользователя
+ * @param int $post_id Идентификатор поста, о публикации которого необходимо сделать уведомление
+ *
+ * @return bool Если почтовое уведомление отправлено - true, в случае отсутствия у пользователя подписчиков уведомление
+ * не отправляется и функция возвращает false.
+ *
+ */
+
+function send_notification_new_post($con, $mailer, array $followers, int $post_id)
+{
+    if (!empty($followers)) {
+        $message = new Swift_Message();
+
+        foreach ($followers as $user) {
+
+            $message->setSubject("Новая публикация от пользователя " . $_SESSION['user']['user_name']);
+            $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
+            $message->setBcc($user['email']);
+
+            $msg_content = "Здравствуйте," . $user['user_name'] .
+                ". Пользователь " . $_SESSION['user']['user_name'] . " только что опубликовал новую запись " . get_post_title($con,
+                    $post_id) .
+                ". Посмотрите её на странице пользователя: https://readme/profile.php/?user_id=" . $_SESSION['user']['user_id'];
+
+            $message->setBody($msg_content, 'text/html');
+            $result = $mailer->send($message);
+
+            if ($result) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Проводит валидацию поля "Ссылка на видео" при публикации поста
+ *
+ **
+ * @param string $video_link Ссылка на видео
+ *
+ *
+ * @return array Если поле не проходит валидацию, в ином случае null
+ *
+ */
+
+function check_video_link_error(string $video_link)
+{
+    if (!filter_var($video_link, FILTER_VALIDATE_URL)) {
+        return $errors = [
+            'field_name_rus' => 'Ссылка youtube',
+            'error_title' => 'Неверно указана ссылка на видео',
+            'error_desc' => 'Просьба указать ссылку на видео в виде: "https://www.youtube.com/"'
+        ];
+    } elseif (!check_youtube_url($video_link)) {
+        return $errors = [
+            'field_name_rus' => 'Ссылка youtube',
+            'error_title' => 'Неверно указана ссылка на видео',
+            'error_desc' => 'Просьба указать ссылку на существующее видео на youtube'
+        ];
+    }
+    return null;
+}
+
+/**
+ * Проводит проверку формата изображения, загруженного через поле "Выбрать фото" при публикации поста
+ **
+ * @param string $file_name Имя файла, полученное через $_FILES['tmp_name']
+ *
+ *
+ * @return array Если тип файла не подходит, то массив с описанием ошибки, в ином случае null.
+ *
+ */
 
 
+function check_image_type(string $file_name)
+{
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $file_type = finfo_file($finfo, $file_name);
+
+    if ($file_type !== 'image/gif' and $file_type !== 'image/jpeg' and $file_type !== 'image/png') {
+        return $error = [
+            'field_name_rus' => 'Выбрать фото',
+            'error_title' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
+        ];
+    }
+
+    return null;
+}
+
+/**
+ * Проверяет тип изображения, загружаемого по ссылке при публикации поста
+ **
+ * @param string $file_name Имя файла, полученное через file_get_contents.
+ *
+ *
+ * @return bool Если тип файла подходит, в ином случае false
+ *
+ */
+
+function check_image_type_link(string $file_name)
+{
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $file_type = finfo_buffer($finfo, $file_name);
+    if ($file_type !== 'image/gif' and $file_type !== 'image/jpeg' and $file_type !== 'image/png') {
+        return false;
+    }
+    return true;
+}
 
 
+/**
+ * Функция проводит валидацию поля "Ссылка на изображение"
+ **
+ * @param string $image_link Ссылка на изображение
+ *
+ * @return array Если валидация не прошла, то возвращается массив с описание ошибки, в ином случае false
+ *
+ */
+
+function check_image_link(string $image_link)
+{
+    if (!filter_var($image_link, FILTER_VALIDATE_URL)) {
+        return $errors = [
+            'field_name_rus' => 'Ссылка из интернета',
+            'error_title' => 'Неверно указана ссылка на изображение',
+            'error_desc' => 'Просьба указать ссылку на изображение в виде: "https://site.com"'
+        ];
+    } elseif (!file_get_contents($image_link)) {
+        return $errors = [
+            'field_name_rus' => 'Ссылка из интернета',
+            'error_title' => 'Не удалось загрузить изображение',
+            'error_desc' => 'При загрузке изображения возникла ошибка'
+        ];
+    } elseif (!check_image_type_link(file_get_contents($image_link))) {
+        return $errors = [
+            'field_name_rus' => 'Ссылка из интернета',
+            'error_title' => 'Недопустимый формат изображения',
+            'error_desc' => 'Формат загружемого изображения должен быть : png, jpeg, gif'
+        ];
+    }
+    return null;
+}
+
+/**
+ * Отправляет почтовое уведомление при подписке на пользователя
+ **
+ * @param $mailer Главный объект библиотеки SwiftMailer
+ * @param array $user_to_sub Массив с иформацией о пользователе, на которого осуществляется подписка. Массив получен с
+ * помощью функции get_user_info()
+ *
+ * @param array $user_who_sub Массив с иформацией о пользователе, который осуществляет подписку. Массив получен с
+ * помощью функции get_user_info()
+ *
+ * @return bool True если уведомление отправлено на почту, в ином случае false
+ *
+ */
 
 
+function send_notification_new_follower($mailer, array $user_to_sub, array $user_who_sub)
+{
+    $message = new Swift_Message();
+    $message->setSubject("У вас новый подписчик");
+    $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
+    $message->setBcc($user_to_sub['email']);
+
+    $msg_content = 'Здравствуйте,' . $user_to_sub['user_name'] . '. На вас подписался новый пользователь ' .
+        $user_who_sub['user_name'] . '. Вот ссылка на его профиль: https://readme/profile.php/?user_id=' . $user_who_sub['user_id'];
+
+    $message->setBody($msg_content, 'text/html');
+    $result = $mailer->send($message);
+
+    if (!$result) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Совершает валидацию поля email при регистрации
+ **
+ * @param mixewd $con Ресурс соединения с БД
+ * @param string $email Почтовый ящик
+ *
+ * @return array Массив с описанием ошибки, если валидация не пройдена, в ином случае null
+ *
+ */
 
 
+function validation_email($con, $email)
+{
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return $errors = [
+            'field_name_rus' => 'Электронная почта',
+            'error_title' => 'Недействительный mail',
+            'error_desc' => 'Вы указали недействительный почтовый ящик'
+        ];
+    } elseif (is_email($con, $email)) {
+        return $errors = [
+            'field_name_rus' => 'Электронная почта',
+            'error_title' => 'Почтовый ящик уже существует',
+            'error_desc' => 'Вы указали уже существующий почтовый ящик'
+        ];
+    }
+    return null;
+}
 
 
 

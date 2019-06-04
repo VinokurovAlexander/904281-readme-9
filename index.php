@@ -37,21 +37,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!count($errors)) {
         header("Location: /feed.php");
         exit;
-    } else {
-        $page_content = include_template('main_template.php', [
-            'errors' => $errors
-        ]);
     }
+
+    $page_content = include_template('main_template.php', [
+        'errors' => $errors
+    ]);
+
 } else {
     if (isset($_SESSION['user'])) {
         $page_content = include_template('popular_template.php', []);
         header("Location: /feed.php");
         exit;
-    } else {
-        $page_content = include_template('main_template.php', [
-            'errors' => $errors
-        ]);
     }
+
+    $page_content = include_template('main_template.php', [
+        'errors' => $errors
+    ]);
 
 }
 

@@ -6,14 +6,16 @@
             <ul class="messages__contacts-list tabs__list">
                 <?php foreach ($dialogs as $dialog) : ?>
                     <li class="messages__contacts-item">
-                        <a class="messages__contacts-tab tabs__item <?php if (isset($_GET['user_id']) && $_GET['user_id'] == get_dialog_user_id($con, $dialog)) {
+                        <a class="messages__contacts-tab tabs__item <?php if (isset($_GET['user_id']) && $_GET['user_id'] == get_dialog_user_id($con,
+                                $dialog)) {
                             echo 'messages__contacts-tab--active ';
                         } ?>" href="/messages.php/?user_id=<?= get_dialog_user_id($con, $dialog) ?>">
                             <div class="messages__avatar-wrapper">
                                 <img class="messages__avatar" src="<?= get_dialog_avatar($con, $dialog) ?>"
                                      alt="Аватар пользователя">
                                 <?php if (get_dialog_unread_msg_cnt($con, $dialog['dialog_name']) > 0) : ?>
-                                    <i class="messages__indicator"><?= get_dialog_unread_msg_cnt($con, $dialog['dialog_name']) ?></i>
+                                    <i class="messages__indicator"><?= get_dialog_unread_msg_cnt($con,
+                                            $dialog['dialog_name']) ?></i>
                                 <? endif; ?>
                             </div>
                             <div class="messages__info">

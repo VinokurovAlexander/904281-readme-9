@@ -110,7 +110,8 @@
                 <?php if (isset($_SESSION['user'])) : ?>
                     <ul class="header__my-nav">
                         <li class="header__my-page header__my-page--popular">
-                            <a class="header__page-link <?php if (strpos($_SERVER['REQUEST_URI'], '/popular.php') !== false) {
+                            <a class="header__page-link <?php if (strpos($_SERVER['REQUEST_URI'],
+                                    '/popular.php') !== false) {
                                 echo "header__page-link--active";
                             } ?>" title="Популярный контент"
                                href="/popular.php/?content_type_id=all&sorting=popular_desc&page=1">
@@ -118,14 +119,16 @@
                             </a>
                         </li>
                         <li class="header__my-page header__my-page--feed">
-                            <a class="header__page-link <?php if (strpos($_SERVER['REQUEST_URI'], '/feed.php') !== false) {
+                            <a class="header__page-link <?php if (strpos($_SERVER['REQUEST_URI'],
+                                    '/feed.php') !== false) {
                                 echo "header__page-link--active";
                             } ?>" href="/feed.php" title="Моя лента">
                                 <span class="visually-hidden">Моя лента</span>
                             </a>
                         </li>
                         <li class="header__my-page header__my-page--messages">
-                            <a class="header__page-link <?php if (strpos($_SERVER['REQUEST_URI'], '/messages.php') !== false) {
+                            <a class="header__page-link <?php if (strpos($_SERVER['REQUEST_URI'],
+                                    '/messages.php') !== false) {
                                 echo "header__page-link--active";
                             } ?>" href="/messages.php" title="Личные сообщения">
                                 <span class="visually-hidden">Личные сообщения</span>
@@ -165,8 +168,10 @@
                                             <a class="header__profile-nav-link" href="/messages.php">
                                                 <span class="header__profile-nav-text">
                                                     Сообщения
-                                                        <?php if (get_all_unread_mes_cnt($con, $_SESSION['user']['user_id']) > 0) : ?>
-                                                            <i class="header__profile-indicator"><?= get_all_unread_mes_cnt($con, $_SESSION['user']['user_id']); ?></i>
+                                                        <?php if (get_all_unread_mes_cnt($con,
+                                                                $_SESSION['user']['user_id']) > 0) : ?>
+                                                            <i class="header__profile-indicator"><?= get_all_unread_mes_cnt($con,
+                                                                    $_SESSION['user']['user_id']); ?></i>
                                                         <? endif; ?>
                                                 </span>
                                             </a>
