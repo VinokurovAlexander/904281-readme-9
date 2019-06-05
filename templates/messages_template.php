@@ -6,21 +6,24 @@
             <ul class="messages__contacts-list tabs__list">
                 <?php foreach ($dialogs as $dialog) : ?>
                     <li class="messages__contacts-item">
-                        <a class="messages__contacts-tab tabs__item <?php if (isset($_GET['user_id']) && $_GET['user_id'] == get_dialog_user_id($con,
-                                $dialog)) {
+                        <a class="messages__contacts-tab tabs__item <?php if (isset($_GET['user_id']) && $_GET['user_id'] === get_dialog_user_id($con,
+                                $dialog, $_SESSION['user']['user_id'])) {
                             echo 'messages__contacts-tab--active ';
-                        } ?>" href="/messages.php?user_id=<?= get_dialog_user_id($con, $dialog) ?>">
+                        } ?>" href="/messages.php?user_id=<?= get_dialog_user_id($con, $dialog,
+                            $_SESSION['user']['user_id']) ?>">
                             <div class="messages__avatar-wrapper">
-                                <img class="messages__avatar" src="<?= get_dialog_avatar($con, $dialog) ?>"
+                                <img class="messages__avatar"
+                                     src="<?= get_dialog_avatar($con, $dialog, $_SESSION['user']['user_id']) ?>"
                                      alt="Аватар пользователя">
-                                <?php if (get_dialog_unread_msg_cnt($con, $dialog['dialog_name']) > 0) : ?>
+                                <?php if (get_dialog_unread_msg_cnt($con, $dialog['dialog_name'],
+                                        $_SESSION['user']['user_id']) > 0) : ?>
                                     <i class="messages__indicator"><?= get_dialog_unread_msg_cnt($con,
-                                            $dialog['dialog_name']) ?></i>
+                                            $dialog['dialog_name'], $_SESSION['user']['user_id']) ?></i>
                                 <? endif; ?>
                             </div>
                             <div class="messages__info">
                                 <span class="messages__contact-name"><?= htmlspecialchars(get_dialog_username($con,
-                                        $dialog)) ?></span>
+                                        $dialog, $_SESSION['user']['user_id'])) ?></span>
                                 <div class="messages__preview">
                                     <p class="messages__preview-text">
                                         <?php if ($dialog['sen_id'] == $_SESSION['user']['user_id']) {

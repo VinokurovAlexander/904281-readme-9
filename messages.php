@@ -25,7 +25,7 @@ if (!empty($_GET['user_id'])) {
     }
 
     //Проверяем подписку на пользователя
-    if (!is_follow($con, $dialog_user_id)) {
+    if (!is_follow($con, $current_user_id, $dialog_user_id)) {
         show_error($con, 'Вы не подписаны на данного пользователя');
     }
 

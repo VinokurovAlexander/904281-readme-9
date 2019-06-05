@@ -18,7 +18,7 @@ if (is_post($con, $repost_post_id)) {
     }
 
     //Добавляем репост в БД
-    $res = add_repost($con, $repost_post);
+    $res = add_repost($con, $repost_post, $new_user_id);
     if (!$res) {
         show_sql_error($con);
     }

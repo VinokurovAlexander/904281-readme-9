@@ -27,7 +27,7 @@
                 </div>
                 <div class="profile__user-buttons user__buttons">
                     <?php if ($user['user_id'] !== $_SESSION['user']['user_id']) : ?>
-                        <?php if (is_follow($con, $user['user_id'])) : ?>
+                        <?php if (is_follow($con, $_SESSION['user']['user_id'], $user['user_id'])) : ?>
                             <a class="profile__user-button user__button user__button--subscription button button--main"
                                href="/unfollow.php?user_id=<?= $user['user_id'] ?>">Отписаться</a>
                             <a class="profile__user-button user__button user__button--writing button button--green"
@@ -136,7 +136,8 @@
                                         <div class="post__buttons">
                                             <a class="post__indicator post__indicator--likes button"
                                                href="/like.php?post_id=<?= $post['post_id'] ?>" title="Лайк">
-                                                <?php if (is_like($con, $post['post_id'])) : ?>
+                                                <?php if (is_like($con, $post['post_id'],
+                                                    $_SESSION['user']['user_id'])) : ?>
                                                     <svg class="post__indicator-icon post__indicator-icon--like-active"
                                                          width="20" height="17">
                                                         <use xlink:href="#icon-heart-active"></use>
@@ -290,34 +291,34 @@
                                     <div class="post-mini__preview">
                                         <a class="post-mini__link" href="/post.php?post_id=<?= $like['post_id'] ?>"
                                            title="Перейти на публикацию">
-                                            <?php if ($like['content_type_id'] === 3) : ?>
+                                            <?php if ($like['content_type_id'] === '3') : ?>
                                                 <img class="post-mini__image" src="<?= $like['img'] ?>" width="109"
                                                      height="109" alt="Превью публикации">
                                                 <span class="visually-hidden">Фото</span>
-                                            <?php elseif ($like['content_type_id'] === 4) : ?>
+                                            <?php elseif ($like['content_type_id'] === '4') : ?>
                                                 <div class="post-mini__image-wrapper">
                                                     <img class="post-mini__image"
                                                          src="https://<?= get_youtube_image_preview($like['video']) ?>"
                                                          width="109" height="109" alt="Превью публикации">
                                                     <span class="post-mini__play-big">
-                                                            <svg class="post-mini__play-big-icon" width="12"
-                                                                 height="13">
-                                                                <use xlink:href="#icon-video-play-big"></use>
-                                                            </svg>
-                                                        </span>
+                                                        <svg class="post-mini__play-big-icon" width="12"
+                                                             height="13">
+                                                            <use xlink:href="#icon-video-play-big"></use>
+                                                        </svg>
+                                                    </span>
                                                 </div>
                                                 <span class="visually-hidden">Видео</span>
-                                            <?php elseif ($like['content_type_id'] === 2) : ?>
+                                            <?php elseif ($like['content_type_id'] === '2') : ?>
                                                 <span class="visually-hidden">Цитата</span>
                                                 <svg class="post-mini__preview-icon" width="21" height="20">
                                                     <use xlink:href="#icon-filter-quote"></use>
                                                 </svg>
-                                            <?php elseif ($like['content_type_id'] === 1) : ?>
+                                            <?php elseif ($like['content_type_id'] === '1') : ?>
                                                 <span class="visually-hidden">Текст</span>
                                                 <svg class="post-mini__preview-icon" width="20" height="21">
                                                     <use xlink:href="#icon-filter-text"></use>
                                                 </svg>
-                                            <?php elseif ($like['content_type_id'] === 5) : ?>
+                                            <?php elseif ($like['content_type_id'] === '5') : ?>
                                                 <span class="visually-hidden">Ссылка</span>
                                                 <svg class="post-mini__preview-icon" width="21" height="18">
                                                     <use xlink:href="#icon-filter-link"></use>
@@ -369,7 +370,8 @@
                                     </div>
                                     <div class="post-mini__user-buttons user__buttons">
                                         <?php if ($follower['user_id'] !== $_SESSION['user']['user_id']) : ?>
-                                            <?php if (is_follow($con, $follower['user_id'])) : ?>
+                                            <?php if (is_follow($con, $_SESSION['user']['user_id'],
+                                                $follower['user_id'])) : ?>
                                                 <a class="post-mini__user-button user__button user__button--subscription button button--main"
                                                    href="/unfollow.php?user_id=<?= $follower['user_id'] ?>">Отписаться</a>
                                             <?php else : ?>

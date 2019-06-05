@@ -14,14 +14,14 @@ if (isset($_GET['post_id'])) {
     if (is_post($con, $current_post_id)) {
 
         //Проверяем наличие лайка
-        if (is_like($con, $post_id)) {
+        if (is_like($con, $post_id, $_SESSION['user']['user_id'])) {
 
             //Лайк есть, нужно его удалить
-            delete_like($con, $post_id);
+            delete_like($con, $post_id, $_SESSION['user']['user_id']);
         } else {
 
             //Добавляем данные в таблицу
-            add_like($con, $post_id);
+            add_like($con, $post_id, $_SESSION['user']['user_id']);
         }
     }
     show_error($con, 'Не существует поста с таким id');

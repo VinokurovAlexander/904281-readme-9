@@ -53,7 +53,7 @@
                         <div class="post__buttons">
                             <a class="post__indicator post__indicator--likes button"
                                href="/like.php?post_id=<?= $post['post_id'] ?>" title="Лайк">
-                                <?php if (is_like($con, $post['post_id'])) : ?>
+                                <?php if (is_like($con, $post['post_id'], $_SESSION['user']['user_id'])) : ?>
                                     <svg class="post__indicator-icon post__indicator-icon--like-active" width="20"
                                          height="17">
                                         <use xlink:href="#icon-heart-active"></use>
@@ -191,7 +191,7 @@
                     </div>
                     <div class="post-details__user-buttons user__buttons">
                         <?php if ($post['user_id'] !== $_SESSION['user']['user_id']) : ?>
-                            <?php if (is_follow($con, $post['user_id'])) : ?>
+                            <?php if (is_follow($con, $_SESSION['user']['user_id'], $post['user_id'])) : ?>
                                 <a class="user__button user__button--subscription button button--main"
                                    href="/unfollow.php?user_id=<?= $post['user_id'] ?>">Отписаться</a>
                                 <a class="user__button user__button--writing button button--green"

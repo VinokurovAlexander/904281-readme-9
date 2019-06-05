@@ -18,7 +18,7 @@ if (isset($_GET['user_id'])) {
     $who_unsub_id = $_SESSION['user']['user_id'];
 
     //Исключаем случай отписки от пользователя на которого вы не подписаны
-    if (!is_follow($con, $to_unsub_id)) {
+    if (!is_follow($con, $who_unsub_id, $to_unsub_id)) {
         show_error($con, 'Вы не подписаны на данного пользователя');
     }
 

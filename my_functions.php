@@ -373,26 +373,29 @@ function show_sql_error($con)
 
 
 /**
- * Функция, которая проверяет является ли залогиненный пользователем подписчиком пользователя, указанного в $to_sub_id
+ * Функция, которая проверяет наличие подписки между пользователями
  **
  * @param mysqli $con Ресурс соединения с БД
- * @param int $to_sub_id Идентификатор пользователя для которого осуществляется проверка
+ * @param int $who_sub_id Идентификатор пользователя инициатора подписки
+ * @param int $to_sub_id Идентификатор пользователя на которого осуществляется подписка
  *
- * @return true если залогиненный пользователь подписан на пользователя, указанного в перемнной $to_sub_id, иначе false
+ * @return bool Если подписка существует - true, иначе false
  *
  */
 
-function is_follow($con, int $to_sub_id)
+function is_follow($con, int $who_sub_id, int $to_sub_id)
 {
-    $who_sub_id = $_SESSION['user']['user_id'];
+
     $is_follow_sql = "SELECT * FROM follow WHERE who_sub_id = $who_sub_id AND to_sub_id = $to_sub_id";
     $is_follow_res = mysqli_query($con, $is_follow_sql);
     $is_follow = mysqli_fetch_all($is_follow_res, MYSQLI_ASSOC);
+
     if (empty($is_follow)) {
         return false;
-    } else {
-        return true;
     }
+
+    return true;
+
 }
 
 /**
@@ -444,19 +447,19 @@ function get_message_time($message_date)
 }
 
 /**
- * Получаем имя пользователя в диалоге
+ * Получаем имя собеседника в диалоге
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param array $dialog Массив с диалогами пользователя, который получается в результате работы функции get_dialogs()
+ * @param string $current_user_id Идентификатор пользователя у которого открыт диалог
  *
  * @return string Имя пользователя
  *
  */
 
-function get_dialog_username($con, array $dialog)
+function get_dialog_username($con, array $dialog, string $current_user_id)
 {
     $user_id = $dialog['sen_id'];
-    $current_user_id = $_SESSION['user']['user_id'];
     if ($user_id === $current_user_id) {
         $user_id = $dialog['rec_id'];
     }
@@ -471,15 +474,15 @@ function get_dialog_username($con, array $dialog)
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param array $dialog Массив с диалогами пользователя, который получается в результате работы функции get_dialogs()
+ * @param string $current_user_id Идентификатор пользователя у которого открыт диалог
  *
  * @return string Путь к аватару
  *
  */
 
-function get_dialog_avatar($con, array $dialog)
+function get_dialog_avatar($con, array $dialog, string $current_user_id)
 {
     $user_id = $dialog['sen_id'];
-    $current_user_id = $_SESSION['user']['user_id'];
     if ($user_id === $current_user_id) {
         $user_id = $dialog['rec_id'];
     }
@@ -494,15 +497,15 @@ function get_dialog_avatar($con, array $dialog)
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param array $dialog Массив с диалогами пользователя, который получается в результате работы функции get_dialogs()
+ * @param string $current_user_id Идентификатор пользователя у которого открыт диалог
  *
  * @return int Идентификатор собеседника в диалоге
  *
  */
 
-function get_dialog_user_id($con, $dialog)
+function get_dialog_user_id($con, array $dialog, string $current_user_id)
 {
     $user_id = $dialog['sen_id'];
-    $current_user_id = $_SESSION['user']['user_id'];
     if ($user_id === $current_user_id) {
         $user_id = $dialog['rec_id'];
     }
@@ -759,19 +762,20 @@ function add_comment($con, string $text, int $user_id, int $post_id)
 }
 
 /**
- * Функция проверяет наличие лайка на публикации от залогиненного пользователя
+ * Функция проверяет наличие лайка на публикации
  *
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста для которого нужно проверить наличие лайка
+ * @param int $user_id Идентификатор пользователя инициатора лайка
  *
  * @return bool True если лайк поставлен, в ином случае false
  *
  */
 
-function is_like($con, int $post_id)
+function is_like($con, int $post_id, int $user_id)
 {
-    $user_id = $_SESSION['user']['user_id'];
+
     $is_like_sql = "SELECT l.like_id FROM likes l
                     WHERE l.post_id = $post_id AND l.who_like_id = $user_id";
     $is_like_res = mysqli_query($con, $is_like_sql);
@@ -814,20 +818,25 @@ function is_post($con, int $post_id)
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста которому ставится лайк
+ * @param int $who_like_id Идентификатор пользователя инциатора лайка
  *
- * @return string Добавляются данные в БД и возвращает на страницу с которой был произведен запрос
+ * @return string Добавляются данные в БД и возвращает на страницу с которой был произведен запрос, в ином случае
+ * перенаправляет на страницу с описанием ошибки
  *
  */
 
-function add_like($con, int $post_id)
+function add_like($con, int $post_id, int $who_like_id)
 {
-    $who_like_id = $_SESSION['user']['user_id'];
+
     $add_like_sql = 'INSERT INTO likes(who_like_id, post_id,dt_add) VALUES (?,?,NOW())';
     $stmt = db_get_prepare_stmt($con, $add_like_sql, [$who_like_id, $post_id]);
     $res = mysqli_stmt_execute($stmt);
-    $referer_url = $_SERVER['HTTP_REFERER'];
-    header("Location: $referer_url");
-    exit;
+    if ($res) {
+        $referer_url = $_SERVER['HTTP_REFERER'];
+        header("Location: $referer_url");
+        exit;
+    }
+    show_sql_error($con);
 
 }
 
@@ -837,20 +846,24 @@ function add_like($con, int $post_id)
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста у которого удаляется лайк
+ * @param int $who_like_id Идентификатор пользователя инциатора лайка
  *
- * @return string Удаляет данные из бд и возвращает на страницу с которой был произведен запрос
+ * @return string Удаляет данные из бд и возвращает на страницу с которой был произведен запрос. В ином случае
+ * перенаправляет на страницу с описанием ошибки
  *
  */
 
-function delete_like($con, int $post_id)
+function delete_like($con, int $post_id, int $who_like_id)
 {
-    $who_like_id = $_SESSION['user']['user_id'];
+
     $delete_like_sql = "DELETE FROM likes WHERE post_id = $post_id AND who_like_id = $who_like_id";
     $delete_like_res = mysqli_query($con, $delete_like_sql);
-
-    $referer_url = $_SERVER['HTTP_REFERER'];
-    header("Location: $referer_url");
-    exit;
+    if ($delete_like_res) {
+        $referer_url = $_SERVER['HTTP_REFERER'];
+        header("Location: $referer_url");
+        exit;
+    }
+    show_sql_error($con);
 
 }
 
@@ -877,6 +890,7 @@ function post_time_title($time)
  * Функция проверяет наличие сесии
  *
  **
+ *
  *
  * @return void
  *
@@ -1343,15 +1357,15 @@ function get_repost_count($con, int $post_id)
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param array $repost_post Публикация, для которой нужно сделать репост. Массив полученный с помощью функции get_post().
- *
+ * @param int $new_user_id Идентификатор пользователя инициатора репоста
  *
  * @return bool Если данные добавлены в БД - true, в ином случае - false
  *
  */
 
-function add_repost($con, array $repost_post)
+function add_repost($con, array $repost_post, int $new_user_id)
 {
-    $new_user_id = $_SESSION['user']['user_id'];
+
     $repost_add_sql = "INSERT INTO posts(pub_date,title,text,user_id,img,video,
                                          link,quote_author,view_count,content_type_id,repost_id)
                        VALUES (NOW(),?,?,?,?,?,?,?,?,?,?)";
@@ -1420,15 +1434,16 @@ function get_all_unread_mes_cnt($con, int $user_id)
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param string $dialog_name Идентификатор диалога
+ * @param int $current_user_id Идентификатор пользователя у которого открыт диалог
  *
  *
  * @return int $get_msg Количество непрочитанных сообщений в диалоге
  *
  */
 
-function get_dialog_unread_msg_cnt($con, string $dialog_name)
+function get_dialog_unread_msg_cnt($con, string $dialog_name, int $current_user_id)
 {
-    $current_user_id = $_SESSION['user']['user_id'];
+
     $get_msg_sql = "SELECT COUNT(m.mes_id) AS unread_msg_cnt 
                     FROM messages m 
                     WHERE m.is_view is FALSE and (m.dialog_name = '$dialog_name' AND m.rec_id = $current_user_id)";
