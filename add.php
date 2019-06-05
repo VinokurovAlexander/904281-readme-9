@@ -127,9 +127,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $current_user_id = intval($_SESSION['user']['user_id']);
         $followers = get_profile_followers($con, $current_user_id);
 
-        if (!send_notification_new_post($con, $mailer, $followers, $post_id)) {
-            $error = "Не удалось отправить рассылку: " . $logger->dump();
-            show_error($con, $error);
+        foreach ($followers as $user) {
+            $msg_content = "Здравствуйте," . $user['user_name'] .
+                ". Пользователь " . $_SESSION['user']['user_name'] . " только что опубликовал новую запись " . get_post_title($con,
+                    $post_id) .
+                ". Посмотрите её на странице пользователя: https://readme/profile.php?user_id=" . $_SESSION['user']['user_id'];
+            $subject = "Новая публикация от пользователя " . $_SESSION['user']['user_name'];
+            if (!send_notification($mailer,$msg_content,$user['email'],$subject)) {
+                $error = "Не удалось отправить рассылку: " . $logger->dump();
+                show_error($con, $error);
+            }
         }
 
         header("Location: /post.php?post_id=" . $post_id);

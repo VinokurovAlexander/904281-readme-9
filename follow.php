@@ -30,7 +30,12 @@ if (isset($_GET['user_id'])) {
         $user_to_sub = get_user_info($con, $to_sub_id);
         $user_who_sub = get_user_info($con, $who_sub_id);
 
-        if (!send_notification_new_follower($mailer, $user_to_sub, $user_who_sub)) {
+        $subject = 'У вас новый подписчик';
+        $email = $user_to_sub['email'];
+        $msg_content = 'Здравствуйте,' . $user_to_sub['user_name'] . '. На вас подписался новый пользователь ' .
+            $user_who_sub['user_name'] . '. Вот ссылка на его профиль: https://readme/profile.php?user_id=' . $user_who_sub['user_id'];
+
+        if (!send_notification($mailer,$msg_content,$email,$subject)) {
             $error = "Не удалось отправить рассылку: " . $logger->dump();
             show_error($con, $error);
         }

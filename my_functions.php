@@ -880,7 +880,7 @@ function post_time_title($time)
  *
  **
  *
- * @return string Если сессия не активна перенаправляет на страницу авторизации/регистрации
+ * @return void
  *
  */
 
@@ -1770,83 +1770,6 @@ function check_image_link(string $image_link)
 }
 
 /**
- * Отправляет почтовое уведомление при подписке на пользователя
- **
- * @param $mailer Главный объект библиотеки SwiftMailer
- * @param array $user_to_sub Массив с иформацией о пользователе, на которого осуществляется подписка. Массив получен с
- * помощью функции get_user_info()
- *
- * @param array $user_who_sub Массив с иформацией о пользователе, который осуществляет подписку. Массив получен с
- * помощью функции get_user_info()
- *
- * @return bool True если уведомление отправлено на почту, в ином случае false
- *
- */
-
-
-function send_notification_new_follower($mailer, array $user_to_sub, array $user_who_sub)
-{
-    $message = new Swift_Message();
-    $message->setSubject("У вас новый подписчик");
-    $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
-    $message->setBcc($user_to_sub['email']);
-
-    $msg_content = 'Здравствуйте,' . $user_to_sub['user_name'] . '. На вас подписался новый пользователь ' .
-        $user_who_sub['user_name'] . '. Вот ссылка на его профиль: https://readme/profile.php?user_id=' . $user_who_sub['user_id'];
-
-    $message->setBody($msg_content, 'text/html');
-    $result = $mailer->send($message);
-
-    if (!$result) {
-        return false;
-    }
-    return true;
-}
-
-/**
- * Функция отправляет почтовое уведомление подписчикам пользователя, опубликовавшего новый пост
- *
- **
- * @param mysqli $con Ресурс соединения с БД
- * @param $mailer Главный объект библиотеки SwiftMailer
- * @param array $followers Массив с подписчиками пользователя
- * @param int $post_id Идентификатор поста, о публикации которого необходимо сделать уведомление
- *
- * @return bool Если почтовое уведомление отправлено - true, в случае отсутствия у пользователя подписчиков уведомление
- * не отправляется и функция возвращает false.
- *
- */
-
-function send_notification_new_post($con, $mailer, array $followers, int $post_id)
-{
-    if (!empty($followers)) {
-        $message = new Swift_Message();
-
-        foreach ($followers as $user) {
-
-            $message->setSubject("Новая публикация от пользователя " . $_SESSION['user']['user_name']);
-            $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
-            $message->setBcc($user['email']);
-
-            $msg_content = "Здравствуйте," . $user['user_name'] .
-                ". Пользователь " . $_SESSION['user']['user_name'] . " только что опубликовал новую запись " . get_post_title($con,
-                    $post_id) .
-                ". Посмотрите её на странице пользователя: https://readme/profile.php?user_id=" . $_SESSION['user']['user_id'];
-
-            $message->setBody($msg_content, 'text/html');
-            $result = $mailer->send($message);
-
-            if ($result) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-
-
-/**
  * Совершает валидацию поля email при регистрации
  **
  * @param mysqli $con Ресурс соединения с БД
@@ -1874,6 +1797,38 @@ function validation_email($con, $email)
     }
     return null;
 }
+
+
+/**
+ * Отправляет почтовое сообщение
+ **
+ * @param $mailer Главный объект библиотеки SwiftMailer
+ * @param string $msg_content Текст сообщения
+ * @param string $email Почтовый адрес принимающего
+ * @param string $subject Тема письма
+ *
+ * @return bool Если сообщение отправлено - true, в ином случае false.
+ *
+ */
+
+function send_notification ($mailer, string $msg_content,string $email, string $subject)
+{
+    $message = new Swift_Message();
+    $message->setSubject($subject);
+    $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
+    $message->setBcc($email);
+
+
+
+    $message->setBody($msg_content, 'text/html');
+    $result = $mailer->send($message);
+
+    if (!$result) {
+        return false;
+    }
+    return true;
+}
+
 
 
 
