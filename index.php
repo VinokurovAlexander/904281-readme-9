@@ -5,10 +5,15 @@ require_once('sql_connect.php');
 
 session_start();
 
+if (isset($_SESSION['user'])) {
+    header("Location: /feed.php");
+    exit();
+}
+
 $errors = [];
 
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $post = $_POST;
     $required_fields = ['email', 'password'];
 
@@ -38,23 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: /feed.php");
         exit;
     }
-
-    $page_content = include_template('main_template.php', [
-        'errors' => $errors
-    ]);
-
-} else {
-    if (isset($_SESSION['user'])) {
-        $page_content = include_template('popular_template.php', []);
-        header("Location: /feed.php");
-        exit;
-    }
-
-    $page_content = include_template('main_template.php', [
-        'errors' => $errors
-    ]);
-
 }
+
+$page_content = include_template('main_template.php', [
+    'errors' => $errors
+]);
+
 
 print($page_content);
 

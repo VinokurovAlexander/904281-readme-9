@@ -13,7 +13,7 @@ $required_fields = [
 ];
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $post = $_POST;
 
     //Проверяем заполнены ли обязательные поля
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //Валидация полей
     $email = $post['email'];
     if ($email) {
-        if (validation_email($con, $email) != null) {
+        if (validation_email($con, $email) !== null) {
             $errors['email'] = validation_email($con, $email);
         }
     }
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $tmp_name = $_FILES['userpic-file']['tmp_name'];
 
         //Проверка типа загружаемой картинки
-        if (check_image_type($tmp_name) != null) {
+        if (check_image_type($tmp_name) !== null) {
             $errors['userpic-file'] = check_image_type($tmp_name);
         } else {
             //Загружаем картинку в публичную директорию

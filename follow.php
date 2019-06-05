@@ -35,7 +35,7 @@ if (isset($_GET['user_id'])) {
         $msg_content = 'Здравствуйте,' . $user_to_sub['user_name'] . '. На вас подписался новый пользователь ' .
             $user_who_sub['user_name'] . '. Вот ссылка на его профиль: https://readme/profile.php?user_id=' . $user_who_sub['user_id'];
 
-        if (!send_notification($mailer,$msg_content,$email,$subject)) {
+        if (!send_notification($mailer, $msg_content, $email, $subject)) {
             $error = "Не удалось отправить рассылку: " . $logger->dump();
             show_error($con, $error);
         }

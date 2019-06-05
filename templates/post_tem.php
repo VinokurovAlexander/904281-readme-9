@@ -5,11 +5,11 @@
             <h2 class="visually-hidden">Публикация</h2>
             <div class="post-details__wrapper post-photo">
                 <div class="post-details__main-block post post--details">
-                    <?php if ($post['content_type_id'] == '3') : ?>
+                    <?php if ($post['content_type_id'] === '3') : ?>
                         <div class="post-details__image-wrapper post-photo__image-wrapper">
                             <img src="<?= $post['img'] ?>" alt="Фото от пользователя" width="760" height="507">
                         </div>
-                    <?php elseif ($post['content_type_id'] == '2') : ?>
+                    <?php elseif ($post['content_type_id'] === '2') : ?>
                         <div class="post-details__image-wrapper post-quote">
                             <div class="post__main">
                                 <blockquote>
@@ -20,7 +20,7 @@
                                 </blockquote>
                             </div>
                         </div>
-                    <?php elseif ($post['content_type_id'] == '5') : ?>
+                    <?php elseif ($post['content_type_id'] === '5') : ?>
                         <div class="post__main">
                             <div class="post-link__wrapper">
                                 <a class="post-link__external" href="<?= htmlspecialchars($post['link']) ?>"
@@ -38,7 +38,7 @@
                                 </a>
                             </div>
                         </div>
-                    <?php elseif ($post['content_type_id'] == '1') : ?>
+                    <?php elseif ($post['content_type_id'] === '1') : ?>
                         <div class="post-details__image-wrapper post-text">
                             <div class="post__main">
                                 <p>
@@ -46,7 +46,7 @@
                                 </p>
                             </div>
                         </div>
-                    <?php elseif ($post['content_type_id'] == '4') : ?>
+                    <?php elseif ($post['content_type_id'] === '4') : ?>
                         <iframe width="760" height="400" src="<?= $post['video'] ?>" frameborder="0"></iframe>
                     <?php endif; ?>
                     <div class="post__indicators">
@@ -148,7 +148,7 @@
                                             $post['post_id']) ?></sup>
                                 </a>
                             <? endif; ?>
-                            <?php if ((isset($_GET['comments'])) && $_GET['comments'] == 'full') : ?>
+                            <?php if ((isset($_GET['comments'])) && $_GET['comments'] === 'full') : ?>
                                 <a class="comments__more-link" href="/post.php?post_id=<?= $post['post_id'] ?>">
                                     <span>Оставить 3 последних комментария</span>
                                 </a>

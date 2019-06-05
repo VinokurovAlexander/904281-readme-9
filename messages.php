@@ -16,11 +16,11 @@ $dialog_user_id = null;
 if (!empty($_GET['user_id'])) {
     $dialog_user_id = $_GET['user_id'];
     //Проверяем существование пользователя
-    if (is_user($con, $dialog_user_id) == false) {
+    if (is_user($con, $dialog_user_id) === false) {
         show_error($con, 'Пользователя с таким id не существует');
     }
 
-    if ($dialog_user_id == $current_user_id) {
+    if ($dialog_user_id === $current_user_id) {
         show_error($con, 'Нельзя отправлять сообщения самому себе');
     }
 
@@ -47,12 +47,12 @@ if (!empty($_GET['user_id'])) {
         }
     }
 
-    read_msg($con,$dialog_user_id,$current_user_id);
+    read_msg($con, $dialog_user_id, $current_user_id);
 }
 
 $dialogs = array_merge($dialogs, get_dialogs($con, $current_user_id));
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $post = $_POST;
     //Проверяем заполнение полей

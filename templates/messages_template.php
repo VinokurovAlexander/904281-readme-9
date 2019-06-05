@@ -19,7 +19,8 @@
                                 <? endif; ?>
                             </div>
                             <div class="messages__info">
-                                <span class="messages__contact-name"><?= htmlspecialchars(get_dialog_username($con, $dialog)) ?></span>
+                                <span class="messages__contact-name"><?= htmlspecialchars(get_dialog_username($con,
+                                        $dialog)) ?></span>
                                 <div class="messages__preview">
                                     <p class="messages__preview-text">
                                         <?php if ($dialog['sen_id'] == $_SESSION['user']['user_id']) {

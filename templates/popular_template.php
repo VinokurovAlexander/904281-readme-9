@@ -8,8 +8,9 @@
                 <b class="popular__sorting-caption sorting__caption">Сортировка:</b>
                 <ul class="popular__sorting-list sorting__list">
                     <li class="sorting__item sorting__item--popular">
-                        <a class="sorting__link <?= get_sorting_link_class('popular',$_GET['sorting']) ?>"
-                           href="/popular.php?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=popular_<?=get_sorting_type_link('popular', $_GET['sorting'])?>&page=1">
+                        <a class="sorting__link <?= get_sorting_link_class('popular', $_GET['sorting']) ?>"
+                           href="/popular.php?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=popular_<?= get_sorting_type_link('popular',
+                               $_GET['sorting']) ?>&page=1">
                             <span>Популярность</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -17,8 +18,9 @@
                         </a>
                     </li>
                     <li class="sorting__item">
-                        <a class="sorting__link <?= get_sorting_link_class('likes',$_GET['sorting']) ?>"
-                           href="/popular.php?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=likes_<?=get_sorting_type_link('likes', $_GET['sorting'])?>&page=1">
+                        <a class="sorting__link <?= get_sorting_link_class('likes', $_GET['sorting']) ?>"
+                           href="/popular.php?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=likes_<?= get_sorting_type_link('likes',
+                               $_GET['sorting']) ?>&page=1">
                             <span>Лайки</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -26,8 +28,9 @@
                         </a>
                     </li>
                     <li class="sorting__item">
-                        <a class="sorting__link <?= get_sorting_link_class('date',$_GET['sorting']) ?>"
-                           href="/popular.php?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=date_<?=get_sorting_type_link('date', $_GET['sorting'])?>&page=1">
+                        <a class="sorting__link <?= get_sorting_link_class('date', $_GET['sorting']) ?>"
+                           href="/popular.php?content_type_id=<?= $_GET['content_type_id'] ?>&sorting=date_<?= get_sorting_type_link('date',
+                               $_GET['sorting']) ?>&page=1">
                             <span>Дата</span>
                             <svg class="sorting__icon" width="10" height="12">
                                 <use xlink:href="#icon-sort"></use>
@@ -40,7 +43,7 @@
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                        <a class="filters__button filters__button--ellipse filters__button--all <?php if ($_GET['content_type_id'] == 'all') {
+                        <a class="filters__button filters__button--ellipse filters__button--all <?php if ($_GET['content_type_id'] === 'all') {
                             echo 'filters__button--active';
                         } ?> " href="/popular.php?content_type_id=all&sorting=popular_desc&page=1">
                             <span>Все</span>
@@ -49,7 +52,7 @@
                     <?php foreach ($content_types as $content_type): ?>
                         <li class="popular__filters-item filters__item">
                             <a class="filters__button filters__button--photo button
-                        <?php if (($_GET['content_type_id'] == $content_type['content_type_id'])) {
+                        <?php if (($_GET['content_type_id'] === $content_type['content_type_id'])) {
                                 echo "filters__button--active";
                             } ?>"
                                href="/popular.php?content_type_id=<?= $content_type['content_type_id']; ?>&sorting=popular_desc&page=1">
@@ -74,22 +77,22 @@
                         </h2>
                     </header>
                     <div class="post__main">
-                        <?php if ($post['icon_class'] == 'quote'): ?>
+                        <?php if ($post['icon_class'] === 'quote'): ?>
                             <blockquote>
                                 <p>
                                     <?= htmlspecialchars($post['text']); ?>
                                 </p>
                                 <cite><?= htmlspecialchars($post['quote_author']) ?></cite>
                             </blockquote>
-                        <?php elseif ($post['icon_class'] == 'text'): ?>
+                        <?php elseif ($post['icon_class'] === 'text'): ?>
                             <p>
                                 <?= (cut_text(htmlspecialchars($post['text']), 300, $post['post_id'])); ?>
                             </p>
-                        <?php elseif ($post['icon_class'] == 'photo'): ?>
+                        <?php elseif ($post['icon_class'] === 'photo'): ?>
                             <div class="post-photo__image-wrapper">
                                 <img src="<?= $post['img']; ?>" alt="Фото от пользователя" width="360" height="240">
                             </div>
-                        <?php elseif ($post['icon_class'] == 'link'): ?>
+                        <?php elseif ($post['icon_class'] === 'link'): ?>
                             <div class="post-link__wrapper">
                                 <a class="post-link__external" href="<?= $post['link']; ?>" title="Перейти по ссылке">
                                     <div class="post-link__info-wrapper">
@@ -103,7 +106,7 @@
                                     <span><?= htmlspecialchars($post['link']); ?></span>
                                 </a>
                             </div>
-                        <?php elseif ($post['icon_class'] == 'video'): ?>
+                        <?php elseif ($post['icon_class'] === 'video'): ?>
                             <iframe width="360" height="240" src="<?= $post['video'] ?>" frameborder="0"></iframe>
                         <?php endif; ?>
                     </div>
@@ -159,13 +162,13 @@
             <?php if ($pages_count > 1) : ?>
                 <?php if ($_GET['page'] !== '1') : ?>
                     <a class="popular__page-link popular__page-link--prev button button--gray"
-                       href="<?= get_page_link('prev',$_GET['content_type_id'],$_GET['sorting'],$_GET['page']) ?>">
+                       href="<?= get_page_link('prev', $_GET['content_type_id'], $_GET['sorting'], $_GET['page']) ?>">
                         Предыдущая страница
                     </a>
                 <? endif; ?>
-                <?php if ($_GET['page'] != $pages_count) : ?>
+                <?php if ($_GET['page'] !== $pages_count) : ?>
                     <a class="popular__page-link popular__page-link--next button button--gray"
-                       href="<?= get_page_link('next',$_GET['content_type_id'],$_GET['sorting'],$_GET['page']) ?>">
+                       href="<?= get_page_link('next', $_GET['content_type_id'], $_GET['sorting'], $_GET['page']) ?>">
                         Следующая страница
                     </a>
                 <? endif; ?>

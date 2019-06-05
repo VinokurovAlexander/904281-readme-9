@@ -46,30 +46,30 @@
                     <b class="profile__tabs-caption filters__caption">Показать:</b>
                     <ul class="profile__tabs-list filters__list tabs__list">
                         <li class="profile__tabs-item filters__item">
-                            <a class="profile__tabs-link filters__button tabs__item tabs__item--active button <? if ($_GET['content'] == 'posts') {
+                            <a class="profile__tabs-link filters__button tabs__item tabs__item--active button <? if ($_GET['content'] === 'posts') {
                                 echo 'filters__button--active';
                             } ?>" href="/profile.php?user_id=<?= $_GET['user_id'] ?>&content=posts">Посты</a>
                         </li>
                         <li class="profile__tabs-item filters__item">
-                            <a class="profile__tabs-link filters__button tabs__item button <? if ($_GET['content'] == 'likes') {
+                            <a class="profile__tabs-link filters__button tabs__item button <? if ($_GET['content'] === 'likes') {
                                 echo 'filters__button--active';
                             } ?>" href="/profile.php?user_id=<?= $_GET['user_id'] ?>&content=likes">Лайки</a>
                         </li>
                         <li class="profile__tabs-item filters__item">
-                            <a class="profile__tabs-link filters__button tabs__item button <? if ($_GET['content'] == 'followers') {
+                            <a class="profile__tabs-link filters__button tabs__item button <? if ($_GET['content'] === 'followers') {
                                 echo 'filters__button--active';
                             } ?>" href="/profile.php?user_id=<?= $_GET['user_id'] ?>&content=followers">Подписки</a>
                         </li>
                     </ul>
                 </div>
                 <div class="profile__tab-content">
-                    <section class="profile__posts tabs__content <? if ($_GET['content'] == 'posts') {
+                    <section class="profile__posts tabs__content <? if ($_GET['content'] === 'posts') {
                         echo 'tabs__content--active';
                     } ?>">
                         <?php foreach ($posts as $post): ?>
                             <article class="profile__post post post-<?= $post['icon_class']; ?>">
                                 <header class="post__header">
-                                    <?php if ($post['repost_id'] != null) : ?>
+                                    <?php if ($post['repost_id'] !== null) : ?>
                                         <div class="post__author">
                                             <a class="post__author-link"
                                                href="/profile.php?user_id=<?= $post['author_id'] ?>" title="Автор">
@@ -95,26 +95,26 @@
                                     <? endif; ?>
                                 </header>
                                 <div class="post__main">
-                                    <?php if ($post['content_type_id'] == 1): ?>
+                                    <?php if ($post['content_type_id'] === '1'): ?>
                                         <p>
                                             <?= (cut_text(htmlspecialchars($post['text']), 300, $post['post_id'])); ?>
                                         </p>
-                                    <?php elseif ($post['content_type_id'] == 2): ?>
+                                    <?php elseif ($post['content_type_id'] === '2'): ?>
                                         <blockquote>
                                             <p>
                                                 <?= htmlspecialchars($post['text']); ?>
                                             </p>
                                             <cite><?= htmlspecialchars($post['quote_author']) ?></cite>
                                         </blockquote>
-                                    <?php elseif ($post['content_type_id'] == 3): ?>
+                                    <?php elseif ($post['content_type_id'] === '3'): ?>
                                         <div class="post-photo__image-wrapper">
                                             <img src="<?= ($post['img']); ?>" alt="Фото от пользователя" width="760"
                                                  height="396">
                                         </div>
-                                    <?php elseif ($post['content_type_id'] == 4): ?>
+                                    <?php elseif ($post['content_type_id'] === '4'): ?>
                                         <iframe width="760px" height="400px" src="<?= $post['video'] ?>"
                                                 frameborder="0"></iframe>
-                                    <?php elseif ($post['content_type_id'] == 5): ?>
+                                    <?php elseif ($post['content_type_id'] === '5'): ?>
                                         <div class="post-link__wrapper">
                                             <a class="post-link__external" href="<?= $post['link']; ?>"
                                                title="Перейти по ссылке">
@@ -179,11 +179,11 @@
                                         <?php endforeach; ?>
                                     </ul>
                                 </footer>
-                                <?php if (isset($_GET['comments_post_id']) && $_GET['comments_post_id'] == $post['post_id']) : ?>
+                                <?php if (isset($_GET['comments_post_id']) && $_GET['comments_post_id'] === $post['post_id']) : ?>
                                 <div class="comments">
                                     <div class="comments__list-wrapper">
                                         <ul class="comments__list">
-                                            <? foreach (get_comments($con, $post['post_id'],$_GET) as $comment): ?>
+                                            <? foreach (get_comments($con, $post['post_id'], $_GET) as $comment): ?>
                                                 <li class="comments__item user">
                                                     <div class="comments__avatar">
                                                         <a class="user__avatar-link"
@@ -257,7 +257,7 @@
                             </article>
                         <?php endforeach; ?>
                     </section>
-                    <section class="profile__likes tabs__content <?php if ($_GET['content'] == 'likes') {
+                    <section class="profile__likes tabs__content <?php if ($_GET['content'] === 'likes') {
                         echo 'tabs__content--active';
                     } ?>">
                         <h2 class="visually-hidden">Лайки</h2>
@@ -290,11 +290,11 @@
                                     <div class="post-mini__preview">
                                         <a class="post-mini__link" href="/post.php?post_id=<?= $like['post_id'] ?>"
                                            title="Перейти на публикацию">
-                                            <?php if ($like['content_type_id'] == 3) : ?>
+                                            <?php if ($like['content_type_id'] === 3) : ?>
                                                 <img class="post-mini__image" src="<?= $like['img'] ?>" width="109"
                                                      height="109" alt="Превью публикации">
                                                 <span class="visually-hidden">Фото</span>
-                                            <?php elseif ($like['content_type_id'] == 4) : ?>
+                                            <?php elseif ($like['content_type_id'] === 4) : ?>
                                                 <div class="post-mini__image-wrapper">
                                                     <img class="post-mini__image"
                                                          src="https://<?= get_youtube_image_preview($like['video']) ?>"
@@ -307,17 +307,17 @@
                                                         </span>
                                                 </div>
                                                 <span class="visually-hidden">Видео</span>
-                                            <?php elseif ($like['content_type_id'] == 2) : ?>
+                                            <?php elseif ($like['content_type_id'] === 2) : ?>
                                                 <span class="visually-hidden">Цитата</span>
                                                 <svg class="post-mini__preview-icon" width="21" height="20">
                                                     <use xlink:href="#icon-filter-quote"></use>
                                                 </svg>
-                                            <?php elseif ($like['content_type_id'] == 1) : ?>
+                                            <?php elseif ($like['content_type_id'] === 1) : ?>
                                                 <span class="visually-hidden">Текст</span>
                                                 <svg class="post-mini__preview-icon" width="20" height="21">
                                                     <use xlink:href="#icon-filter-text"></use>
                                                 </svg>
-                                            <?php elseif ($like['content_type_id'] == 5) : ?>
+                                            <?php elseif ($like['content_type_id'] === 5) : ?>
                                                 <span class="visually-hidden">Ссылка</span>
                                                 <svg class="post-mini__preview-icon" width="21" height="18">
                                                     <use xlink:href="#icon-filter-link"></use>
@@ -329,7 +329,7 @@
                             <? endforeach; ?>
                         </ul>
                     </section>
-                    <section class="profile__subscriptions tabs__content <?php if ($_GET['content'] == 'followers') {
+                    <section class="profile__subscriptions tabs__content <?php if ($_GET['content'] === 'followers') {
                         echo 'tabs__content--active';
                     } ?>">
                         <h2 class="visually-hidden">Подписки</h2>

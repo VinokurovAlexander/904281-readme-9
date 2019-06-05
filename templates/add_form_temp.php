@@ -1,4 +1,4 @@
-<?php if ($_GET['content_type_id'] == '1') : ?>    <!-- ct = 'Текст'-->
+<?php if ($_GET['content_type_id'] === '1') : ?>    <!-- ct = 'Текст'-->
 
     <section class="adding-post__text tabs__content tabs__content--active">
         <h2 class="visually-hidden">Форма добавления текста</h2>
@@ -89,7 +89,7 @@
         </form>
     </section>
 
-<?php elseif ($_GET['content_type_id'] == '2') : ?>    <!-- ct = 'Цитата'  -->
+<?php elseif ($_GET['content_type_id'] === '2') : ?>    <!-- ct = 'Цитата'  -->
 
     <section class="adding-post__quote tabs__content tabs__content--active">
         <h2 class="visually-hidden">Форма добавления цитаты</h2>
@@ -199,7 +199,7 @@
         </form>
     </section>
 
-<?php elseif ($_GET['content_type_id'] == '3') : ?>    <!-- ct = 'Картинка'  -->
+<?php elseif ($_GET['content_type_id'] === '3') : ?>    <!-- ct = 'Картинка'  -->
 
     <section class="adding-post__photo tabs__content tabs__content--active tabs__content--active">
         <h2 class="visually-hidden">Форма добавления фото</h2>
@@ -308,7 +308,7 @@
         </form>
     </section>
 
-<?php elseif ($_GET['content_type_id'] == '4') : ?>    <!-- ct = 'Видео'  -->
+<?php elseif ($_GET['content_type_id'] === '4') : ?>    <!-- ct = 'Видео'  -->
 
     <section class="adding-post__video tabs__content tabs__content--active">
         <h2 class="visually-hidden">Форма добавления видео</h2>
@@ -397,7 +397,7 @@
         </form>
     </section>
 
-<?php elseif ($_GET['content_type_id'] == '5') : ?>    <!-- ct = 'Ссылка'  -->
+<?php elseif ($_GET['content_type_id'] === '5') : ?>    <!-- ct = 'Ссылка'  -->
 
     <section class="adding-post__link tabs__content tabs__content--active">
         <h2 class="visually-hidden">Форма добавления ссылки</h2>

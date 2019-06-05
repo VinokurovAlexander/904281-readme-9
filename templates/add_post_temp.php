@@ -10,7 +10,7 @@
                         <?php foreach ($content_types as $k => $v): ?>
                             <li class="adding-post__tabs-item filters__item">
                                 <a class="adding-post__tabs-link filters__button filters__button--<?= $v['icon_class']; ?>  tabs__item tabs__item--active button
-                               <?php if ($_GET['content_type_id'] == $v['content_type_id']) {
+                               <?php if ($_GET['content_type_id'] === $v['content_type_id']) {
                                     echo "filters__button--active";
                                 } ?>"
                                    href="/add.php?content_type_id=<?= $v['content_type_id']; ?>">

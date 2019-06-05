@@ -21,7 +21,7 @@ if (!isset($_GET['content_type_id']) || empty($_GET['content_type_id'])) {
     }
 }
 
-$posts = get_posts_for_feed($con, $current_user_id,$current_content_type_id);
+$posts = get_posts_for_feed($con, $current_user_id, $current_content_type_id);
 
 $page_content = include_template('feed_template.php', [
     'posts' => $posts,

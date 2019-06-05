@@ -26,7 +26,7 @@ $errors = [];
 //Получаем обязательные поля для формы
 $rf = get_required_fields($con, $current_content_type_id);
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $post = $_POST;
 
     //Проверяем заполнены ли обязательные поля
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     //Проверяем корректность заполнения полей
-    if ($current_content_type_id == 3) {
+    if ($current_content_type_id === 3) {
 
         //Проверяем добавлена ли картинка через поле 'Выбрать фото'
         if (empty($_FILES['userpic-file-photo']['name'])) {
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             unset($errors['photo-link']);
             $tmp_name = $_FILES['userpic-file-photo']['tmp_name'];
 
-            if (check_image_type($tmp_name) != null) {
+            if (check_image_type($tmp_name) !== null) {
                 $errors['userpic-file-photo'] = check_image_type($tmp_name);
             } else {
                 move_uploaded_file($tmp_name, $path);
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         elseif ($photo_link_from_internet) {
             unset($errors['userpic-file-photo']);
 
-            if (check_image_link($photo_link_from_internet) != null) {
+            if (check_image_link($photo_link_from_internet) !== null) {
                 $errors['photo-link'] = check_image_link($photo_link_from_internet);
             } else {
                 $get_image = file_get_contents($photo_link_from_internet);
@@ -88,10 +88,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if ($current_content_type_id == 4) {
+    if ($current_content_type_id === 4) {
         if (!empty($_POST['video-link'])) {
             $video_link = $_POST['video-link'];
-            if (check_video_link_error($video_link) != null) {
+            if (check_video_link_error($video_link) !== null) {
                 $errors['video-link'] = check_video_link_error($video_link);
             }
             $youtube_video_id = extract_youtube_id($video_link);
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if ($current_content_type_id == 5) {
+    if ($current_content_type_id === 5) {
         //Проверяем корректно ли указан URL
         $link = $post['post-link'];
 
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $post_id) .
                 ". Посмотрите её на странице пользователя: https://readme/profile.php?user_id=" . $_SESSION['user']['user_id'];
             $subject = "Новая публикация от пользователя " . $_SESSION['user']['user_name'];
-            if (!send_notification($mailer,$msg_content,$user['email'],$subject)) {
+            if (!send_notification($mailer, $msg_content, $user['email'], $subject)) {
                 $error = "Не удалось отправить рассылку: " . $logger->dump();
                 show_error($con, $error);
             }

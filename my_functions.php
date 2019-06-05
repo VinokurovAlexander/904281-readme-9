@@ -93,29 +93,28 @@ function add_hashtags($con, array $hashtags, int $post_id)
 
 function add_post($con, int $content_type_id, array $post)
 {
-    if ($content_type_id == 1) {
+    if ($content_type_id === 1) {
         $post_text_add_sql = 'INSERT INTO posts(pub_date, title, text, user_id, content_type_id) VALUES (NOW(),?,?,?,?)';
         $stmt = db_get_prepare_stmt($con, $post_text_add_sql,
             [$post['text-heading'], $post['post-text'], $post['user_id'], $content_type_id]);
-    } elseif ($content_type_id == 2) {
+    } elseif ($content_type_id === 2) {
         $post_quote_add_sql = 'INSERT INTO posts(pub_date,title,text,quote_author,user_id,content_type_id) VALUES (NOW(),?,?,?,?,?)';
         $stmt = db_get_prepare_stmt($con, $post_quote_add_sql,
             [$post['quote-heading'], $post['quote-text'], $post['quote-author'], $post['user_id'], $content_type_id]);
-    } elseif ($content_type_id == 3) {
+    } elseif ($content_type_id === 3) {
         $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id) VALUES (NOW(),?,?,?,?)';
         $stmt = db_get_prepare_stmt($con, $post_add_sql,
             [$post['photo-heading'], $post['user_id'], $post['img_path'], $content_type_id]);
-    } elseif ($content_type_id == 4) {
+    } elseif ($content_type_id === 4) {
         $post_video_add_sql = 'INSERT INTO posts (pub_date, title, user_id, video, content_type_id) VALUES (NOW(),?,?,?,?)';
         $stmt = db_get_prepare_stmt($con, $post_video_add_sql,
             [$post['video-heading'], $post['user_id'], $post['video-link'], $content_type_id]);
     } //
-    elseif ($content_type_id == 5) {
+    elseif ($content_type_id === 5) {
         $post_link_add_sql = 'INSERT INTO posts(pub_date,title,link,user_id,content_type_id) VALUES (NOW(),?,?,?,?)';
         $stmt = db_get_prepare_stmt($con, $post_link_add_sql,
             [$post['link-heading'], $post['post-link'], $post['user_id'], $content_type_id]);
-    }
-    else {
+    } else {
         return false;
     }
 
@@ -184,8 +183,7 @@ function rel_time($pub_date)
     } elseif ($diff >= 3024000) {
         $diff = floor($diff / 2592000);
         $decl = get_noun_plural_form($diff, 'месяц', 'месяца', 'месяцев');
-    }
-    else {
+    } else {
         return false;
     }
 
@@ -430,13 +428,13 @@ function get_message_time($message_date)
     $dt_now = date_create('now');
     $dt_now_format = date_format($dt_now, "d.m.Y");
 
-    if ($dt_mes_format == $dt_now_format) {
+    if ($dt_mes_format === $dt_now_format) {
         $message_date_format = date_format($dt_mes, "G:H");
     } else {
         $message_date_format = date_format($dt_mes, "j n");
         $message_explode = explode(' ', $message_date_format);
         foreach ($months as $key => $month) {
-            if ($key == $message_explode[1]) {
+            if ($key === $message_explode[1]) {
                 $message_explode[1] = $month;
                 $message_date_format = implode(' ', $message_explode);
             }
@@ -459,7 +457,7 @@ function get_dialog_username($con, array $dialog)
 {
     $user_id = $dialog['sen_id'];
     $current_user_id = $_SESSION['user']['user_id'];
-    if ($user_id == $current_user_id) {
+    if ($user_id === $current_user_id) {
         $user_id = $dialog['rec_id'];
     }
     $get_username_sql = "SELECT user_name FROM users u WHERE u.user_id = $user_id";
@@ -482,7 +480,7 @@ function get_dialog_avatar($con, array $dialog)
 {
     $user_id = $dialog['sen_id'];
     $current_user_id = $_SESSION['user']['user_id'];
-    if ($user_id == $current_user_id) {
+    if ($user_id === $current_user_id) {
         $user_id = $dialog['rec_id'];
     }
     $get_avatar_sql = "SELECT avatar_path FROM users u WHERE u.user_id = $user_id";
@@ -505,7 +503,7 @@ function get_dialog_user_id($con, $dialog)
 {
     $user_id = $dialog['sen_id'];
     $current_user_id = $_SESSION['user']['user_id'];
-    if ($user_id == $current_user_id) {
+    if ($user_id === $current_user_id) {
         $user_id = $dialog['rec_id'];
     }
     $get_user_id_sql = "SELECT user_id FROM users u WHERE u.user_id = $user_id";
@@ -923,7 +921,7 @@ function get_content_types($con)
  *
  */
 
-function get_sorting_link_class(string $sorting_link_name,string $current_get_link)
+function get_sorting_link_class(string $sorting_link_name, string $current_get_link)
 {
     if ($current_get_link === $sorting_link_name . '_desc') {
         $result = 'sorting__link--active';
@@ -931,8 +929,7 @@ function get_sorting_link_class(string $sorting_link_name,string $current_get_li
         $result = 'sorting__link--active sorting__link--reverse';
     } elseif ($current_get_link !== $sorting_link_name) {
         $result = null;
-    }
-    else {
+    } else {
         return false;
     }
 
@@ -959,12 +956,11 @@ function get_sorting_type_link(string $sorting_link_name, string $current_get_li
 
     if ($current_sorting_name !== $sorting_link_name) {
         $sorting_type = 'desc';
-    } elseif ($current_sorting_name == $sorting_link_name && $current_sorting_type == 'desc') {
+    } elseif ($current_sorting_name === $sorting_link_name && $current_sorting_type == 'desc') {
         $sorting_type = 'asc';
-    } elseif ($current_sorting_name == $sorting_link_name && $current_sorting_type == 'asc') {
+    } elseif ($current_sorting_name === $sorting_link_name && $current_sorting_type == 'asc') {
         $sorting_type = 'desc';
-    }
-    else {
+    } else {
         return false;
     }
     return $sorting_type;
@@ -990,16 +986,16 @@ function get_posts($con, int $pages_items, int $offset, string $sorting, string 
     $sorting_name = array_shift($sorting_explode);
     $sorting_type = array_pop($sorting_explode);
 
-    if ($sorting_name == 'popular') {
+    if ($sorting_name === 'popular') {
         $sorting_name = 'p.view_count';
-    } elseif ($sorting_name == 'likes') {
+    } elseif ($sorting_name === 'likes') {
         $sorting_name = 'likes_count';
-    } elseif ($sorting_name == 'date') {
+    } elseif ($sorting_name === 'date') {
         $sorting_name = 'p.pub_date';
     }
 
 
-    if ($content_type_id == 'all') {
+    if ($content_type_id === 'all') {
         $content_type_sql = '';
     } else {
         $content_type_sql = 'AND p.content_type_id=' . $content_type_id;
@@ -1034,7 +1030,7 @@ function get_posts($con, int $pages_items, int $offset, string $sorting, string 
  *
  */
 
-function check_get_popular(array $get, int $page_items,$con)
+function check_get_popular(array $get, int $page_items, $con)
 {
     if (empty($get) || empty($get['content_type_id'])) {
         header("Location: /popular.php?content_type_id=all&sorting=popular_desc&page=1");
@@ -1050,7 +1046,7 @@ function check_get_popular(array $get, int $page_items,$con)
         exit();
     }
 
-    if ($get['page'] > get_pages_count($con, $page_items, $content_type_id) || $get['page'] == 0) {
+    if ($get['page'] > get_pages_count($con, $page_items, $content_type_id) || $get['page'] === 0) {
         show_error($con, 'Страницы с таким номером не существует');
     }
 
@@ -1058,7 +1054,7 @@ function check_get_popular(array $get, int $page_items,$con)
     $sorting_type = get_sorting_type($get['sorting']);
 
     if ((($sorting_name !== 'popular') && ($sorting_name !== 'likes') && ($sorting_name !== 'date')) ||
-    (($sorting_type !== 'desc') && ($sorting_type !== 'asc'))) {
+        (($sorting_type !== 'desc') && ($sorting_type !== 'asc'))) {
         show_error($con, 'Неверно указаны параметры сортировки');
     }
 
@@ -1078,7 +1074,7 @@ function check_get_popular(array $get, int $page_items,$con)
 
 function get_pages_count($con, int $page_items, string $content_type_id)
 {
-    if ($content_type_id == 'all') {
+    if ($content_type_id === 'all') {
         $content_type = '';
     } else {
         $content_type = 'AND content_type_id=' . $content_type_id;
@@ -1103,12 +1099,12 @@ function get_pages_count($con, int $page_items, string $content_type_id)
  *
  */
 
-function get_page_link($link_type,string $content_type_id, string $sorting, int $page)
+function get_page_link($link_type, string $content_type_id, string $sorting, int $page)
 {
 
-    if ($link_type == 'prev') {
+    if ($link_type === 'prev') {
         $page = $page - 1;
-    } elseif ($link_type == 'next') {
+    } elseif ($link_type === 'next') {
         $page = $page + 1;
     }
     $link = '/popular.php?content_type_id=' . $content_type_id . '&sorting=' . $sorting . '&page=' . $page;
@@ -1131,7 +1127,7 @@ function get_page_link($link_type,string $content_type_id, string $sorting, int 
 function get_comments($con, int $post_id, array $get)
 {
 
-    if ((isset($get['comments']) && $get['comments'] == 'full') || (isset($get['show_all']))) {
+    if ((isset($get['comments']) && $get['comments'] === 'full') || (isset($get['show_all']))) {
         $limit = '';
     } else {
         $limit = 'LIMIT 3';
@@ -1262,7 +1258,7 @@ function get_profile_followers($con, int $user_id)
 function get_posts_for_feed($con, int $user_id, string $content_type_id)
 {
 
-    if ($content_type_id == 'all') {
+    if ($content_type_id === 'all') {
         $content_type_id_sql = '';
     } else {
         $content_type_id_sql = 'AND p.content_type_id=' . $content_type_id;
@@ -1575,12 +1571,12 @@ function unfollow($con, int $who_unsub_id, int $to_unsub_id)
  * @return array $posts Возвращает массив с постами согласно поисковому запросу
  */
 
-function search($con,string $search_text)
+function search($con, string $search_text)
 {
 
-    if (substr($search_text, 0, 1) == '#') {
+    if (substr($search_text, 0, 1) === '#') {
         //Поиск по хэштегам
-        $search_text_explode = explode(' ',$search_text);
+        $search_text_explode = explode(' ', $search_text);
         $hashtags = explode('#', $search_text_explode[0]);
         $hashtag = mysqli_real_escape_string($con, $hashtags[1]);
         $search_sql = "SELECT h.hashtag_id,p.*,u.user_name,u.avatar_path,ct.icon_class FROM hashtags h
@@ -1619,7 +1615,7 @@ function search($con,string $search_text)
 
 function get_search(string $search_text)
 {
-    if (substr($search_text, 0, 1) == '#') {
+    if (substr($search_text, 0, 1) === '#') {
         $search_explode = explode(' ', $search_text);
         $search_text = $search_explode[0];
     }
@@ -1665,8 +1661,6 @@ function get_post_title($con, int $post_id)
     $title = $get_title_array['title'];
     return $title;
 }
-
-
 
 
 /**
@@ -1820,13 +1814,12 @@ function validation_email($con, $email)
  *
  */
 
-function send_notification ($mailer, string $msg_content,string $email, string $subject)
+function send_notification($mailer, string $msg_content, string $email, string $subject)
 {
     $message = new Swift_Message();
     $message->setSubject($subject);
     $message->setFrom(['keks@phpdemo.ru' => 'Readme']);
     $message->setBcc($email);
-
 
 
     $message->setBody($msg_content, 'text/html');
@@ -1848,7 +1841,8 @@ function send_notification ($mailer, string $msg_content,string $email, string $
  *
  */
 
-function get_sorting_name ($current_get_link) {
+function get_sorting_name($current_get_link)
+{
     $current_link_explode = explode('_', $current_get_link);
     $current_sorting_name = array_shift($current_link_explode);
     return $current_sorting_name;
@@ -1864,7 +1858,8 @@ function get_sorting_name ($current_get_link) {
  *
  */
 
-function get_sorting_type ($current_get_link) {
+function get_sorting_type($current_get_link)
+{
     $current_link_explode = explode('_', $current_get_link);
     $current_sorting_type = array_pop($current_link_explode);
     return $current_sorting_type;

@@ -24,12 +24,12 @@
                             </header>
                             <div class="post__main">
                                 <h2><a href="/post.php?post_id=<?= $post['post_id'] ?>"><?= $post['title'] ?></a></h2>
-                                <?php if ($post['content_type_id'] == '3') : ?>
+                                <?php if ($post['content_type_id'] === '3') : ?>
                                     <div class="post-details__image-wrapper post-photo__image-wrapper">
                                         <img src="<?= $post['img'] ?>" alt="Фото от пользователя" width="760"
                                              height="507">
                                     </div>
-                                <?php elseif ($post['content_type_id'] == '2') : ?>
+                                <?php elseif ($post['content_type_id'] === '2') : ?>
                                     <div class="post-details__image-wrapper post-quote">
                                         <div class="post__main">
                                             <blockquote>
@@ -40,7 +40,7 @@
                                             </blockquote>
                                         </div>
                                     </div>
-                                <?php elseif ($post['content_type_id'] == '5') : ?>
+                                <?php elseif ($post['content_type_id'] === '5') : ?>
                                     <div class="post-link__wrapper">
                                         <a class="post-link__external" href="<?= htmlspecialchars($post['link']) ?>"
                                            title="Перейти по ссылке">
@@ -56,7 +56,7 @@
                                             <span><?= htmlspecialchars($post['link']) ?></span>
                                         </a>
                                     </div>
-                                <?php elseif ($post['content_type_id'] == '1') : ?>
+                                <?php elseif ($post['content_type_id'] === '1') : ?>
                                     <div class="post-details__image-wrapper post-text">
                                         <div class="post__main">
                                             <p>
@@ -64,7 +64,7 @@
                                             </p>
                                         </div>
                                     </div>
-                                <?php elseif ($post['content_type_id'] == '4') : ?>
+                                <?php elseif ($post['content_type_id'] === '4') : ?>
                                     <iframe width="760" height="400" src="<?= $post['video'] ?>"
                                             frameborder="0"></iframe>
                                 <?php endif; ?>
@@ -117,7 +117,7 @@
             </div>
             <ul class="feed__filters filters">
                 <li class="feed__filters-item filters__item">
-                    <a class="filters__button <?php if ($_GET['content_type_id'] == 'all') {
+                    <a class="filters__button <?php if ($_GET['content_type_id'] === 'all') {
                         echo 'filters__button--active';
                     } ?>" href="/feed.php?content_type_id=all">
                         <span>Все</span>
@@ -125,7 +125,7 @@
                 </li>
                 <?php foreach ($content_types as $ct) : ?>
                     <li class="feed__filters-item filters__item">
-                        <a class="filters__button filters__button--<?= $ct['icon_class'] ?> button <?php if (($_GET['content_type_id'] == $ct['content_type_id'])) {
+                        <a class="filters__button filters__button--<?= $ct['icon_class'] ?> button <?php if (($_GET['content_type_id'] === $ct['content_type_id'])) {
                             echo "filters__button--active";
                         } ?>"
                            href="/feed.php?content_type_id=<?= $ct['content_type_id'] ?>">

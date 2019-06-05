@@ -13,7 +13,7 @@ if (is_post($con, $repost_post_id)) {
     $new_user_id = $_SESSION['user']['user_id'];
     $original_post_user_id = $repost_post['user_id'];
 
-    if ($new_user_id == $original_post_user_id) {
+    if ($new_user_id === $original_post_user_id) {
         show_error($con, 'Вы не можете делать репосты своих публикаций');
     }
 

@@ -26,7 +26,7 @@ if (get_post($con, $post_id)) {
     show_sql_error($con);
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_POST['message-text'])) {
         $errors = [
             'message-text' => 'Это поле необходимо заполнить'
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$comments = get_comments($con,$post_id,$_GET);
+$comments = get_comments($con, $post_id, $_GET);
 
 $page_content = include_template('post_tem.php', [
     'post' => $post,

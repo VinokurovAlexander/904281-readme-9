@@ -12,7 +12,7 @@ if (!isset($_GET['search_text']) || empty($_GET['search_text'])) {
 }
 
 $search_text = $_GET['search_text'];
-$posts = search($con,$search_text);
+$posts = search($con, $search_text);
 
 if (empty($posts)) {
     $page_content = include_template('no_result_teamplate.php', []);
