@@ -85,32 +85,32 @@ function add_hashtags($con, array $hashtags, int $post_id)
  * Добавляет данные, переданные через форму добавления поста, в БД
  **
  * @param mysqli $con Ресурс соединения с БД
- * @param int $content_type_id Идентификатор типа публикуемого поста
+ * @param string $content_type_id Идентификатор типа публикуемого поста
  * @param array $post Данные, передаваемые через форму
  *
  * @return true - если данные добавлены, в ином случае false
  */
 
-function add_post($con, int $content_type_id, array $post)
+function add_post($con, string $content_type_id, array $post)
 {
-    if ($content_type_id === 1) {
+    if ($content_type_id === '1') {
         $post_text_add_sql = 'INSERT INTO posts(pub_date, title, text, user_id, content_type_id) VALUES (NOW(),?,?,?,?)';
         $stmt = db_get_prepare_stmt($con, $post_text_add_sql,
             [$post['text-heading'], $post['post-text'], $post['user_id'], $content_type_id]);
-    } elseif ($content_type_id === 2) {
+    } elseif ($content_type_id === '2') {
         $post_quote_add_sql = 'INSERT INTO posts(pub_date,title,text,quote_author,user_id,content_type_id) VALUES (NOW(),?,?,?,?,?)';
         $stmt = db_get_prepare_stmt($con, $post_quote_add_sql,
             [$post['quote-heading'], $post['quote-text'], $post['quote-author'], $post['user_id'], $content_type_id]);
-    } elseif ($content_type_id === 3) {
+    } elseif ($content_type_id === '3') {
         $post_add_sql = 'INSERT INTO posts (pub_date, title, user_id, img, content_type_id) VALUES (NOW(),?,?,?,?)';
         $stmt = db_get_prepare_stmt($con, $post_add_sql,
             [$post['photo-heading'], $post['user_id'], $post['img_path'], $content_type_id]);
-    } elseif ($content_type_id === 4) {
+    } elseif ($content_type_id === '4') {
         $post_video_add_sql = 'INSERT INTO posts (pub_date, title, user_id, video, content_type_id) VALUES (NOW(),?,?,?,?)';
         $stmt = db_get_prepare_stmt($con, $post_video_add_sql,
             [$post['video-heading'], $post['user_id'], $post['video-link'], $content_type_id]);
     } //
-    elseif ($content_type_id === 5) {
+    elseif ($content_type_id === '5') {
         $post_link_add_sql = 'INSERT INTO posts(pub_date,title,link,user_id,content_type_id) VALUES (NOW(),?,?,?,?)';
         $stmt = db_get_prepare_stmt($con, $post_link_add_sql,
             [$post['link-heading'], $post['post-link'], $post['user_id'], $content_type_id]);

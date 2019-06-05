@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     //Проверяем корректность заполнения полей
-    if ($current_content_type_id === 3) {
+    if ($current_content_type_id === '3') {
 
         //Проверяем добавлена ли картинка через поле 'Выбрать фото'
         if (empty($_FILES['userpic-file-photo']['name'])) {
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if ($current_content_type_id === 4) {
+    if ($current_content_type_id === '4') {
         if (!empty($_POST['video-link'])) {
             $video_link = $_POST['video-link'];
             if (check_video_link_error($video_link) !== null) {
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if ($current_content_type_id === 5) {
+    if ($current_content_type_id === '5') {
         //Проверяем корректно ли указан URL
         $link = $post['post-link'];
 
