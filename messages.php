@@ -46,7 +46,8 @@ if (!empty($_GET['user_id'])) {
             show_sql_error($con);
         }
     }
-    read_msg($con);
+
+    read_msg($con,$dialog_user_id,$current_user_id);
 }
 
 $dialogs = array_merge($dialogs, get_dialogs($con, $current_user_id));

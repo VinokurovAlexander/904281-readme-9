@@ -5,7 +5,7 @@
         <div class="search__query-wrapper">
             <div class="search__query container">
                 <span>Вы искали:</span>
-                <span class="search__query-text"><?= get_search() ?></span>
+                <span class="search__query-text"><?= get_search($_GET['search_text']) ?></span>
             </div>
         </div>
         <div class="search__results-wrapper">

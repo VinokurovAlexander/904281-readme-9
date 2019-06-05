@@ -912,23 +912,24 @@ function get_content_types($con)
 }
 
 /**
- * Функция возвращает названия класса для кнопок сортировки
+ * Функция возвращает названия класса для кнопок сортировки. Класс отвечает за выделение кнопок сортировки.
  *
  **
- * @param string $sorting_link_name сортировки
+ * @param string $sorting_link_name Наименование типа сортировки: posts,likes,popular
+ * @param string $current_get_link Наименование текущего типа сортировки из GET запроса
  *
  * @return string $result Строка с названием класса если в GET запросе указан тип сортировки такой же как и в $sorting_link_name.
  * В ином случае null.
  *
  */
 
-function get_sorting_link_class($sorting_link_name)
+function get_sorting_link_class(string $sorting_link_name,string $current_get_link)
 {
-    if (($_GET['sorting']) == $sorting_link_name . '_desc') {
+    if ($current_get_link === $sorting_link_name . '_desc') {
         $result = 'sorting__link--active';
-    } elseif (($_GET['sorting']) == $sorting_link_name . '_asc') {
+    } elseif ($current_get_link === $sorting_link_name . '_asc') {
         $result = 'sorting__link--active sorting__link--reverse';
-    } elseif ($_GET['sorting'] !== $sorting_link_name) {
+    } elseif ($current_get_link !== $sorting_link_name) {
         $result = null;
     }
     else {
@@ -940,26 +941,27 @@ function get_sorting_link_class($sorting_link_name)
 
 
 /**
- * Функция вовращает тип сортировки
+ * Функция вовращает тип сортировки asc или desc для формирования ссылки
  *
  **
- * @param string $sorting_link_name Название сортировки
+ * @param string $sorting_link_name Наименование типа сортировки: posts,likes,popular
+ * @param string $current_get_link Наименование текущего типа сортировки из GET запроса
  *
  * @return string $sorting_type Возвращает тип сортировки asc или desc
  *
  */
 
-function get_sorting_type($sorting_link_name)
+function get_sorting_type_link(string $sorting_link_name, string $current_get_link)
 {
-    $current_link = $_GET['sorting'];
-    $current_link_explode = explode('_', $current_link);
-    $current_sorting = array_shift($current_link_explode);
-    $current_sorting_type = array_pop($current_link_explode);
-    if ($current_sorting !== $sorting_link_name) {
+
+    $current_sorting_name = get_sorting_name($current_get_link);
+    $current_sorting_type = get_sorting_type($current_get_link);
+
+    if ($current_sorting_name !== $sorting_link_name) {
         $sorting_type = 'desc';
-    } elseif ($current_sorting == $sorting_link_name && $current_sorting_type == 'desc') {
+    } elseif ($current_sorting_name == $sorting_link_name && $current_sorting_type == 'desc') {
         $sorting_type = 'asc';
-    } elseif ($current_sorting == $sorting_link_name && $current_sorting_type == 'asc') {
+    } elseif ($current_sorting_name == $sorting_link_name && $current_sorting_type == 'asc') {
         $sorting_type = 'desc';
     }
     else {
@@ -975,14 +977,15 @@ function get_sorting_type($sorting_link_name)
  * @param mysqli $con Ресурс соединения с БД
  * @param int $pages_items Количество отображаемых элементов на странице
  * @param int $offset Смещение выборки
+ * @param string $sorting Наименование типа сортировки: posts,likes,popular
+ * @param string $content_type_id Идентификатор типа поста
  *
  * @return array Массив с постами
  *
  */
 
-function get_posts($con, int $pages_items, int $offset)
+function get_posts($con, int $pages_items, int $offset, string $sorting, string $content_type_id)
 {
-    $sorting = $_GET['sorting'];
     $sorting_explode = explode('_', $sorting);
     $sorting_name = array_shift($sorting_explode);
     $sorting_type = array_pop($sorting_explode);
@@ -995,7 +998,7 @@ function get_posts($con, int $pages_items, int $offset)
         $sorting_name = 'p.pub_date';
     }
 
-    $content_type_id = $_GET['content_type_id'];
+
     if ($content_type_id == 'all') {
         $content_type_sql = '';
     } else {
@@ -1022,24 +1025,43 @@ function get_posts($con, int $pages_items, int $offset)
  * Функция предотвращает переход на страницу popular.php без всех необходимых данных GET запроса
  *
  **
+ * @param array $get Массив $_GET
+ * @param int $page_items Количество постов на странице
+ * @param mysqli $con Ресурс соединения с БД
  *
- *
- * @return string Переправляет на старницу "Популярное" с параметрами GET по умолчанию
+ * @return string Переправляет на старницу "Популярное"  с параметрами GET по умолчанию
+ * или перенаправляет на страницу с описанием ошибки
  *
  */
 
-function check_get_popular()
+function check_get_popular(array $get, int $page_items,$con)
 {
-    if (empty($_GET) || empty($_GET['content_type_id'])) {
+    if (empty($get) || empty($get['content_type_id'])) {
         header("Location: /popular.php?content_type_id=all&sorting=popular_desc&page=1");
         exit();
     }
-    $content_type_id = $_GET['content_type_id'];
-    if (empty($_GET['sorting']) || empty($_GET['page'])) {
+    $content_type_id = $get['content_type_id'];
+    if ($content_type_id > get_content_types_count($con) && $content_type_id !== 'all') {
+        show_error($con, 'Неверно указан идентификатор типа контента');
+    }
+    if (empty($get['sorting']) || empty($get['page'])) {
         $url = '/popular.php?content_type_id=' . $content_type_id . '&sorting=popular_desc&page=1';
         header("Location: $url");
         exit();
     }
+
+    if ($get['page'] > get_pages_count($con, $page_items, $content_type_id) || $get['page'] == 0) {
+        show_error($con, 'Страницы с таким номером не существует');
+    }
+
+    $sorting_name = get_sorting_name($get['sorting']);
+    $sorting_type = get_sorting_type($get['sorting']);
+
+    if ((($sorting_name !== 'popular') && ($sorting_name !== 'likes') && ($sorting_name !== 'date')) ||
+    (($sorting_type !== 'desc') && ($sorting_type !== 'asc'))) {
+        show_error($con, 'Неверно указаны параметры сортировки');
+    }
+
 }
 
 /**
@@ -1048,14 +1070,14 @@ function check_get_popular()
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param int $page_items Количество постов на странице
+ * @param string $content_type_id Идентификатор типа контента
  *
  * @return int $pages_count Количество страниц
  *
  */
 
-function get_pages_count($con, $page_items)
+function get_pages_count($con, int $page_items, string $content_type_id)
 {
-    $content_type_id = $_GET['content_type_id'];
     if ($content_type_id == 'all') {
         $content_type = '';
     } else {
@@ -1073,16 +1095,17 @@ function get_pages_count($con, $page_items)
  *
  **
  * @param string $link_type 'prev' если нужно ссылка на предыдущую страницу или 'next' если на следующую
+ * @param string $content_type_id Идентификатор типа поста
+ * @param string $sorting Тип сортировки
+ * @param int $page Номер текущей страницы
  *
  * @return string $link возвращает ссылку на необходимую страницу
  *
  */
 
-function get_page_link($link_type)
+function get_page_link($link_type,string $content_type_id, string $sorting, int $page)
 {
-    $content_type_id = $_GET['content_type_id'];
-    $sorting = $_GET['sorting'];
-    $page = $_GET['page'];
+
     if ($link_type == 'prev') {
         $page = $page - 1;
     } elseif ($link_type == 'next') {
@@ -1093,38 +1116,22 @@ function get_page_link($link_type)
 }
 
 /**
- * Получаем ссылку для открытия комментариев на странице просмотра постов в профиле пользователя
- *
- **
- * @param int $post_id Идентификатор поста для которого нужно открыть комментарии
- *
- * @return string $link Возвращает ссылку для открытия комментариев
- *
- */
-
-function get_show_comments_link($post_id)
-{
-    $user_id = $_GET['user_id'];
-    $link = '/profile.php?user_id=' . $user_id . '&content=posts&comments_post_id=' . $post_id;
-    return $link;
-}
-
-
-/**
  * Получаем комменатрии для поста
  *
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста для которого нужно получить комментарии
+ * @param array $get Массив $_GET
+ *
  *
  * @return array Массив с комментариями
  *
  */
 
-function get_comments($con, int $post_id)
+function get_comments($con, int $post_id, array $get)
 {
 
-    if ((isset($_GET['comments']) && $_GET['comments'] == 'full') || (isset($_GET['show_all']))) {
+    if ((isset($get['comments']) && $get['comments'] == 'full') || (isset($get['show_all']))) {
         $limit = '';
     } else {
         $limit = 'LIMIT 3';
@@ -1246,14 +1253,14 @@ function get_profile_followers($con, int $user_id)
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param int $user_id Идентификатор пользователя
+ * @param string $content_type_id Идентификатор типа поста
  *
  * @return array Возвращает массив с постами для отображения на странице "Моя лента"
  *
  */
 
-function get_posts_for_feed($con, int $user_id)
+function get_posts_for_feed($con, int $user_id, string $content_type_id)
 {
-    $content_type_id = $_GET['content_type_id'];
 
     if ($content_type_id == 'all') {
         $content_type_id_sql = '';
@@ -1440,20 +1447,20 @@ function get_dialog_unread_msg_cnt($con, string $dialog_name)
  *
  **
  * @param mysqli $con Ресурс соединения с БД
+ * @param int $sen_user_id Идентификатор пользователя отправителя сообщений
+ * @param int $rec_user_id Идентификатор пользователя принимающего сообщения
+ *
  *
  * @return bool Если данные о сообщение были успешно обновлены в БД - true, иначе false
  */
 
 
-function read_msg($con)
+function read_msg($con, int $sen_user_id, int $rec_user_id)
 {
-    $dialog_user_id = $_GET['user_id'];
-    $current_user_id = $_SESSION['user']['user_id'];
 
-    //Отмечаем прочитанные сообщения
     $read_msg_sql = "UPDATE messages m SET m.is_view = TRUE 
                          WHERE m.is_view IS FALSE 
-                         AND (m.sen_id = $dialog_user_id AND m.rec_id = $current_user_id)";
+                         AND (m.sen_id = $sen_user_id AND m.rec_id = $rec_user_id)";
     $res_msg = mysqli_query($con, $read_msg_sql);
     if ($res_msg) {
         return true;
@@ -1562,17 +1569,19 @@ function unfollow($con, int $who_unsub_id, int $to_unsub_id)
  *
  **
  * @param mysqli $con Ресурс соединения с БД
+ * @param string $search_text Поисковой запрос
+ *
  *
  * @return array $posts Возвращает массив с постами согласно поисковому запросу
  */
 
-function search($con)
+function search($con,string $search_text)
 {
-    $search = $_GET['search_text'];
 
-    if (substr($search, 0, 1) == '#') {
+    if (substr($search_text, 0, 1) == '#') {
         //Поиск по хэштегам
-        $hashtags = explode('#', $search);
+        $search_text_explode = explode(' ',$search_text);
+        $hashtags = explode('#', $search_text_explode[0]);
         $hashtag = mysqli_real_escape_string($con, $hashtags[1]);
         $search_sql = "SELECT h.hashtag_id,p.*,u.user_name,u.avatar_path,ct.icon_class FROM hashtags h
                        JOIN posts_hashtags ph ON ph.hashtag_id = h.hashtag_id
@@ -1589,7 +1598,7 @@ function search($con)
                    JOIN users u ON u.user_id = p.user_id
                    JOIN content_type ct ON ct.content_type_id = p.content_type_id
                    WHERE MATCH(title, text) AGAINST(?)";
-        $stmt = db_get_prepare_stmt($con, $search_sql, [$search]);
+        $stmt = db_get_prepare_stmt($con, $search_sql, [$search_text]);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
     }
@@ -1602,19 +1611,19 @@ function search($con)
  * Возвращает строку, которая была указана при поисковом запросе.
  *
  **
+ * @param string $search_text Поисковой запрос из GET
  *
  * @return string Возвращает строку, которая была указана при поисковом запросе.
  * Если было указано больше одного хэштега, возвращает первый хэштег и поиск производиться только по нему.
  */
 
-function get_search()
+function get_search(string $search_text)
 {
-    $search = $_GET['search_text'];
-    if (substr($search, 0, 1) == '#') {
-        $search_explode = explode(' ', $search);
-        $search = $search_explode[0];
+    if (substr($search_text, 0, 1) == '#') {
+        $search_explode = explode(' ', $search_text);
+        $search_text = $search_explode[0];
     }
-    return $search;
+    return $search_text;
 }
 
 /**
@@ -1829,6 +1838,37 @@ function send_notification ($mailer, string $msg_content,string $email, string $
     return true;
 }
 
+/**
+ * Возвращает название сортировки
+ **
+ * @param string $current_get_link Строка указанная в GET запросе с ключом 'sorting'
+ *
+ *
+ * @return string $current_sorting_name Возвращает название сортировки, указанное в GET запросе
+ *
+ */
+
+function get_sorting_name ($current_get_link) {
+    $current_link_explode = explode('_', $current_get_link);
+    $current_sorting_name = array_shift($current_link_explode);
+    return $current_sorting_name;
+
+}
+
+/**
+ * Возвращает тип сортировки по возврастанию или по убыванию, указаный в GET запросе
+ **
+ * @param string $current_get_link Строка указанная в GET запросе с ключом 'sorting'
+ *
+ * @return string $current_sorting_type Возвращает тип сортировки по возврастанию или по убыванию, указаный в GET запросе
+ *
+ */
+
+function get_sorting_type ($current_get_link) {
+    $current_link_explode = explode('_', $current_get_link);
+    $current_sorting_type = array_pop($current_link_explode);
+    return $current_sorting_type;
+}
 
 
 

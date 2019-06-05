@@ -183,7 +183,7 @@
                                 <div class="comments">
                                     <div class="comments__list-wrapper">
                                         <ul class="comments__list">
-                                            <? foreach (get_comments($con, $post['post_id']) as $comment): ?>
+                                            <? foreach (get_comments($con, $post['post_id'],$_GET) as $comment): ?>
                                                 <li class="comments__item user">
                                                     <div class="comments__avatar">
                                                         <a class="user__avatar-link"
@@ -214,15 +214,15 @@
                                         <?php if (!isset($_GET['show_all']) && (get_comments_count($con,
                                                     $post['post_id']) > 3)) : ?>
                                             <a class="comments__more-link"
-                                               href="<?= get_show_comments_link($post['post_id']) ?>&show_all">
+                                               href="<?= '/profile.php?user_id=' . $_GET['user_id'] . '&content=posts&comments_post_id=' . $post['post_id']; ?>&show_all">
                                                 <span>Показать все комментарии</span>
                                                 <sup class="comments__amount"><?= get_comments_count($con,
                                                         $post['post_id']) ?></sup>
                                             </a>
                                         <? endif; ?>
-                                        <?php if ((isset($_GET['comments'])) && isset($_GET['comments'])) : ?>
+                                        <?php if (isset($_GET['show_all'])) : ?>
                                             <a class="comments__more-link"
-                                               href="<?= get_show_comments_link($post['post_id']) ?>">
+                                               href="<?= '/profile.php?user_id=' . $_GET['user_id'] . '&content=posts&comments_post_id=' . $post['post_id']; ?>">
                                                 <span>Оставить 3 последних комментария</span>
                                             </a>
                                         <?php endif; ?>
@@ -250,7 +250,7 @@
                                     <?php else : ?>
                                         <div class="comments">
                                             <a class="comments__button button"
-                                               href="<?= get_show_comments_link($post['post_id']) ?>">Показать
+                                               href="<?= '/profile.php?user_id=' . $_GET['user_id'] . '&content=posts&comments_post_id=' . $post['post_id']; ?>">Показать
                                                 комментарии</a>
                                         </div>
                                     <? endif; ?>

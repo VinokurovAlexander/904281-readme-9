@@ -24,6 +24,9 @@ if (empty($_GET['content'])) {
     exit();
 }
 
+
+
+
 $errors = [];
 $user = get_user_info($con, $current_user_id);
 $posts = get_profile_posts($con, $current_user_id);
@@ -65,6 +68,7 @@ $layout_content = include_template('layout.php', [
 ]);
 
 print($layout_content);
+
 
 
 

@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$comments = get_comments($con, $post_id);
+$comments = get_comments($con,$post_id,$_GET);
 
 $page_content = include_template('post_tem.php', [
     'post' => $post,

@@ -11,7 +11,8 @@ if (!isset($_GET['search_text']) || empty($_GET['search_text'])) {
     show_error($con, 'Параметры запроса неверные или отсутствуют');
 }
 
-$posts = search($con);
+$search_text = $_GET['search_text'];
+$posts = search($con,$search_text);
 
 if (empty($posts)) {
     $page_content = include_template('no_result_teamplate.php', []);
@@ -30,4 +31,10 @@ $layout_content = include_template('layout.php', [
 
 print($layout_content);
 
+print('<pre>');
 
+print('$_GET:');
+print_r($_GET);
+print('<br>');
+
+print('</pre>');
