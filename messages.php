@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         //Добавляем данные в таблицу
         $sender_id = $_SESSION['user']['user_id'];
-        $recipient_id = intval($_GET['user_id']);
+        $recipient_id = $_GET['user_id'];
 
         //Проверяем создан ли у данных пользователей диалог
         if (is_dialog($con, $sender_id, $recipient_id) !== null) {

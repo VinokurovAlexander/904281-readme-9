@@ -9,7 +9,7 @@ my_session_start();
 
 if (isset($_GET['user_id'])) {
     //Получаем id пользователя на которого будет осуществлена подписка
-    $to_sub_id = intval($_GET['user_id']);
+    $to_sub_id = $_GET['user_id'];
 
     if (!is_user($con, $to_sub_id)) {
         show_error($con, 'Пользователя с таким id не существует');

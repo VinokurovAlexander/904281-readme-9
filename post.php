@@ -11,7 +11,7 @@ if (!isset($_GET['post_id']) || empty($_GET['post_id'])) {
     show_error($con, 'Параметр запроса отсутствует, либо по этому id не нашли ни одной записи');
 }
 
-$post_id = intval($_GET['post_id']);
+$post_id = $_GET['post_id'];
 $title = 'Просмотр поста';
 $errors = [];
 

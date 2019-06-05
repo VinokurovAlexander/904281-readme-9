@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     if (empty($errors)) {
-        $post_id = intval($_GET['comments_post_id']);
+        $post_id = $_GET['comments_post_id'];
         add_comment($con, $_POST['message-text'], $_SESSION['user']['user_id'], $post_id);
     }
 }

@@ -8,7 +8,7 @@ my_session_start();
 
 if (isset($_GET['user_id'])) {
     //Получаем id пользователя от которого нужно отписаться
-    $to_unsub_id = intval($_GET['user_id']);
+    $to_unsub_id = $_GET['user_id'];
 
     if (!is_user($con, $to_unsub_id)) {
         show_error($con, 'Пользователя с таким id не существует');

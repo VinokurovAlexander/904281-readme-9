@@ -13,7 +13,7 @@ if (!isset($_GET['content_type_id']) || empty($_GET['content_type_id'])) {
     exit();
 } else {
     $content_types = get_content_types($con);
-    $current_content_type_id = intval($_GET['content_type_id']);
+    $current_content_type_id = $_GET['content_type_id'];
     if ($current_content_type_id > count($content_types)) {
         show_error($con, 'Типа публикации с таким id не существует');
     }
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         add_hashtags($con, $hashtags, $post_id);
 
         //Отправляем уведомления
-        $current_user_id = intval($_SESSION['user']['user_id']);
+        $current_user_id = $_SESSION['user']['user_id'];
         $followers = get_profile_followers($con, $current_user_id);
 
         foreach ($followers as $user) {

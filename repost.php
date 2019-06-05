@@ -6,7 +6,7 @@ require_once('my_functions.php');
 
 my_session_start();
 
-$repost_post_id = intval($_GET['post_id']);
+$repost_post_id = $_GET['post_id'];
 
 if (is_post($con, $repost_post_id)) {
     $repost_post = get_post($con, $repost_post_id);
