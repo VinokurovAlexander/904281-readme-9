@@ -31,6 +31,7 @@ if (empty($_GET['content'])) {
 
 
 $errors = [];
+$comments = [];
 $user = get_user_info($con, $current_user_id);
 $posts = get_profile_posts($con, $current_user_id);
 $likes = get_profile_likes($con, $current_user_id);
@@ -55,13 +56,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+if (isset($_GET['comments_post_id'])) {
+    $post_id = $_GET['comments_post_id'];
+    if (isset($_GET['show_all'])) {
+        $comments = get_comments($con,$post_id,false);
+    }
+    else {
+        $comments = get_comments($con,$post_id,true);
+    }
+}
+
 $page_content = include_template('profile_template.php', [
     'user' => $user,
     'posts' => $posts,
     'likes' => $likes,
     'con' => $con,
     'followers' => $followers,
-    'errors' => $errors
+    'errors' => $errors,
+    'comments' => $comments
 ]);
 
 $layout_content = include_template('layout.php', [

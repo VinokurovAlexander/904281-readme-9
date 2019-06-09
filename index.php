@@ -29,13 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $res = mysqli_query($con, $sql);
     $user = $res ? mysqli_fetch_array($res, MYSQLI_ASSOC) : null;
 
-    if (!count($errors) and $user) {
+    if (!count($errors) && $user) {
         if (password_verify($post['password'], $user['password'])) {
             $_SESSION['user'] = $user;
         } else {
             $errors['password'] = 'Неверный пароль';
         }
-    } elseif (!count($errors) and !$user) {
+    } elseif (!count($errors) && !$user) {
         $errors['email'] = 'Такой пользователь не найден';
     }
 

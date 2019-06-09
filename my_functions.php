@@ -171,13 +171,13 @@ function rel_time($pub_date)
     if ($diff < 3600) {
         $diff = floor($diff / 60);
         $decl = get_noun_plural_form($diff, 'минута', 'минуты', 'минут'); //узнаем необходимое склонение
-    } elseif ($diff >= 60 and $diff < 86400) {
+    } elseif ($diff >= 60 && $diff < 86400) {
         $diff = floor($diff / 3600);
         $decl = get_noun_plural_form($diff, 'час', 'часа', 'часов');
-    } elseif ($diff >= 86400 and $diff < 604800) {
+    } elseif ($diff >= 86400 && $diff < 604800) {
         $diff = floor($diff / 86400);
         $decl = get_noun_plural_form($diff, 'день', 'дня', 'дней');
-    } elseif ($diff >= 604800 and $diff < 3024000) {
+    } elseif ($diff >= 604800 && $diff < 3024000) {
         $diff = floor($diff / 604800);
         $decl = get_noun_plural_form($diff, 'неделя', 'недели', 'недель');
     } elseif ($diff >= 3024000) {
@@ -970,9 +970,9 @@ function get_sorting_type_link(string $sorting_link_name, string $current_get_li
 
     if ($current_sorting_name !== $sorting_link_name) {
         $sorting_type = 'desc';
-    } elseif ($current_sorting_name === $sorting_link_name && $current_sorting_type == 'desc') {
+    } elseif ($current_sorting_name === $sorting_link_name && $current_sorting_type === 'desc') {
         $sorting_type = 'asc';
-    } elseif ($current_sorting_name === $sorting_link_name && $current_sorting_type == 'asc') {
+    } elseif ($current_sorting_name === $sorting_link_name && $current_sorting_type === 'asc') {
         $sorting_type = 'desc';
     } else {
         return false;
@@ -1039,7 +1039,7 @@ function get_posts($con, int $pages_items, int $offset, string $sorting, string 
  * @param int $page_items Количество постов на странице
  * @param mysqli $con Ресурс соединения с БД
  *
- * @return string Переправляет на старницу "Популярное"  с параметрами GET по умолчанию
+ * @return void Переправляет на старницу "Популярное"  с параметрами GET по умолчанию
  * или перенаправляет на страницу с описанием ошибки
  *
  */
@@ -1131,20 +1131,21 @@ function get_page_link($link_type, string $content_type_id, string $sorting, int
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста для которого нужно получить комментарии
- * @param array $get Массив $_GET
+ * @param bool $need_limit Параметр, отвечающий за кол-во выгружаемых комментариев
  *
  *
  * @return array Массив с комментариями
  *
  */
 
-function get_comments($con, int $post_id, array $get)
+function get_comments($con, int $post_id, bool $need_limit)
 {
 
-    if ((isset($get['comments']) && $get['comments'] === 'full') || (isset($get['show_all']))) {
-        $limit = '';
-    } else {
+    if ($need_limit) {
         $limit = 'LIMIT 3';
+    }
+    else {
+        $limit = '';
     }
 
     $get_comments_sql = "SELECT c.pub_date,c.content,c.user_id,u.avatar_path,u.user_name FROM comments c
@@ -1747,7 +1748,7 @@ function check_image_type_link(string $file_name)
 {
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $file_type = finfo_buffer($finfo, $file_name);
-    if ($file_type !== 'image/gif' and $file_type !== 'image/jpeg' and $file_type !== 'image/png') {
+    if ($file_type !== 'image/gif' && $file_type !== 'image/jpeg' && $file_type !== 'image/png') {
         return false;
     }
     return true;

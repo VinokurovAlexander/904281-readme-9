@@ -26,7 +26,7 @@
                                         $dialog, $_SESSION['user']['user_id'])) ?></span>
                                 <div class="messages__preview">
                                     <p class="messages__preview-text">
-                                        <?php if ($dialog['sen_id'] == $_SESSION['user']['user_id']) {
+                                        <?php if ($dialog['sen_id'] === $_SESSION['user']['user_id']) {
                                             echo 'Вы: ';
                                         } ?>
                                         <?= htmlspecialchars($dialog['content']) ?>
@@ -46,7 +46,7 @@
             <div class="messages__chat-wrapper">
                 <ul class="messages__list tabs__content tabs__content--active">
                     <?php foreach ($messages as $message) : ?>
-                        <li class="messages__item <?php if ($message['sen_id'] == $_SESSION['user']['user_id']) {
+                        <li class="messages__item <?php if ($message['sen_id'] === $_SESSION['user']['user_id']) {
                             echo 'messages__item--my';
                         } ?>">
                             <div class="messages__info-wrapper">

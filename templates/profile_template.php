@@ -184,7 +184,7 @@
                                 <div class="comments">
                                     <div class="comments__list-wrapper">
                                         <ul class="comments__list">
-                                            <? foreach (get_comments($con, $post['post_id'], $_GET) as $comment): ?>
+                                            <? foreach ($comments as $comment): ?>
                                                 <li class="comments__item user">
                                                     <div class="comments__avatar">
                                                         <a class="user__avatar-link"

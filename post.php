@@ -6,10 +6,12 @@ require_once('sql_connect.php');
 my_session_start();
 
 
-if (!isset($_GET['post_id']) || empty($_GET['post_id'])) {
+if (!isset($_GET['post_id']) || empty($_GET['post_id'])  || !is_post($con,$_GET['post_id'])) {
     header('HTTP/1.0 404 not found');
     show_error($con, 'Параметр запроса отсутствует, либо по этому id не нашли ни одной записи');
 }
+
+
 
 $post_id = $_GET['post_id'];
 $title = 'Просмотр поста';
@@ -44,7 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$comments = get_comments($con, $post_id, $_GET);
+if ((isset($_GET['comments'])) && $_GET['comments'] === 'full') {
+    $comments = get_comments($con, $post_id, false);
+}
+else {
+    $comments = get_comments($con, $post_id, true);
+}
+
 
 $page_content = include_template('post_tem.php', [
     'post' => $post,
