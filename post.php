@@ -6,9 +6,9 @@ require_once('sql_connect.php');
 my_session_start();
 
 
-if (!isset($_GET['post_id']) || empty($_GET['post_id'])  || !is_post($con,$_GET['post_id'])) {
+if (!isset($_GET['post_id']) || empty($_GET['post_id'])  || !is_post($con,intval($_GET['post_id']))) {
     header('HTTP/1.0 404 not found');
-    show_error($con, 'Параметр запроса отсутствует, либо по этому id не нашли ни одной записи');
+    show_error($con, 'Параметр запроса отсутствует, либо по этому id не нашли ни одной записи',true);
 }
 
 

@@ -7,11 +7,10 @@ require_once('my_functions.php');
 my_session_start();
 
 if (isset($_GET['post_id'])) {
-    $post_id = $_GET['post_id'];
-    $current_post_id = $_GET['post_id'];
+    $post_id = intval($_GET['post_id']);
 
     //Проверяем наличие поста с указанным id
-    if (is_post($con, $current_post_id)) {
+    if (is_post($con, $post_id)) {
 
         //Проверяем наличие лайка
         if (is_like($con, $post_id, $_SESSION['user']['user_id'])) {
@@ -24,8 +23,8 @@ if (isset($_GET['post_id'])) {
             add_like($con, $post_id, $_SESSION['user']['user_id']);
         }
     }
-    show_error($con, 'Не существует поста с таким id');
+    show_error($con, 'Не существует поста с таким id',true);
 }
 
-show_error($con, 'Нет post_id в GET запросе');
+show_error($con, 'Нет post_id в GET запросе',true);
 

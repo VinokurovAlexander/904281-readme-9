@@ -8,7 +8,7 @@ my_session_start();
 $title = "Поиск";
 
 if (!isset($_GET['search_text']) || empty($_GET['search_text'])) {
-    show_error($con, 'Параметры запроса неверные или отсутствуют');
+    show_error($con, 'Параметры запроса неверные или отсутствуют',true);
 }
 
 $search_text = $_GET['search_text'];

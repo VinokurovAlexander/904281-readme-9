@@ -9,19 +9,24 @@ my_session_start();
 
 if (isset($_GET['user_id'])) {
     //Получаем id пользователя на которого будет осуществлена подписка
-    $to_sub_id = $_GET['user_id'];
+    $to_sub_id = intval($_GET['user_id']);
 
     if (!is_user($con, $to_sub_id)) {
-        show_error($con, 'Пользователя с таким id не существует');
+        show_error($con, 'Пользователя с таким id не существует',true);
     }
 
     //Получаем id пользователя который будет осущетсвлять подписку
     $who_sub_id = $_SESSION['user']['user_id'];
 
+    if ($to_sub_id == $who_sub_id) {
+        show_error($con, 'Нельзя подписаться на самого себя');
+    }
+
     //Исключаем случай подписки на одного и того же пользователя
     if (is_follow($con, $who_sub_id, $to_sub_id)) {
         show_error($con, 'На этого пользователя вы уже подписаны');
     }
+
 
     //Добавляем данные в таблицу
     if (add_followes($con, $who_sub_id, $to_sub_id)) {
@@ -48,7 +53,7 @@ if (isset($_GET['user_id'])) {
 
 }
 
-show_error($con, 'В параметрах GET запроса отсутствует id пользователя');
+show_error($con, 'В параметрах GET запроса отсутствует id пользователя',true);
 
 
 

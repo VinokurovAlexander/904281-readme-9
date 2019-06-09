@@ -337,12 +337,13 @@ function get_youtube_image_preview(string $youtube_url)
  **
  * @param mysqli $con Ресурс соединения с БД
  * @param string $error Текст ошибки
+ * @param bool $is_404 Параметр, отвечающий за показ кода ответа 404
  *
  * @return string Отображает шаблон с ошибкой и заканчивает выполнения всего остального сценария
  *
  */
 
-function show_error($con, string $error)
+function show_error($con, string $error, bool $is_404 = false)
 {
     $page_content = include_template('error.php', ['error' => $error]);
     $layout_content = include_template('layout.php', [
@@ -350,6 +351,11 @@ function show_error($con, string $error)
         'title' => 'Ошибка',
         'con' => $con
     ]);
+
+    if ($is_404) {
+        header('HTTP/1.0 404 not found');
+    }
+
     print($layout_content);
     exit();
 }
@@ -1052,7 +1058,7 @@ function check_get_popular(array $get, int $page_items, $con)
     }
     $content_type_id = $get['content_type_id'];
     if ($content_type_id > get_content_types_count($con) && $content_type_id !== 'all') {
-        show_error($con, 'Неверно указан идентификатор типа контента');
+        show_error($con, 'Неверно указан идентификатор типа контента',true);
     }
     if (empty($get['sorting']) || empty($get['page'])) {
         $url = '/popular.php?content_type_id=' . $content_type_id . '&sorting=popular_desc&page=1';
@@ -1060,8 +1066,8 @@ function check_get_popular(array $get, int $page_items, $con)
         exit();
     }
 
-    if ($get['page'] > get_pages_count($con, $page_items, $content_type_id) || $get['page'] === 0) {
-        show_error($con, 'Страницы с таким номером не существует');
+    if ($get['page'] > get_pages_count($con, $page_items, $content_type_id) || intval($get['page']) === 0) {
+        show_error($con, 'Страницы с таким номером не существует',true);
     }
 
     $sorting_name = get_sorting_name($get['sorting']);
@@ -1069,7 +1075,7 @@ function check_get_popular(array $get, int $page_items, $con)
 
     if ((($sorting_name !== 'popular') && ($sorting_name !== 'likes') && ($sorting_name !== 'date')) ||
         (($sorting_type !== 'desc') && ($sorting_type !== 'asc'))) {
-        show_error($con, 'Неверно указаны параметры сортировки');
+        show_error($con, 'Неверно указаны параметры сортировки',true);
     }
 
 }
