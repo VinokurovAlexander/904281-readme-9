@@ -166,7 +166,7 @@
                         Предыдущая страница
                     </a>
                 <? endif; ?>
-                <?php if ($_GET['page'] !== $pages_count) : ?>
+                <?php if (intval($_GET['page']) !== intval($pages_count)) : ?>
                     <a class="popular__page-link popular__page-link--next button button--gray"
                        href="<?= get_page_link('next', $_GET['content_type_id'], $_GET['sorting'], $_GET['page']) ?>">
                         Следующая страница

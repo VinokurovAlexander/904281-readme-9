@@ -410,7 +410,7 @@ function is_follow($con, int $who_sub_id, int $to_sub_id)
  * @param string $message_date Дата публикации сообщения
  *
  * @return string Время в отформатированном формате.
- * Если сообщение было отправлено/принято в течение текущих суток, то время отображается как %H:%i (14:40)
+ * Если сообщение было отправлено/принято в течение текущих суток, то время отображается как %G:%i (14:40)
  * В ином случае формат отображения $d $month (31 дек)
  *
  */
@@ -432,18 +432,20 @@ function get_message_time($message_date)
         12 => 'дек',
     ];
 
+
     $dt_mes = date_create($message_date);
     $dt_mes_format = date_format($dt_mes, "d.m.Y");
     $dt_now = date_create('now');
     $dt_now_format = date_format($dt_now, "d.m.Y");
 
     if ($dt_mes_format === $dt_now_format) {
-        $message_date_format = date_format($dt_mes, "G:H");
+        $message_date_format = date_format($dt_mes, "G:i");
+
     } else {
         $message_date_format = date_format($dt_mes, "j n");
         $message_explode = explode(' ', $message_date_format);
         foreach ($months as $key => $month) {
-            if ($key === $message_explode[1]) {
+            if ($key === intval($message_explode[1])) {
                 $message_explode[1] = $month;
                 $message_date_format = implode(' ', $message_explode);
             }
@@ -1140,7 +1142,6 @@ function get_page_link($link_type, string $content_type_id, string $sorting, int
  * @param mysqli $con Ресурс соединения с БД
  * @param int $post_id Идентификатор поста для которого нужно получить комментарии
  * @param bool $need_limit Параметр, отвечающий за кол-во выгружаемых комментариев
- *
  *
  * @return array Массив с комментариями
  *

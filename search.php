@@ -31,10 +31,3 @@ $layout_content = include_template('layout.php', [
 
 print($layout_content);
 
-print('<pre>');
-
-print('$_GET:');
-print_r($_GET);
-print('<br>');
-
-print('</pre>');

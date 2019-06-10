@@ -10,11 +10,7 @@ $page_items = 6;
 check_get_popular($_GET, $page_items, $con);
 
 $cur_page = $_GET['page'] ?? 1;
-
-print_r($cur_page);
-
 $offset = ($cur_page - 1) * $page_items;
-
 
 $content_types = get_content_types($con);
 

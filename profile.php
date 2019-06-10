@@ -85,11 +85,3 @@ $layout_content = include_template('layout.php', [
 ]);
 
 print($layout_content);
-
-
-print('<pre>');
-
-print_r($_GET);
-
-
-print('</pre>');
