@@ -1045,7 +1045,9 @@ function get_posts($con, int $pages_items, int $offset, string $sorting, string 
  * @param int $page_items Количество постов на странице
  * @param mysqli $con Ресурс соединения с БД
  *
- * @return void Переправляет на старницу "Популярное"  с параметрами GET по умолчанию
+ * @return void
+ *
+ * Переправляет на старницу "Популярное"  с параметрами GET по умолчанию
  * или перенаправляет на страницу с описанием ошибки
  *
  */
@@ -1058,7 +1060,7 @@ function check_get_popular(array $get, int $page_items, $con)
     }
     $content_type_id = $get['content_type_id'];
     if ($content_type_id > get_content_types_count($con) && $content_type_id !== 'all') {
-        show_error($con, 'Неверно указан идентификатор типа контента',true);
+        show_error($con, 'Неверно указан идентификатор типа контента', true);
     }
     if (empty($get['sorting']) || empty($get['page'])) {
         $url = '/popular.php?content_type_id=' . $content_type_id . '&sorting=popular_desc&page=1';
@@ -1067,7 +1069,7 @@ function check_get_popular(array $get, int $page_items, $con)
     }
 
     if ($get['page'] > get_pages_count($con, $page_items, $content_type_id) || intval($get['page']) === 0) {
-        show_error($con, 'Страницы с таким номером не существует',true);
+        show_error($con, 'Страницы с таким номером не существует', true);
     }
 
     $sorting_name = get_sorting_name($get['sorting']);
@@ -1075,7 +1077,7 @@ function check_get_popular(array $get, int $page_items, $con)
 
     if ((($sorting_name !== 'popular') && ($sorting_name !== 'likes') && ($sorting_name !== 'date')) ||
         (($sorting_type !== 'desc') && ($sorting_type !== 'asc'))) {
-        show_error($con, 'Неверно указаны параметры сортировки',true);
+        show_error($con, 'Неверно указаны параметры сортировки', true);
     }
 
 }
@@ -1149,8 +1151,7 @@ function get_comments($con, int $post_id, bool $need_limit)
 
     if ($need_limit) {
         $limit = 'LIMIT 3';
-    }
-    else {
+    } else {
         $limit = '';
     }
 

@@ -14,8 +14,8 @@ if (!isset($_GET['content_type_id']) || empty($_GET['content_type_id'])) {
 } else {
     $content_types = get_content_types($con);
     $current_content_type_id = intval($_GET['content_type_id']);
-    if ($current_content_type_id > count($content_types) || $current_content_type_id == 0) {
-        show_error($con, 'Типа публикации с таким id не существует',true);
+    if ($current_content_type_id > count($content_types) || $current_content_type_id === 0) {
+        show_error($con, 'Типа публикации с таким id не существует', true);
     }
 }
 

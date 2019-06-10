@@ -12,13 +12,13 @@ if (isset($_GET['user_id'])) {
     $to_sub_id = intval($_GET['user_id']);
 
     if (!is_user($con, $to_sub_id)) {
-        show_error($con, 'Пользователя с таким id не существует',true);
+        show_error($con, 'Пользователя с таким id не существует', true);
     }
 
     //Получаем id пользователя который будет осущетсвлять подписку
     $who_sub_id = $_SESSION['user']['user_id'];
 
-    if ($to_sub_id == $who_sub_id) {
+    if ($to_sub_id === $who_sub_id) {
         show_error($con, 'Нельзя подписаться на самого себя');
     }
 
@@ -53,7 +53,7 @@ if (isset($_GET['user_id'])) {
 
 }
 
-show_error($con, 'В параметрах GET запроса отсутствует id пользователя',true);
+show_error($con, 'В параметрах GET запроса отсутствует id пользователя', true);
 
 
 

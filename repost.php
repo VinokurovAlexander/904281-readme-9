@@ -7,7 +7,7 @@ require_once('my_functions.php');
 my_session_start();
 
 if (!isset($_GET['post_id'])) {
-    show_error($con, 'Отсутствует post id в параметрах запроса',true);
+    show_error($con, 'Отсутствует post id в параметрах запроса', true);
 }
 
 
@@ -34,5 +34,5 @@ if (is_post($con, $repost_post_id)) {
 
 }
 
-show_error($con, 'Поста с таким id не существует',true);
+show_error($con, 'Поста с таким id не существует', true);
 

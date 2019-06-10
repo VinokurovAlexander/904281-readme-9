@@ -11,7 +11,7 @@ if (isset($_GET['user_id'])) {
     $to_unsub_id = intval($_GET['user_id']);
 
     if (!is_user($con, $to_unsub_id)) {
-        show_error($con, 'Пользователя с таким id не существует',true);
+        show_error($con, 'Пользователя с таким id не существует', true);
     }
 
     //Получаем id пользователя который будет отписываться
@@ -32,4 +32,4 @@ if (isset($_GET['user_id'])) {
 
 }
 
-show_error($con, 'В параметрах GET запроса отсутствует id пользователя',true);
+show_error($con, 'В параметрах GET запроса отсутствует id пользователя', true);

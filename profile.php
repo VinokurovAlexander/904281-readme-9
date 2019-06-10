@@ -10,7 +10,7 @@ $title = 'Профиль пользователя';
 
 if (!isset($_GET['user_id']) || empty($_GET['user_id'])) {
     header('HTTP/1.0 404 not found');
-    show_error($con, 'Параметр запроса отсутствует, либо по этому id не нашли ни одной записи',true);
+    show_error($con, 'Параметр запроса отсутствует, либо по этому id не нашли ни одной записи', true);
 } else {
     $current_user_id = intval($_GET['user_id']);
     if (!is_user($con, $current_user_id)) {
@@ -25,7 +25,7 @@ if (empty($_GET['content'])) {
 } else {
     $content = $_GET['content'];
     if ($content !== 'posts' && $content !== 'likes' && $content !== 'followers') {
-        show_error($con, 'Указан неверный тип контента',true);
+        show_error($con, 'Указан неверный тип контента', true);
     }
 }
 
@@ -58,14 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if (isset($_GET['comments_post_id'])) {
     $post_id = intval($_GET['comments_post_id']);
-    if (!is_post($con,$post_id)) {
-        show_error($con,'Поста с таким id не существует',true);
+    if (!is_post($con, $post_id)) {
+        show_error($con, 'Поста с таким id не существует', true);
     }
     if (isset($_GET['show_all'])) {
-        $comments = get_comments($con,$post_id,false);
-    }
-    else {
-        $comments = get_comments($con,$post_id,true);
+        $comments = get_comments($con, $post_id, false);
+    } else {
+        $comments = get_comments($con, $post_id, true);
     }
 }
 
@@ -86,7 +85,6 @@ $layout_content = include_template('layout.php', [
 ]);
 
 print($layout_content);
-
 
 
 print('<pre>');

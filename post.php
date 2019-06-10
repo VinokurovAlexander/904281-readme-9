@@ -6,11 +6,10 @@ require_once('sql_connect.php');
 my_session_start();
 
 
-if (!isset($_GET['post_id']) || empty($_GET['post_id'])  || !is_post($con,intval($_GET['post_id']))) {
+if (!isset($_GET['post_id']) || empty($_GET['post_id']) || !is_post($con, intval($_GET['post_id']))) {
     header('HTTP/1.0 404 not found');
-    show_error($con, 'Параметр запроса отсутствует, либо по этому id не нашли ни одной записи',true);
+    show_error($con, 'Параметр запроса отсутствует, либо по этому id не нашли ни одной записи', true);
 }
-
 
 
 $post_id = $_GET['post_id'];
@@ -48,8 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 if ((isset($_GET['comments'])) && $_GET['comments'] === 'full') {
     $comments = get_comments($con, $post_id, false);
-}
-else {
+} else {
     $comments = get_comments($con, $post_id, true);
 }
 

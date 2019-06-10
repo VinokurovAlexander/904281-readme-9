@@ -23,8 +23,8 @@ if (isset($_GET['post_id'])) {
             add_like($con, $post_id, $_SESSION['user']['user_id']);
         }
     }
-    show_error($con, 'Не существует поста с таким id',true);
+    show_error($con, 'Не существует поста с таким id', true);
 }
 
-show_error($con, 'Нет post_id в GET запросе',true);
+show_error($con, 'Нет post_id в GET запросе', true);
 

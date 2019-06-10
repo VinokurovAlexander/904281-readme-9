@@ -16,7 +16,6 @@ print_r($cur_page);
 $offset = ($cur_page - 1) * $page_items;
 
 
-
 $content_types = get_content_types($con);
 
 if (isset($_GET['sorting']) && isset($_GET['content_type_id'])) {

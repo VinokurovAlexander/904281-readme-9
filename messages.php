@@ -17,7 +17,7 @@ if (!empty($_GET['user_id'])) {
     $dialog_user_id = intval($_GET['user_id']);
     //Проверяем существование пользователя
     if (is_user($con, $dialog_user_id) === false) {
-        show_error($con, 'Пользователя с таким id не существует',true);
+        show_error($con, 'Пользователя с таким id не существует', true);
     }
 
     if ($dialog_user_id === $current_user_id) {
